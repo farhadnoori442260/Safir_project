@@ -1,0 +1,238 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:uber_users_app/global/global_var.dart'; // متغیرهای userName و userPhone پروژه شما
+import 'package:uber_users_app/pages/trips_history_page.dart';
+import 'map_screen.dart';
+import 'settings_screen.dart';
+
+class SafirHomeScreen extends StatefulWidget {
+  const SafirHomeScreen({super.key});
+
+  @override
+  State<SafirHomeScreen> createState() => _SafirHomeScreenState();
+}
+
+class _SafirHomeScreenState extends State<SafirHomeScreen> {
+  int? _activeSelectedIndex; 
+  String _currentLanguage = 'دری'; 
+  
+  final Color safirColor = const Color(0xFF145A41); 
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  // انواع سرویس‌ها دقیقاً هماهنگ با مقادیر مورد نیاز فایربیس (Car, Auto, Bike)
+  final List<Map<String, dynamic>> _services = [
+    {'title': 'درخواست سفیر', 'icon': Icons.local_taxi, 'type': 'Car'}, 
+    {'title': 'بین شهری', 'icon': Icons.add_road, 'type': 'Auto'},
+    {'title': 'باربری سفیر', 'icon': Icons.local_shipping, 'type': 'Bike'},
+    {'title': 'ثبت نام', 'icon': Icons.person_add, 'type': 'Register'},
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCurrentUserInfo();
+  }
+
+  // لود آنلاین نام و تلفن شما از روت Users فایربیس
+  _loadCurrentUserInfo() async {
+    if (FirebaseAuth.instance.currentUser != null) {
+      DatabaseReference usersRef = FirebaseDatabase.instance
+          .ref()
+          .child("users")
+          .child(FirebaseAuth.instance.currentUser!.uid);
+
+      await usersRef.once().then((snap) {
+        if (snap.snapshot.value != null && mounted) {
+          setState(() {
+            userName = (snap.snapshot.value as Map)["name"] ?? userName;
+            userPhone = (snap.snapshot.value as Map)["phone"] ?? userPhone;
+          });
+        }
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        key: _scaffoldKey,
+        backgroundColor: Colors.white, 
+        drawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              UserAccountsDrawerHeader(
+                decoration: BoxDecoration(color: safirColor),
+                accountName: Text(userName.isEmpty ? 'فرهاد نوری' : userName, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                accountEmail: Text(userPhone.isEmpty ? '+93 7xx xxx xxx' : userPhone, style: const TextStyle(color: Colors.white70)),
+                currentAccountPicture: const CircleAvatar(
+                  backgroundColor: Colors.white,
+                  child: Icon(Icons.person, size: 40, color: Color(0xFF145A41)),
+                ),
+              ),
+              ListTile(
+                leading: Icon(Icons.history, color: safirColor), 
+                title: const Text('تاریخچه سفرهای من'), 
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(context, MaterialPageRoute(builder: (c) => const TripsHistoryPage()));
+                }
+              ),
+              ListTile(leading: Icon(Icons.account_balance_wallet, color: safirColor), title: const Text('کیف پول'), onTap: () {}),
+              ListTile(
+                leading: Icon(Icons.settings, color: safirColor), 
+                title: const Text('تنظیمات'), 
+                onTap: () {
+                  Navigator.pop(context); 
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SettingsScreen(
+                        currentLanguage: _currentLanguage,
+                        onLanguageChanged: (newLang) {
+                          setState(() {
+                            _currentLanguage = newLang;
+                          });
+                        },
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+        body: GestureDetector(
+          onTap: () {
+            setState(() {
+              _activeSelectedIndex = null; 
+            });
+          },
+          child: Stack(
+            children: [
+              Positioned(
+                top: 40, right: 0, left: 0,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Safir',
+                            style: TextStyle(color: safirColor, fontSize: 28, fontWeight: FontWeight.bold, fontFamily: 'Serif'),
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.menu, color: safirColor, size: 28),
+                            onPressed: () => _scaffoldKey.currentState?.openDrawer(),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Divider(color: safirColor.withOpacity(0.2), height: 1, thickness: 1),
+                  ],
+                ),
+              ),
+              Positioned(
+                top: 140, right: 25, left: 25,
+                child: Text(
+                  'سرویس مورد نظر را از منوی شناور انتخاب کنید:',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: safirColor),
+                  textAlign: TextAlign.right,
+                ),
+              ),
+              Positioned(
+                bottom: 40, left: 15, right: 15,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(30),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.15), 
+                        blurRadius: 20,                       
+                        spreadRadius: 2,                      
+                        offset: const Offset(0, 8),           
+                      )
+                    ]
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: List.generate(_services.length, (index) {
+                      bool isVisualActive = _activeSelectedIndex == index;
+
+                      return GestureDetector(
+                        onTap: () {
+                          if (_activeSelectedIndex == index) {
+                            // انتقال نوع وسیله نقلیه به پارامتر serviceType در نقشه جدید رایگان شما
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => SafirMapScreen(serviceType: _services[index]['type']),
+                              ),
+                            );
+                          } else {
+                            setState(() {
+                              _activeSelectedIndex = index;
+                            });
+                          }
+                        },
+                        child: Stack(
+                          alignment: Alignment.center,
+                          clipBehavior: Clip.none,
+                          children: [
+                            AnimatedPositioned(
+                              duration: const Duration(milliseconds: 250),
+                              curve: Curves.easeOutBack,
+                              bottom: isVisualActive ? 65 : 20, 
+                              child: AnimatedOpacity(
+                                duration: const Duration(milliseconds: 180),
+                                opacity: isVisualActive ? 1.0 : 0.0,
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                  decoration: BoxDecoration(
+                                    color: safirColor,
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  child: Text(
+                                    _services[index]['title'],
+                                    style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            AnimatedContainer(
+                              duration: const Duration(milliseconds: 250),
+                              width: 52,
+                              height: 52,
+                              decoration: BoxDecoration(
+                                color: isVisualActive ? safirColor : Colors.grey[100],
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                _services[index]['icon'],
+                                color: isVisualActive ? Colors.white : safirColor,
+                                size: 24,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
