@@ -4,8 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:uber_users_app/global/global_var.dart'; // متغیرهای userName و userPhone پروژه شما
 import 'package:uber_users_app/pages/trips_history_page.dart';
-import 'map_screen.dart';
-import 'settings_screen.dart';
+import 'package:uber_users_app/pages/settings_screen.dart'; // تصحیح مسیر ایمپورت تنظیمات
+import 'map_screen.dart'; // فایل نقشه شما
 
 class SafirHomeScreen extends StatefulWidget {
   const SafirHomeScreen({super.key});
@@ -171,11 +171,11 @@ class _SafirHomeScreenState extends State<SafirHomeScreen> {
                       return GestureDetector(
                         onTap: () {
                           if (_activeSelectedIndex == index) {
-                            // انتقال نوع وسیله نقلیه به پارامتر serviceType در نقشه جدید رایگان شما
+                            // هماهنگ شده با نام کلاس MapScreen موجود در فایل map_screen.dart شما
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => SafirMapScreen(serviceType: _services[index]['type']),
+                                builder: (context) => MapScreen(serviceType: _services[index]['type']),
                               ),
                             );
                           } else {
