@@ -52,7 +52,16 @@ class _SafirMapScreenState extends State<SafirMapScreen> {
   void initState() {
     super.initState();
     selectedVehicle = widget.serviceType;
-    if (selectedVehicle == "Bike") _selectedCategory = 1;
+    // هماهنگ‌سازی تب اولیه بر اساس انتخاب کاربر در هوم اسکرین سفیر
+    if (selectedVehicle == "Bike") {
+      _selectedCategory = 1;
+    } else if (selectedVehicle == "Auto") {
+      _selectedCategory = 0;
+      _selectedVehicleType = 1;
+    } else {
+      _selectedCategory = 0;
+      _selectedVehicleType = 0;
+    }
     _getCurrentLiveLocation();
   }
 
@@ -420,7 +429,7 @@ class _SafirMapScreenState extends State<SafirMapScreen> {
                       ),
                       const SizedBox(height: 12),
                       if (_selectedCategory == 0) ...[
-                        _buildHorizontalVehicleOption(0, Icons.local_taxi, 'سفير اقتصادی', 'ارزان و سریع', '${actualFareAmount.toStringAsFixed(0)} افغانی', 'Car'),
+                        _buildHorizontalVehicleOption(0, Icons.local_taxi, 'سير اقتصادی', 'ارزان و سریع', '${actualFareAmount.toStringAsFixed(0)} افغانی', 'Car'),
                         const SizedBox(height: 8),
                         _buildHorizontalVehicleOption(1, Icons.electric_car, 'سفير ویژه', 'لوکس و راحت', '${(actualFareAmount * 1.4).toStringAsFixed(0)} افغانی', 'Auto'),
                       ] else ...[
