@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-// تعریف وضعیت‌های برنامه سفیر
+// تعریف وضعیت‌های برنامه سفیر (مبدأ یا مقصد)
 enum SelectionState { pickingOrigin, pickingDestination }
 
 class SafirMapPicker extends StatefulWidget {
@@ -13,7 +13,10 @@ class SafirMapPicker extends StatefulWidget {
 class _SafirMapPickerState extends State<SafirMapPicker> {
   // متغیرهای کنترل وضعیت
   SelectionState _currentState = SelectionState.pickingOrigin; 
+  
+  // این متغیر اصلی است که به نقشه واقعی متصل می‌شود و میخ را حرکت می‌دهد
   bool _isMapMoving = false; 
+  
   String _currentAddress = "در حال دریافت آدرس سفیر...";
   
   // رنگ اختصاصی برند سفیر
@@ -25,45 +28,64 @@ class _SafirMapPickerState extends State<SafirMapPicker> {
       body: Stack(
         children: [
           // ----------------------------------------------------
-          // لایه اول: نقشه سفیر
+          // لایه اول: نقشه سفیر (بعداً پکیج نقشه واقعی اینجا فعال می‌شود)
           // ----------------------------------------------------
           Container(
             color: Colors.grey[200],
             child: const Center(
-              child: Text("محل قرارگیری ویجت نقشه جدید"),
+              child: Text(
+                "محل قرارگیری ویجت نقشه جدید سفیر",
+                style: TextStyle(fontFamily: 'IranYekan', color: Colors.grey),
+              ),
             ),
           ),
 
           // ----------------------------------------------------
-          // لایه دوم: میخ (مارکر) ثابت در مرکز صفحه
+          // لایه دوم: میخ ثابت در مرکز صفحه (دقیقاً مثل اسنپ)
           // ----------------------------------------------------
           Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                // این کانتینر انیمیشنی، آیکون و چوبک را با هم به بالا می‌برد
                 AnimatedContainer(
                   duration: const Duration(milliseconds: 150),
                   curve: Curves.easeOut,
                   transform: Matrix4.translationValues(0, _isMapMoving ? -20 : 0, 0),
-                  child: Icon(
-                    Icons.location_on_rounded, 
-                    size: 55,
-                    color: _currentState == SelectionState.pickingOrigin 
-                        ? safirBrandColor 
-                        : Colors.orange[800],
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // الف) خودِ میخ یا مارکر اصلی با فونت و استایل سفیر
+                      Icon(
+                        Icons.location_on_rounded, 
+                        size: 50,
+                        color: _currentState == SelectionState.pickingOrigin 
+                            ? safirBrandColor 
+                            : Colors.orange[800],
+                      ),
+                      // ب) چوبک یا میله متصل به میخ (که با آن بالا می‌رود)
+                      Container(
+                        width: 3, 
+                        height: 14, 
+                        color: Colors.grey[700], 
+                      ),
+                    ],
                   ),
                 ),
                 
+                // ج) نقطه یا سایه سیاه روی زمین که همیشه ثابت است و تکان نمی‌خورد
                 AnimatedContainer(
                   duration: const Duration(milliseconds: 150),
-                  width: _isMapMoving ? 8 : 18,
-                  height: 4,
+                  width: _isMapMoving ? 6 : 12,
+                  height: 3,
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.3),
+                    color: Colors.black.withOpacity(_isMapMoving ? 0.6 : 0.3),
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                const SizedBox(height: 45), 
+                
+                // تنظیم فاصله برای نشستن دقیق نوک چوبک بر مرکز زمین
+                const SizedBox(height: 32), 
               ],
             ),
           ),
@@ -134,7 +156,12 @@ class _SafirMapPickerState extends State<SafirMapPicker> {
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("مبداء و مقصد تایید شدند! در حال جستجوی سفیر...")),
+        const SnackBar(
+          content: Text(
+            "مبداء و مقصد تایید شدند! در حال جستجوی سفیر...",
+            style: TextStyle(fontFamily: 'IranYekan'),
+          ),
+        ),
       );
     }
   }
