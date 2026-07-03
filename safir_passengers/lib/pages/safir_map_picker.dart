@@ -13,22 +13,25 @@ class SafirMapPicker extends StatefulWidget {
 class _SafirMapPickerState extends State<SafirMapPicker> {
   // متغیرهای کنترل وضعیت
   SelectionState _currentState = SelectionState.pickingOrigin; 
-  
-  // این متغیر اصلی است که به نقشه واقعی متصل می‌شود و میخ را حرکت می‌دهد
   bool _isMapMoving = false; 
-  
   String _currentAddress = "در حال دریافت آدرس سفیر...";
   
-  // رنگ اختصاصی برند سفیر
-  final Color safirBrandColor = const Color(0xff145A41);
+  // رنگ‌های استاندارد بر اساس پیشنهاد شما
+  final Color safirBrandColor = const Color(0xff145A41); // سبز تیره سفیر برای مقصد
+  final Color originBlueColor = Colors.blueAccent; // آبی برای مبدأ
 
   @override
   Widget build(BuildContext context) {
+    // تشخیص رنگ فعال بر اساس وضعیت فعلی برنامه
+    Color currentColor = _currentState == SelectionState.pickingOrigin 
+        ? originBlueColor 
+        : safirBrandColor;
+
     return Scaffold(
       body: Stack(
         children: [
           // ----------------------------------------------------
-          // لایه اول: نقشه سفیر (بعداً پکیج نقشه واقعی اینجا فعال می‌شود)
+          // لایه اول: نقشه سفیر
           // ----------------------------------------------------
           Container(
             color: Colors.grey[200],
@@ -41,13 +44,12 @@ class _SafirMapPickerState extends State<SafirMapPicker> {
           ),
 
           // ----------------------------------------------------
-          // لایه دوم: میخ ثابت در مرکز صفحه (دقیقاً مثل اسنپ)
+          // لایه دوم: میخ ثابت در مرکز صفحه (با تغییر رنگ دینامیک)
           // ----------------------------------------------------
           Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // این کانتینر انیمیشنی، آیکون و چوبک را با هم به بالا می‌برد
                 AnimatedContainer(
                   duration: const Duration(milliseconds: 150),
                   curve: Curves.easeOut,
@@ -55,15 +57,13 @@ class _SafirMapPickerState extends State<SafirMapPicker> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // الف) خودِ میخ یا مارکر اصلی با فونت و استایل سفیر
+                      // الف) خودِ میخ یا مارکر اصلی (آبی برای مبدأ، سبز برای مقصد)
                       Icon(
                         Icons.location_on_rounded, 
                         size: 50,
-                        color: _currentState == SelectionState.pickingOrigin 
-                            ? safirBrandColor 
-                            : Colors.orange[800],
+                        color: currentColor,
                       ),
-                      // ب) چوبک یا میله متصل به میخ (که با آن بالا می‌رود)
+                      // ب) چوبک یا میله متصل به میخ
                       Container(
                         width: 3, 
                         height: 14, 
@@ -73,7 +73,7 @@ class _SafirMapPickerState extends State<SafirMapPicker> {
                   ),
                 ),
                 
-                // ج) نقطه یا سایه سیاه روی زمین که همیشه ثابت است و تکان نمی‌خورد
+                // ج) نقطه یا سایه سیاه روی زمین
                 AnimatedContainer(
                   duration: const Duration(milliseconds: 150),
                   width: _isMapMoving ? 6 : 12,
@@ -84,14 +84,13 @@ class _SafirMapPickerState extends State<SafirMapPicker> {
                   ),
                 ),
                 
-                // تنظیم فاصله برای نشستن دقیق نوک چوبک بر مرکز زمین
                 const SizedBox(height: 32), 
               ],
             ),
           ),
 
           // ----------------------------------------------------
-          // لایه سوم: باکس آدرس و دکمه تایید (پایین صفحه)
+          // لایه سوم: باکس آدرس و دکمه تایید با رنگ هماهنگ
           // ----------------------------------------------------
           Positioned(
             bottom: 24,
@@ -120,13 +119,13 @@ class _SafirMapPickerState extends State<SafirMapPicker> {
                     ),
                     const SizedBox(height: 16),
                     
-                    // دکمه تایید با رنگ سازمانی سفیر و فونت ایران یکان
+                    // دکمه تایید (آبی در مبدأ، سبز سفیر در مقصد)
                     SizedBox(
                       width: double.infinity,
                       height: 48,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: safirBrandColor,
+                          backgroundColor: currentColor,
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                         ),
                         onPressed: _handleConfirmation,
