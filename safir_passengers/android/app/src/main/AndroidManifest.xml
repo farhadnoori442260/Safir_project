@@ -2,14 +2,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.safir.passengers">
     
-    <!-- مجوزهای دسترسی به اینترنت و شبکه -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     
-    <!-- مجوزهای دسترسی به موقعیت مکانی مسافر برای تاکسی‌سرویس سفیر -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
 
     <application
         android:label="سفیر مسافر"
@@ -41,8 +42,7 @@
             android:name="flutterEmbedding"
             android:value="2" />
             
-        <!-- بخش تگ گوگل مپ برای جلوگیری از تداخل کاملاً حذف شد -->
-    </application>
+        </application>
 
     <queries>
         <intent>
