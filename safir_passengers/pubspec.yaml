@@ -1,0 +1,59 @@
+name: uber_users_app
+description: "A new Flutter project."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.4.4 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  google_maps_flutter:
+  connectivity_plus: 
+  firebase_auth:
+  cloud_firestore:
+  firebase_database:
+  firebase_storage:
+  permission_handler:
+  geolocator:
+  http:
+  provider:
+  flutter_polyline_points:
+  loading_animation_widget:
+  flutter_geofire:
+  googleapis:
+  googleapis_auth:
+  restart_app: ^1.2.1
+  url_launcher:
+  country_picker:
+  rounded_loading_button: '2.1.0'
+  google_sign_in:
+  flutter_stripe: ^10.0.0 
+
+  cupertino_icons: ^1.0.6
+  firebase_core: ^3.2.0
+  pinput: ^5.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+
+  # بخش دارایی‌ها و پوشه تصاویر ناوگان و آیکون‌های سفیر
+  assets:
+    - assets/images/
+    - themes/
+    - assets/vehicles/
+
+  # بخش فعال‌سازی فونت ایران یکان برای کل پروژه سفیر
+  fonts:
+    - family: IranYekan
+      fonts:
+        - asset: assets/fonts/IranYekan-Regular.ttf
+        - asset: assets/fonts/IranYekan-Bold.ttf
+          weight: 700
