@@ -4,8 +4,8 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:safir_drivers/methods/common_method.dart'; // اصلاح نام پکیج به safir_drivers
-import 'package:safir_drivers/pages/dashboard.dart';       // اصلاح نام پکیج به safir_drivers
+import 'package:safir_drivers/methods/common_method.dart';
+import 'package:safir_drivers/pages/dashboard.dart';
 import '../widgets/loading_dialog.dart';
 import 'login_screen.dart';
 
@@ -28,9 +28,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
   XFile? imageFile;
   String urlOfUploadedImage = "";
 
-  checkIfNetworkIsAvailable() {
-    //cMethods.checkConnectivity(context);
+  // متغیر ذخیره نوع وسیله نقلیه انتخابی (مقدار پیش‌فرض: موتر اقتصادی)
+  String selectedVehicleType = "economic_car";
 
+  // لیست گزینه‌های منوی انتخابی برای رانندگان سفیر
+  final List<DropdownMenuItem<String>> vehicleTypeItems = [
+    const DropdownMenuItem(value: "economic_car", child: Text("موتر اقتصادی", style: TextStyle(fontFamily: 'IranYekan'))),
+    const DropdownMenuItem(value: "modern_car", child: Text("موتر مدرن", style: TextStyle(fontFamily: 'IranYekan'))),
+    const DropdownMenuItem(value: "motorbike", child: Text("موتورسایکل", style: TextStyle(fontFamily: 'IranYekan'))),
+  ];
+
+  checkIfNetworkIsAvailable() {
     if (imageFile != null) {
       signUpFormValidation();
     } else {
@@ -52,7 +60,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     } else if (vehicleColorTextEditingController.text.trim().isEmpty) {
       cMethods.displaySnackBar("لطفاً رنگ وسیله نقلیه خود را وارد کنید.", context);
     } else if (vehicleNumberTextEditingController.text.isEmpty) {
-      cMethods.displaySnackBar("لطفاً شماره پلاک/فورم وسیله نقلیه را وارد کنید.", context);
+      cMethods.displaySnackBar("لطفاً شماره پلاک یا فورم وسیله نقلیه را وارد کنید.", context);
     } else {
       uploadImageToStorage();
     }
@@ -93,6 +101,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       DatabaseReference usersRef = FirebaseDatabase.instance.ref().child("drivers").child(userFirebase!.uid);
 
       Map driverCarInfo = {
+        "type": selectedVehicleType, // نوع وسیله انتخابی به صورت کاملاً دقیق به سرور فرستاده می‌شود
         "carColor": vehicleColorTextEditingController.text.trim(),
         "carModel": vehicleModelTextEditingController.text.trim(),
         "carNumber": vehicleNumberTextEditingController.text.trim(),
@@ -149,9 +158,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           color: Colors.grey,
                           image: DecorationImage(
                               fit: BoxFit.fitHeight,
-                              image: FileImage(
-                                File(imageFile!.path),
-                              ))),
+                              image: FileImage(File(imageFile!.path)))),
                     ),
 
               const SizedBox(height: 10),
@@ -214,12 +221,35 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                       style: const TextStyle(color: Colors.grey, fontSize: 15),
                     ),
-                    const SizedBox(height: 22),
+                    
+                    const SizedBox(height: 25),
+                    
+                    // منوی کشویی انتخاب نوع وسیله نقلیه اختصاصی سفیر
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          "نوع وسیله نقلیه:",
+                          style: TextStyle(fontFamily: 'IranYekan', fontSize: 15, color: Colors.grey),
+                        ),
+                        DropdownButton<String>(
+                          value: selectedVehicleType,
+                          items: vehicleTypeItems,
+                          onChanged: (value) {
+                            setState(() {
+                              selectedVehicleType = value!;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                    
+                    const SizedBox(height: 15),
                     TextField(
                       controller: vehicleModelTextEditingController,
                       keyboardType: TextInputType.text,
                       decoration: const InputDecoration(
-                        labelText: "مدل وسیله نقلیه (مثلاً موتر تویوتا / موتورسایکل)",
+                        labelText: "مدل وسیله (مثلاً تویوتا کرولا / کورولا ۲۰۰8)",
                         labelStyle: TextStyle(fontFamily: 'IranYekan', fontSize: 14),
                       ),
                       style: const TextStyle(color: Colors.grey, fontSize: 15),
@@ -250,10 +280,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         checkIfNetworkIsAvailable();
                       },
                       style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF145A41), // تغییر رنگ به سبز اختصاصی سفیر
+                          backgroundColor: const Color(0xFF145A41), // رنگ سبز اختصاصی سفیر
                           padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 10)),
                       child: const Text(
-                        "ثبت‌نام",
+                        "ثبت‌نام راننده",
                         style: TextStyle(
                           fontFamily: 'IranYekan',
                           fontSize: 16,
