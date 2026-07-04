@@ -31,13 +31,24 @@ class _BlockedScreenState extends State<BlockedScreen> {
                 
                 // متن فارسی اطلاع‌رسانی مسدودیت با فونت ایران‌یکان
                 const Text(
-                  "حساب کاربری شما توسط مدیریت مسدود شده است.\nلطفاً جهت کسب اطلاعات بیشتر با پشتیبانی سفیر در ارتباط باشید:\nfarhadnoori442@gmail.com",
+                  "حساب کاربری شما توسط مدیریت مسدود شده است.\nلطفاً جهت کسب اطلاعات بیشتر با پشتیبانی سفیر در ارتباط باشید:",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontFamily: 'IranYekan',
                     fontSize: 15,
-                    color: Colors.blackDE,
+                    color: Colors.black87, // اصلاح شده
                     height: 1.6,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                
+                // قرار دادن ایمیل در بخش جداگانه برای جلوگیری از بهم ریختگی متن RTL
+                const Text(
+                  "farhadnoori442@gmail.com",
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFFD32F2F),
                   ),
                 ),
                 const SizedBox(height: 32),
