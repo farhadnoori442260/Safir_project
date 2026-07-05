@@ -1,7 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
-// اصلاح کامل ایمپورت‌ها به پکیج رسمی سفیر ادمین
 import 'package:safir_admin/dashboard/side_navigation_drawer.dart';
 import 'package:safir_admin/firebase_options.dart';
 import 'package:safir_admin/provider/driver_provider.dart';
@@ -9,48 +9,65 @@ import 'package:safir_admin/provider/user_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
-  // مقداردهی اولیه فایربیس با کانفیگ‌های پلتفرم مربوطه (وب/اندروید)
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  // این متد اجازه می‌دهد از هر جای برنامه زبان را تغییر دهیم
+  static void setLocale(BuildContext context, Locale newLocale) {
+    _MyAppState? state = context.findAncestorStateOfType<_MyAppState>();
+    state?.changeLanguage(newLocale);
+  }
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  // زبان پیش‌فرض پنل مدیریت (دری)
+  Locale _locale = const Locale('fa', 'AF'); 
+
+  void changeLanguage(Locale locale) {
+    setState(() {
+      _locale = locale;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    // رنگ سبز امضا و سازمانی سفیر
     const Color safirPrimaryGreen = Color(0xFF145A41);
 
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(
-          create: (_) => DriverProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (_) => UserProvider(),
-        )
+        ChangeNotifierProvider(create: (_) => DriverProvider()),
+        ChangeNotifierProvider(create: (_) => UserProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'Safir Admin Panel', // تغییر عنوان به پنل مدیریت سفیر
+        title: 'Safir Admin Panel',
         theme: ThemeData(
-          // اعمال رنگ تم سازمانی جدید و حذف رنگ صورتی قبلی
           primaryColor: safirPrimaryGreen,
           colorScheme: ColorScheme.fromSeed(
             seedColor: safirPrimaryGreen,
             primary: safirPrimaryGreen,
           ),
-          fontFamily: 'Vazir', // در صورت اضافه کردن فونت فارسی در pubspec
           useMaterial3: true,
         ),
-        // راست‌چین کردن کل پنل برای نمایش کاملاً استاندارد زبان فارسی و پشتو
-        locale: const Locale('fa', 'AF'), 
+        
+        // تنظیمات اصلی برای شناسایی زبان‌ها و راست‌چین/چپ‌چین شدن خودکار
+        locale: _locale,
         supportedLocales: const [
-          Locale('fa', 'AF'),
-          Locale('ps', 'AF'),
+          Locale('fa', 'AF'), // دری
+          Locale('ps', 'AF'), // پشتو
+          Locale('en', 'US'), // انگلیسی
+        ],
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
         ],
         home: const SideNavigationDrawer(),
       ),
