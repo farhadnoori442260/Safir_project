@@ -1,0 +1,10 @@
+# تنظیمات تحلیل‌گر کدهای دارت برای پروژه سفیر راننده
+include: package:flutter_lints/flutter.yaml
+
+linter:
+  rules:
+    # غیرفعال کردن برخی هشدارهای سخت‌گیرانه برای سرعت بیشتر در توسعه
+    avoid_print: false                  # اجازه استفاده از دستور پرینت برای دباگ کدهایت
+    prefer_const_constructors: false    # غدغن کردن گیر دادن‌های مداوم به کلمه const
+    prefer_const_literals_to_create_immutables: false
+    prefer_single_quotes: true          # پیشنهاد استفاده از تک‌کوتیشن برای استرینگ‌ها
