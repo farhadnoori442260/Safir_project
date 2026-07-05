@@ -1,0 +1,30 @@
+name: safir_admin
+description: "پنل مدیریت اختصاصی سامانه آنلاین تاکسی سفیر"
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.4.4 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  firebase_core: ^3.4.0
+  firebase_database: ^11.1.0 # اضافه کردن ورژن پایدار برای دیتابیس سفیر
+  flutter_admin_scaffold: ^1.1.0 # ورژن متناسب با ناوبری منو
+  provider: ^6.1.2 # ورژن پایدار مدیریت وضعیت
+  cupertino_icons: ^1.0.6
+  url_launcher: ^6.3.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+
+  # آدرس‌دهی کل پوشه اسِت‌ها از جمله تصویر داشبورد
+  assets:
+    - assets/
