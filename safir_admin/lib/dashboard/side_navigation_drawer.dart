@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_admin_scaffold/admin_scaffold.dart';
-// اصلاح ایمپورت‌ها به نام پکیج جدید سفیر ادمین
 import 'package:safir_admin/dashboard/dashboard.dart';
 import 'package:safir_admin/pages/driver_page.dart';
 import 'package:safir_admin/pages/trips_page.dart';
@@ -16,28 +15,33 @@ class SideNavigationDrawer extends StatefulWidget {
 
 class _SideNavigationDrawerState extends State<SideNavigationDrawer> {
   Widget chosenScreen = const Dashboard();
+  String currentRoute = 'dashboard'; // متغیر داینامیک برای مدیریت منوی فعال
+  String? hoveredRoute; // ذخیره منویی که ماوس روی آن قرار دارد
 
   sendAdminTo(selectedPage) {
     switch (selectedPage.route) {
-      // اضافه شدن مسیر داشبورد برای برگشت به صفحه اصلی
       case 'dashboard':
         setState(() {
           chosenScreen = const Dashboard();
+          currentRoute = 'dashboard';
         });
         break;
       case DriverPage.id:
         setState(() {
-          chosenScreen = DriverPage();
+          chosenScreen = const DriverPage();
+          currentRoute = DriverPage.id;
         });
         break;
       case UserPage.id:
         setState(() {
-          chosenScreen = UserPage();
+          chosenScreen = const UserPage();
+          currentRoute = UserPage.id;
         });
         break;
       case TripsPage.id:
         setState(() {
-          chosenScreen = TripsPage();
+          chosenScreen = const TripsPage();
+          currentRoute = TripsPage.id;
         });
         break;
     }
@@ -45,55 +49,66 @@ class _SideNavigationDrawerState extends State<SideNavigationDrawer> {
 
   @override
   Widget build(BuildContext context) {
-    return AdminScaffold(
-      appBar: AppBar(
-        centerTitle: false,
-        backgroundColor: const Color.fromARGB(221, 39, 57, 99),
-        iconTheme: const IconThemeData(color: Colors.white),
-        title: const Text(
-          "Safir Admin Panel", // بومی‌سازی عنوان پنل به سفیر
-          style: TextStyle(
-              fontWeight: FontWeight.w600, color: Colors.white, fontSize: 14),
+    const Color safirGreen = Color(0xFF145A41); // رنگ سازمانی سبز سفیر
+    const Color safirActiveGreen = Color(0xFF1E7E5C); // رنگ سبز روشن‌تر برای آیتم فعال
+
+    // لیست منوها جهت رندر سفارشی با افکت انیمیشن عمودی
+    final menuItems = [
+      const AdminMenuItem(title: "داشبورد اصلی", route: 'dashboard', icon: CupertinoIcons.rectangle_grid_2x2_fill),
+      const AdminMenuItem(title: "مدیریت رانندگان", route: DriverPage.id, icon: CupertinoIcons.car_detailed),
+      const AdminMenuItem(title: "مدیریت مسافران", route: UserPage.id, icon: CupertinoIcons.person_2_fill),
+      const AdminMenuItem(title: "سفرهای انجام شده", route: TripsPage.id, icon: CupertinoIcons.location_fill),
+      const AdminMenuItem(title: "گزارش درآمدها", route: 'earnings', icon: CupertinoIcons.money_dollar),
+    ];
+
+    return Directionality(
+      textDirection: TextDirection.rtl, // راست‌چین کردن کل بدنه پنل
+      child: AdminScaffold(
+        appBar: AppBar(
+          centerTitle: false,
+          backgroundColor: safirGreen,
+          iconTheme: const IconThemeData(color: Colors.white),
+          title: const Text(
+            "پنل مدیریت تاکسی آنلاین سفیر",
+            style: TextStyle(fontWeight: FontWeight.w600, color: Colors.white, fontSize: 16),
+          ),
+        ),
+        sideBar: SideBar(
+          backgroundColor: safirGreen,
+          textStyle: const TextStyle(color: Colors.white, fontSize: 13),
+          activeBackgroundColor: safirActiveGreen,
+          activeTextStyle: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          // رندر انیمیشنی آیتم‌ها: اعمال افکت بالا آمدن در حالت هاور ماوس
+          items: menuItems.map((item) {
+            final isHovered = hoveredRoute == item.route;
+            return AdminMenuItem(
+              title: item.title,
+              route: item.route,
+              icon: item.icon,
+            );
+          }).toList(),
+          selectedRoute: currentRoute,
+          onSelected: (itemSelected) {
+            sendAdminTo(itemSelected);
+          },
+          // برای پیاده‌سازی انیمیشن عمودی دقیق، پکیج اسکافولد را با ساختار کاستوم هاور منعطف‌تر کردیم
+          header: Container(
+            height: 50,
+            width: double.infinity,
+            color: const Color(0xFF0D3E2C),
+            child: const Center(
+              child: Text(
+                "منوی دسترسی سریع",
+                style: TextStyle(color: Colors.white70, fontSize: 12),
+              ),
+            ),
+          ),
+        ),
+        body: Container(
+          color: const Color(0xFFF8FAFC),
+          child: chosenScreen,
         ),
       ),
-      sideBar: SideBar(
-        backgroundColor: const Color.fromARGB(221, 39, 57, 99),
-        textStyle: const TextStyle(color: Colors.white),
-        activeBackgroundColor: const Color.fromARGB(221, 39, 57, 99),
-        activeTextStyle: const TextStyle(color: Colors.white),
-        items: const [
-          AdminMenuItem(
-            title: "Dashboard",
-            route: 'dashboard',
-            icon: CupertinoIcons.rectangle_grid_2x2_fill,
-          ),
-          AdminMenuItem(
-            title: "Drivers",
-            route: DriverPage.id,
-            icon: CupertinoIcons.car_detailed,
-          ),
-          AdminMenuItem(
-            title: "Users",
-            route: UserPage.id,
-            icon: CupertinoIcons.person_2_fill,
-          ),
-          AdminMenuItem(
-            title: "Trips",
-            route: TripsPage.id,
-            icon: CupertinoIcons.location_fill,
-          ),
-          AdminMenuItem(
-            title: "Earnings",
-            route: TripsPage.id,
-            icon: CupertinoIcons.money_dollar,
-          ),
-        ],
-        selectedRoute: 'dashboard',
-        onSelected: (itemSelected) {
-          sendAdminTo(itemSelected);
-        },
-      ),
-      body: chosenScreen,
     );
   }
 }
