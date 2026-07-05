@@ -16,7 +16,6 @@ void main() async {
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
-  // این متد اجازه می‌دهد از هر جای برنامه زبان را تغییر دهیم
   static void setLocale(BuildContext context, Locale newLocale) {
     _MyAppState? state = context.findAncestorStateOfType<_MyAppState>();
     state?.changeLanguage(newLocale);
@@ -27,7 +26,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  // زبان پیش‌فرض پنل مدیریت (دری)
+  // زبان پیش‌فرض پنل مدیریت سفیر (دری)
   Locale _locale = const Locale('fa', 'AF'); 
 
   void changeLanguage(Locale locale) {
@@ -54,10 +53,10 @@ class _MyAppState extends State<MyApp> {
             seedColor: safirPrimaryGreen,
             primary: safirPrimaryGreen,
           ),
+          fontFamily: 'IranYekan', // اعمال فونت شیک ایران‌یکان به کل پنل
           useMaterial3: true,
         ),
         
-        // تنظیمات اصلی برای شناسایی زبان‌ها و راست‌چین/چپ‌چین شدن خودکار
         locale: _locale,
         supportedLocales: const [
           Locale('fa', 'AF'), // دری
