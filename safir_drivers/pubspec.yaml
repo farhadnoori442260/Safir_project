@@ -1,5 +1,5 @@
 name: safir_drivers
-description: "Safir Taxi Driver Application"
+description: "Safir Drivers Application - Internet Taxi Service"
 publish_to: 'none'
 
 version: 1.0.0+1
@@ -10,35 +10,42 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  google_maps_flutter: ^2.7.0
+  
+  # پکیج‌های جدید برای پیاده‌سازی اوپن‌استریت‌مپ (جایگزین گوگل مپ)
+  flutter_map: ^7.0.2
+  latlong2: ^0.9.1
+  
   geolocator: ^12.0.0
   connectivity_plus: ^6.0.4
+  
+  # پکیج‌های هسته و دیتابیس فایربیس
+  firebase_core: ^3.3.0
   firebase_auth: ^5.1.2
   cloud_firestore: ^5.1.0
-  firebase_database:
-  firebase_storage:
+  firebase_database: ^11.0.3
+  firebase_storage: ^12.1.2
+  firebase_messaging: ^15.0.3
+  
   permission_handler: ^11.3.1
   image_picker: ^1.1.2
-  flutter_geofire: 
-  firebase_messaging:
+  image_cropper: ^8.0.0
+  flutter_geofire: ^1.2.0
+  
+  # مدیریت نوتیفیکیشن و پخش صدا برای درخواست سفر
   flutter_notification_channel: ^3.1.0
-  assets_audio_player:
-  http:
-  flutter_polyline_points:
-  url_launcher:
-
+  assets_audio_player: ^3.0.6
+  http: ^1.2.2
+  url_launcher: ^6.3.0
   cupertino_icons: ^1.0.6
-  firebase_core: ^3.3.0
   restart_app: ^1.2.1
-  country_picker:
-  rounded_loading_button: '2.1.0'
-  google_sign_in:
-  provider:
+  country_picker: ^2.0.24
+  rounded_loading_button: ^2.1.1
+  google_sign_in: ^6.2.1
+  provider: ^6.1.2
   pinput: ^5.0.0
-  image_cropper: 
-  path_provider:
-  cached_network_image: '3.3.1'
-  shared_preferences:
+  path_provider: ^2.1.3
+  cached_network_image: ^3.3.1
+  shared_preferences: ^2.2.3
 
 dev_dependencies:
   flutter_test:
@@ -48,18 +55,10 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 
-  # بخش دارایی‌ها، صداها و تصاویر اختصاصی برنامه راننده سفیر
+  # آدرس‌دهی اسِت‌ها و پوشه‌های گرافیکی/صوتی سفیر
   assets:
     - assets/audio/
     - assets/images/
     - assets/vehicles/
     - assets/auth/
     - themes/
-
-  # بخش فعال‌سازی فونت ایران یکان برای کل پروژه رانندگان سفیر
-  fonts:
-    - family: IranYekan
-      fonts:
-        - asset: assets/fonts/IranYekan-Regular.ttf
-        - asset: assets/fonts/IranYekan-Bold.ttf
-          weight: 700
