@@ -16,6 +16,7 @@ void main() async {
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
+  // 👈 این دقیقاً همان متدی است که از هر جای برنامه صدا زده شود، کل برنامه را ریبيلد می‌کند
   static void setLocale(BuildContext context, Locale newLocale) {
     _MyAppState? state = context.findAncestorStateOfType<_MyAppState>();
     state?.changeLanguage(newLocale);
@@ -26,8 +27,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  // زبان پیش‌فرض پنل مدیریت سفیر (دری)
-  Locale _locale = const Locale('fa', 'AF'); 
+  Locale _locale = const Locale('fa', 'AF'); // زبان پیش‌فرض
 
   void changeLanguage(Locale locale) {
     setState(() {
@@ -53,22 +53,22 @@ class _MyAppState extends State<MyApp> {
             seedColor: safirPrimaryGreen,
             primary: safirPrimaryGreen,
           ),
-          fontFamily: 'IranYekan', // اعمال فونت شیک ایران‌یکان به کل پنل
+          fontFamily: 'IranYekan',
           useMaterial3: true,
         ),
-        
-        locale: _locale,
+        locale: _locale, // 👈 زبان اصلی اپلیکیشن که با تغییر دکمه آپدیت می‌شود
         supportedLocales: const [
-          Locale('fa', 'AF'), // دری
-          Locale('ps', 'AF'), // پشتو
-          Locale('en', 'US'), // انگلیسی
+          Locale('fa', 'AF'),
+          Locale('ps', 'AF'),
+          Locale('en', 'US'),
         ],
         localizationsDelegates: const [
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
         ],
-        home: const SideNavigationDrawer(),
+        // 👈 فرستادن لکال فعلی به صورت مستقیم به دراور
+        home: SideNavigationDrawer(currentLocale: _locale), 
       ),
     );
   }
