@@ -1,5 +1,6 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:safir_admin/utils/lang_helper.dart'; // 👈 اضافه شدن هیلپر ترجمه
 
 class DriverDataScreen extends StatefulWidget {
   final String driverId;
@@ -20,10 +21,10 @@ class _DriverDataScreenState extends State<DriverDataScreen> {
       stream: driverRef.onValue,
       builder: (BuildContext context, snapshotData) {
         if (snapshotData.hasError) {
-          return const Center(
+          return Center(
             child: Text(
-              "خطایی رخ داده است. بعداً تلاش کنید.",
-              style: TextStyle(fontSize: 20, color: Colors.black),
+              tr(context, 'error_occurred'), // 👈 بومی‌سازی ارور
+              style: const TextStyle(fontSize: 20, color: Colors.black),
             ),
           );
         }
@@ -34,10 +35,10 @@ class _DriverDataScreenState extends State<DriverDataScreen> {
 
         if (!snapshotData.hasData ||
             snapshotData.data?.snapshot.value == null) {
-          return const Center(
+          return Center(
             child: Text(
-              "اطلاعاتی یافت نشد.",
-              style: TextStyle(fontSize: 20, color: Colors.black),
+              tr(context, 'no_data_found'), // 👈 بومی‌سازی نبودن دیتا
+              style: const TextStyle(fontSize: 20, color: Colors.black),
             ),
           );
         }
@@ -46,12 +47,12 @@ class _DriverDataScreenState extends State<DriverDataScreen> {
 
         return Scaffold(
           appBar: AppBar(
-            automaticallyImplyLeading: true, // فعال کردن دکمه بازگشت به لیست راننده‌ها
-            backgroundColor: const Color.fromARGB(221, 39, 57, 99),
+            automaticallyImplyLeading: true, 
+            backgroundColor: const Color(0xFF145A41), // 👈 هماهنگ‌سازی رنگ با سبز سفیر پنل اصلی
             centerTitle: true,
-            title: const Text(
-              "جزئیات اطلاعات راننده",
-              style: TextStyle(color: Colors.white),
+            title: Text(
+              tr(context, 'driver_details'), // 👈 عنوان هدر متحرک سه‌زبانه
+              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
             ),
           ),
           body: SingleChildScrollView(
@@ -81,6 +82,7 @@ class _DriverDataScreenState extends State<DriverDataScreen> {
   Widget _buildProfileSection(Map dataMap) {
     String firstName = dataMap['firstName'] ?? '';
     String secondName = dataMap['secondName'] ?? '';
+    String notReg = tr(context, 'not_registered'); // 👈 متغیر کمکی برای فیلدهای خالی
     
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -100,38 +102,37 @@ class _DriverDataScreenState extends State<DriverDataScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "نام و نام خانوادگی: $firstName $secondName",
+              "${tr(context, 'full_name')}: $firstName $secondName",
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
-            Text("شماره تماس: ${dataMap['phoneNumber'] ?? 'ثبت نشده'}"),
-            Text("ایمیل: ${dataMap['email'] ?? 'ثبت نشده'}"),
-            Text("کد ملی: ${dataMap['cnicNumber'] ?? 'ثبت نشده'}"),
-            Text("آدرس: ${dataMap['address'] ?? 'ثبت نشده'}"),
-            Text("تاریخ تولد: ${dataMap['dob'] ?? 'ثبت نشده'}"),
+            Text("${tr(context, 'phone')}: ${dataMap['phoneNumber'] ?? notReg}"),
+            Text("${tr(context, 'email')}: ${dataMap['email'] ?? notReg}"),
+            Text("${tr(context, 'national_id')}: ${dataMap['cnicNumber'] ?? notReg}"),
+            Text("${tr(context, 'address')}: ${dataMap['address'] ?? notReg}"),
+            Text("${tr(context, 'dob')}: ${dataMap['dob'] ?? notReg}"),
           ],
         ),
       ],
     );
   }
 
-  // بومی‌سازی شده از CNIC به مدارک هویتی و کد ملی
   Widget _buildNationalIdSection(Map dataMap) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          "تصاویر مدارک هویتی (کارت ملی):",
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        Text(
+          tr(context, 'identity_docs'), // 👈 ترجمه عنوان بخش مدارک هویتی
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 10),
         Wrap(
           spacing: 20,
           runSpacing: 20,
           children: [
-            _buildImage(dataMap['cnicFrontImage'], "روی کارت ملی"),
-            _buildImage(dataMap['cnicBackImage'], "پشت کارت ملی"),
-            _buildImage(dataMap['driverFaceWithCnic'], "سلفی با کارت ملی"),
+            _buildImage(dataMap['cnicFrontImage'], tr(context, 'id_front')),
+            _buildImage(dataMap['cnicBackImage'], tr(context, 'id_back')),
+            _buildImage(dataMap['driverFaceWithCnic'], tr(context, 'selfie_with_id')),
           ],
         ),
       ],
@@ -142,19 +143,19 @@ class _DriverDataScreenState extends State<DriverDataScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          "گواهینامه رانندگی:",
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        Text(
+          tr(context, 'driving_license'), // 👈 ترجمه عنوان گواهینامه
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 10),
-        Text('شماره گواهینامه: ${dataMap['drivingLicenseNumber'] ?? 'ثبت نشده'}'),
+        Text('${tr(context, 'license_number')}: ${dataMap['drivingLicenseNumber'] ?? tr(context, 'not_registered')}'),
         const SizedBox(height: 20),
         Wrap(
           spacing: 20,
           runSpacing: 20,
           children: [
-            _buildImage(dataMap['drivingLicenseFrontImage'], "روی گواهینامه"),
-            _buildImage(dataMap['drivingLicenseBackImage'], "پشت گواهینامه"),
+            _buildImage(dataMap['drivingLicenseFrontImage'], tr(context, 'license_front')),
+            _buildImage(dataMap['drivingLicenseBackImage'], tr(context, 'license_back')),
           ],
         ),
       ],
@@ -162,33 +163,36 @@ class _DriverDataScreenState extends State<DriverDataScreen> {
   }
 
   Widget _buildVehicleInfoSection(Map dataMap) {
-    // جلوگیری از کرش در صورتی که اطلاعات خودرو هنوز ثبت نشده باشد
     if (!dataMap.containsKey('vehicleInfo') || dataMap['vehicleInfo'] == null) {
-      return const Text("اطلاعات خودرو هنوز ثبت نشده است.");
+      return Text(
+        tr(context, 'vehicle_not_registered'), // 👈 ترجمه شرط عدم وجود خودرو
+        style: const TextStyle(fontStyle: FontStyle.italic, color: Colors.grey),
+      );
     }
 
     Map vehicle = dataMap['vehicleInfo'] as Map;
+    String notReg = tr(context, 'not_registered');
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          "اطلاعات وسیله نقلیه (سفیر):",
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        Text(
+          tr(context, 'vehicle_info_title'), // 👈 ترجمه مشخصات سفیر
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 10),
-        Text("نوع خودرو: ${vehicle['type'] ?? 'ثبت نشده'}"),
-        Text("مدل/برند: ${vehicle['brand'] ?? 'ثبت نشده'}"),
-        Text("رنگ: ${vehicle['color'] ?? 'ثبت نشده'}"),
-        Text("سال تولید: ${vehicle['productionYear'] ?? 'ثبت نشده'}"),
-        Text("شماره پلاک: ${vehicle['registrationPlateNumber'] ?? 'ثبت نشده'}"),
+        Text("${tr(context, 'vehicle_type')}: ${vehicle['type'] ?? notReg}"),
+        Text("${tr(context, 'vehicle_brand')}: ${vehicle['brand'] ?? notReg}"),
+        Text("${tr(context, 'vehicle_color')}: ${vehicle['color'] ?? notReg}"),
+        Text("${tr(context, 'production_year')}: ${vehicle['productionYear'] ?? notReg}"),
+        Text("${tr(context, 'plate_number')}: ${vehicle['registrationPlateNumber'] ?? notReg}"),
         const SizedBox(height: 10),
         Wrap(
           spacing: 20,
           runSpacing: 20,
           children: [
-            _buildImage(vehicle['registrationCertificateFrontImage'], "روی کارت ماشین"),
-            _buildImage(vehicle['registrationCertificateBackImage'], "پشت کارت ماشین"),
+            _buildImage(vehicle['registrationCertificateFrontImage'], tr(context, 'car_card_front')),
+            _buildImage(vehicle['registrationCertificateBackImage'], tr(context, 'car_card_back')),
           ],
         ),
       ],
