@@ -11,7 +11,8 @@ class DriverProvider with ChangeNotifier {
     
     try {
       // به‌روزرسانی در دیتابیس فایربیس سفیر
-      await _driversRef.child(driverId).update({"blockStatus": newStatus"});
+      // 👈 دابل‌کوتیشن اضافه بعد از newStatus حذف شد تا ارور برطرف شود
+      await _driversRef.child(driverId).update({"blockStatus": newStatus});
       
       notifyListeners(); // باخبر کردن ویجت‌ها برای به‌روزرسانی ظاهر پنل
       return true; // تغییر با موفقیت انجام شد
