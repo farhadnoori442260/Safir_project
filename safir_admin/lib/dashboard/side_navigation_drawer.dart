@@ -17,56 +17,56 @@ class SideNavigationDrawer extends StatefulWidget {
 }
 
 class _SideNavigationDrawerState extends State<SideNavigationDrawer> {
-  Widget chosenScreen = const Dashboard();
   String currentRoute = 'dashboard';
 
-  sendAdminTo(selectedPage) {
-    switch (selectedPage.route) {
+  // 🎯 اصلاح اصولی بخش سوییچ: هر آیدی دقیقاً صفحه خودش را باز می‌کند
+  Widget getActiveScreen() {
+    switch (currentRoute) {
       case 'dashboard':
-        setState(() { chosenScreen = const Dashboard(); currentRoute = 'dashboard'; });
-        break;
+        return const Dashboard();
       case DriverPage.id:
-        setState(() { chosenScreen = const DriverPage(); currentRoute = DriverPage.id; });
-        break;
+        return const DriverPage();
       case UserPage.id:
-        setState(() { chosenScreen = const UserPage(); currentRoute = UserPage.id; });
-        break;
+        return const UserPage(); // 👈 مدیریت مسافران
       case TripsPage.id:
-        setState(() { chosenScreen = const TripsPage(); currentRoute = TripsPage.id; });
-        break;
+        return const TripsPage(); // 👈 سفرهای فعال
+      default:
+        return const Dashboard();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    const Color safirGreen = Color(0xFF145A41);
-    const Color safirActiveGreen = Color(0xFF1E7E5C);
+    const Color appBarBg = Color(0xFF145A41); 
+    const Color sideBarBg = Color(0xFF1E293B); 
+    const Color activeItemBg = Color(0xFF334155); 
+    const Color textStyleColor = Color(0xFF94A3B8); 
 
-    // ترفند طلایی: لیست منوها را مستقیماً بر اساس زبان فعلی همین لحظه می‌سازیم
+    // 🎯 اصلاح لیست منوها: عنوان‌ها و آیکون‌ها دقیقاً با مسیرها ست شده‌اند
     List<AdminMenuItem> getMenuItems() {
       return [
         AdminMenuItem(
-          title: tr(context, 'home'), 
+          title: tr(context, 'home'), // اصلی صفحه
           route: 'dashboard',
           icon: CupertinoIcons.rectangle_grid_2x2_fill,
         ),
         AdminMenuItem(
-          title: tr(context, 'reg_title'), 
+          title: tr(context, 'manage_drivers'), // مدیریت رانندگان
           route: DriverPage.id,
           icon: CupertinoIcons.car_detailed,
         ),
         AdminMenuItem(
-          title: tr(context, 'profile'), 
+          title: tr(context, 'manage_users'), // مدیریت مسافران (اینجا اصلاح شد تا با UserPage.id همخوانی داشته باشد)
           route: UserPage.id,
           icon: CupertinoIcons.person_2_fill,
         ),
         AdminMenuItem(
-          title: tr(context, 'active_rides'), 
+          title: tr(context, 'active_rides'), // سفرهای فعال
           route: TripsPage.id,
           icon: CupertinoIcons.location_fill,
         ),
         AdminMenuItem(
-          title: tr(context, 'total_earned'), 
+          title: tr(context, 'total_earned'), // مجموع درآمد
           route: 'earnings',
           icon: CupertinoIcons.money_dollar,
         ),
@@ -74,12 +74,11 @@ class _SideNavigationDrawerState extends State<SideNavigationDrawer> {
     }
 
     return Scaffold(
-      // اینجا با تغییر زبان، کل ویجت را مجبور می‌کنیم از صفر ساخته شود تا کش پکیج پاک شود
       key: ValueKey(widget.currentLocale.toString()), 
       body: AdminScaffold(
         appBar: AppBar(
           centerTitle: false,
-          backgroundColor: safirGreen,
+          backgroundColor: appBarBg,
           iconTheme: const IconThemeData(color: Colors.white),
           title: const Text(
             "Safir Taxi",
@@ -90,23 +89,16 @@ class _SideNavigationDrawerState extends State<SideNavigationDrawer> {
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: DropdownButton<Locale>(
                 value: widget.currentLocale, 
-                dropdownColor: safirGreen,
+                dropdownColor: appBarBg,
                 icon: const Icon(Icons.language, color: Colors.white),
                 underline: const SizedBox(),
-                
-                // 👈 اصلاح نهایی: مخفی کردن متن بیرون دراپ‌داون و فرستادن کلمات به داخل کره زمین
                 selectedItemBuilder: (BuildContext context) {
-                  return const [
-                    SizedBox(), // دری
-                    SizedBox(), // پشتو
-                    SizedBox(), // English
-                  ];
+                  return const [SizedBox(), SizedBox(), SizedBox()];
                 },
-                
                 onChanged: (Locale? newLocale) {
                   if (newLocale != null) {
                     MyApp.setLocale(context, newLocale);
-                    setState(() {}); // رندر مجدد درجا
+                    setState(() {}); 
                   }
                 },
                 items: const [
@@ -119,17 +111,24 @@ class _SideNavigationDrawerState extends State<SideNavigationDrawer> {
           ],
         ),
         sideBar: SideBar(
-          backgroundColor: safirGreen,
-          textStyle: const TextStyle(color: Colors.white, fontSize: 13),
-          activeBackgroundColor: safirActiveGreen,
+          backgroundColor: sideBarBg,
+          textStyle: const TextStyle(color: textStyleColor, fontSize: 13),
+          activeBackgroundColor: activeItemBg,
           activeTextStyle: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-          items: getMenuItems(), // صدا زدن تابع بجای متغیر ثابت
+          borderColor: const Color(0xFF334155),
+          iconColor: textStyleColor,
+          activeIconColor: Colors.white,
+          items: getMenuItems(), 
           selectedRoute: currentRoute,
           onSelected: (itemSelected) {
-            sendAdminTo(itemSelected);
+            if (itemSelected.route != null) {
+              setState(() {
+                currentRoute = itemSelected.route!;
+              });
+            }
           },
         ),
-        body: chosenScreen,
+        body: getActiveScreen(), 
       ),
     );
   }
