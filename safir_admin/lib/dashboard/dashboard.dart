@@ -32,13 +32,13 @@ class _DashboardState extends State<Dashboard> {
                     child: Container(
                       color: Colors.white,
                       padding: const EdgeInsets.all(16),
+                      // تنظیم حداکثر عرض برای نمایش استاندارد در مانیتورهای بزرگ وب
+                      constraints: const BoxConstraints(
+                        maxWidth: 700,
+                        maxHeight: 500,
+                      ),
                       child: Image.asset(
                         "assets/dashboard.webp",
-                        // تنظیم حداکثر عرض برای نمایش استاندارد در مانیتورهای بزرگ وب
-                        constraints: const BoxConstraints(
-                          maxWidth: 700,
-                          maxHeight: 500,
-                        ),
                         fit: BoxFit.contain,
                         // مدیریت هوشمند خطا در صورتی که عکس هنوز در لود اسِت‌ها مشکل داشته باشد
                         errorBuilder: (context, error, stackTrace) {
