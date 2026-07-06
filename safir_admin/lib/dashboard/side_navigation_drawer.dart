@@ -5,12 +5,12 @@ import 'package:safir_admin/dashboard/dashboard.dart';
 import 'package:safir_admin/pages/driver_page.dart';
 import 'package:safir_admin/pages/trips_page.dart';
 import 'package:safir_admin/pages/user_page.dart';
-// ایمپورت کردن فایل کمکی زبان که در قدم اول ساختی
 import 'package:safir_admin/utils/lang_helper.dart'; 
 import 'package:safir_admin/main.dart';
 
 class SideNavigationDrawer extends StatefulWidget {
-  const SideNavigationDrawer({super.key});
+  final Locale currentLocale; 
+  const SideNavigationDrawer({super.key, required this.currentLocale});
 
   @override
   State<SideNavigationDrawer> createState() => _SideNavigationDrawerState();
@@ -42,36 +42,40 @@ class _SideNavigationDrawerState extends State<SideNavigationDrawer> {
     const Color safirGreen = Color(0xFF145A41);
     const Color safirActiveGreen = Color(0xFF1E7E5C);
 
-    // اینجا از تابع خودت (tr) برای ترجمه منوها استفاده کردیم
-    final menuItems = [
-      AdminMenuItem(
-        title: tr(context, 'home'), // به جای کلمه ثابت، از تابع خودت استفاده شد
-        route: 'dashboard',
-        icon: CupertinoIcons.rectangle_grid_2x2_fill,
-      ),
-      AdminMenuItem(
-        title: tr(context, 'reg_title'), 
-        route: DriverPage.id,
-        icon: CupertinoIcons.car_detailed,
-      ),
-      AdminMenuItem(
-        title: tr(context, 'profile'), 
-        route: UserPage.id,
-        icon: CupertinoIcons.person_2_fill,
-      ),
-      AdminMenuItem(
-        title: tr(context, 'active_rides'), 
-        route: TripsPage.id,
-        icon: CupertinoIcons.location_fill,
-      ),
-      AdminMenuItem(
-        title: tr(context, 'total_earned'), 
-        route: 'earnings',
-        icon: CupertinoIcons.money_dollar,
-      ),
-    ];
+    // ترفند طلایی: لیست منوها را مستقیماً بر اساس زبان فعلی همین لحظه می‌سازیم
+    List<AdminMenuItem> getMenuItems() {
+      return [
+        AdminMenuItem(
+          title: tr(context, 'home'), 
+          route: 'dashboard',
+          icon: CupertinoIcons.rectangle_grid_2x2_fill,
+        ),
+        AdminMenuItem(
+          title: tr(context, 'reg_title'), 
+          route: DriverPage.id,
+          icon: CupertinoIcons.car_detailed,
+        ),
+        AdminMenuItem(
+          title: tr(context, 'profile'), 
+          route: UserPage.id,
+          icon: CupertinoIcons.person_2_fill,
+        ),
+        AdminMenuItem(
+          title: tr(context, 'active_rides'), 
+          route: TripsPage.id,
+          icon: CupertinoIcons.location_fill,
+        ),
+        AdminMenuItem(
+          title: tr(context, 'total_earned'), 
+          route: 'earnings',
+          icon: CupertinoIcons.money_dollar,
+        ),
+      ];
+    }
 
     return Scaffold(
+      // اینجا با تغییر زبان، کل ویجت را مجبور می‌کنیم از صفر ساخته شود تا کش پکیج پاک شود
+      key: ValueKey(widget.currentLocale.toString()), 
       body: AdminScaffold(
         appBar: AppBar(
           centerTitle: false,
@@ -82,16 +86,27 @@ class _SideNavigationDrawerState extends State<SideNavigationDrawer> {
             style: TextStyle(fontWeight: FontWeight.w600, color: Colors.white, fontSize: 16),
           ),
           actions: [
-            // دکمه انتخاب زبان در بالای پنل
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: DropdownButton<Locale>(
+                value: widget.currentLocale, 
                 dropdownColor: safirGreen,
                 icon: const Icon(Icons.language, color: Colors.white),
                 underline: const SizedBox(),
+                
+                // 👈 اصلاح نهایی: مخفی کردن متن بیرون دراپ‌داون و فرستادن کلمات به داخل کره زمین
+                selectedItemBuilder: (BuildContext context) {
+                  return const [
+                    SizedBox(), // دری
+                    SizedBox(), // پشتو
+                    SizedBox(), // English
+                  ];
+                },
+                
                 onChanged: (Locale? newLocale) {
                   if (newLocale != null) {
-                    MyApp.setLocale(context, newLocale); // تغییر زبان کل اپ
+                    MyApp.setLocale(context, newLocale);
+                    setState(() {}); // رندر مجدد درجا
                   }
                 },
                 items: const [
@@ -108,7 +123,7 @@ class _SideNavigationDrawerState extends State<SideNavigationDrawer> {
           textStyle: const TextStyle(color: Colors.white, fontSize: 13),
           activeBackgroundColor: safirActiveGreen,
           activeTextStyle: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-          items: menuItems,
+          items: getMenuItems(), // صدا زدن تابع بجای متغیر ثابت
           selectedRoute: currentRoute,
           onSelected: (itemSelected) {
             sendAdminTo(itemSelected);
