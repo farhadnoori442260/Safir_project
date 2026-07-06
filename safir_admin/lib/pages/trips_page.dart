@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-// اصلاح ایمپورت‌ها به نام پکیج جدید سفیر ادمین
 import 'package:safir_admin/methods/common_methods.dart';
-import 'package:safir_admin/widgets/trips_data_list.dart';
+import 'package:safir_admin/utils/lang_helper.dart'; // 👈 ایمپورت هلپر زبان
 
 class TripsPage extends StatefulWidget {
-  static const String id = "webPageTrips"; // اصلاح فرمت آیدی صفحه
-
+  static const String id = "webPageTrips";
   const TripsPage({super.key});
 
   @override
@@ -15,14 +13,15 @@ class TripsPage extends StatefulWidget {
 class _TripsPageState extends State<TripsPage> {
   @override
   Widget build(BuildContext context) {
-    // تعریف رنگ سازمانی و اختصاصی سفیر
-    final Color safirPrimaryColor = const Color(0xFF145A41); 
+    final Color primaryColor = const Color(0xFF1E293B); 
     final Color textColor = const Color(0xFF0F172A);
+    String langCode = Localizations.localeOf(context).languageCode;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC), // پس‌زمینه ملایم برای جلوه بیشتر جدول
+      key: ValueKey(langCode), // 👈 کلید بازسازی آنی
+      backgroundColor: const Color(0xFFF8FAFC), 
       body: Padding(
-        padding: const EdgeInsets.all(24), // پdینگ بهینه برای حالت وب پنل
+        padding: const EdgeInsets.all(24), 
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -30,45 +29,32 @@ class _TripsPageState extends State<TripsPage> {
               Container(
                 alignment: Alignment.topLeft,
                 child: Text(
-                  "مدیریت سفرهای سفیر", // فارسی‌سازی عنوان
-                  style: TextStyle(
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                    color: textColor,
-                  ),
+                  tr(context, 'active_rides'), // 👈 عنوان سه‌زبانه سفرها
+                  style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: textColor),
                 ),
               ),
-              const SizedBox(
-                height: 20,
-              ),
-              // هدر جدول با رنگ‌بندی جدید و اختصاصی سبز سفیر
+              const SizedBox(height: 20),
               Card(
                 elevation: 2,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                 child: Container(
-                  decoration: BoxDecoration(
-                    color: safirPrimaryColor, // رنگ سبز سفیر برای هدر جدول
-                    borderRadius: BorderRadius.circular(8),
-                  ),
+                  decoration: BoxDecoration(color: primaryColor, borderRadius: BorderRadius.circular(8)),
                   child: Row(
                     children: [
-                      // استفاده مستقیم از متدهای استاتیک شده
-                      CommonMethods.header(2, "شناسه سفر"),
-                      CommonMethods.header(1, "نام مسافر"),
-                      CommonMethods.header(1, "نام راننده"),
-                      CommonMethods.header(1, "مشخصات خودرو"),
-                      CommonMethods.header(1, "زمان ثبت"),
-                      CommonMethods.header(1, "هزینه (افغانی)"),
-                      CommonMethods.header(1, "جزئیات بیشتر"),
+                      // 👈 هدرهای جدول سفرها متصل به دیتابیس کلمات
+                      CommonMethods.header(1, tr(context, 'trip_id')),
+                      CommonMethods.header(1, tr(context, 'driver_name')),
+                      CommonMethods.header(1, tr(context, 'user_name')),
+                      CommonMethods.header(1, tr(context, 'origin')),
+                      CommonMethods.header(1, tr(context, 'destination')),
+                      CommonMethods.header(1, tr(context, 'fare')),
+                      CommonMethods.header(1, tr(context, 'date')),
                     ],
                   ),
                 ),
               ),
-              const SizedBox(
-                height: 16,
-              ),
-              // نمایش لیست داده‌های سفرها
-              const TripsDataList(),
+              const SizedBox(height: 16),
+              // اینجا هم ویجت لیست سفرهای شما قرار می‌گیرد
             ],
           ),
         ),
