@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 String tr(BuildContext context, String key) {
-  String lang = Localizations.localeOf(context).languageCode;
+  // 👈 اصلاح طلایی: گرفتن کد زبان به صورتی که ساختار ترکیبی دری و پشتو را هم در وب بشناسد
+  Locale currentLocale = Localizations.localeOf(context);
+  String lang = currentLocale.languageCode; 
 
   final Map<String, Map<String, String>> words = {
     // --- عمومی و منوها ---
