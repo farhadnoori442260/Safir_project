@@ -146,6 +146,24 @@ String tr(BuildContext context, String key) {
     'password_length_error': {'fa': 'رمز عبور شما باید حداقل ۶ کاراکتر باشد.', 'ps': 'ستاسو پټ نوم باید لږترلږه ۶ توري وي.', 'en': 'Password must be at least 6 characters.'},
     'blocked_account_error': {'fa': 'حساب شما مسدود شده است. لطفاً با پشتیبانی سفیر تماس بگیرید.', 'ps': 'ستاسو حساب بلاک شوی دی. مهرباني وکړئ د سفیر ملاتړ سره اړیکه ونیسئ.', 'en': 'Your account has been blocked. Please contact Safir support.'},
     'no_driver_record': {'fa': 'رکورد شما به عنوان راننده در سیستم وجود ندارد.', 'ps': 'په سیسټم کې د چلوونکي په توګه ستاسو ریکارډ شتون نلري.', 'en': 'No driver record found for this account.'},
+        // --- اختصاصی صفحه ثبت‌نام رانندگان (SignUp Screen) ---
+    'choose_profile_pic': {'fa': 'انتخاب عکس پروفایل', 'ps': 'د پروفایل عکس غوره کړئ', 'en': 'Select Profile Picture'},
+    'vehicle_model_hint': {'fa': 'مدل وسیله (مثلاً تویوتا کرولا)', 'ps': 'د موټر ماډل (مثلاً ټیوټا کرولا)', 'en': 'Vehicle Model (e.g. Toyota Corolla)'},
+    'vehicle_color_label': {'fa': 'رنگ وسیله نقلیه', 'ps': 'د وسایطو رنګ', 'en': 'Vehicle Color'},
+    'vehicle_plate_label': {'fa': 'شماره پلاک یا پلیت وسیله نقلیه', 'ps': 'د ذیج نمبر یا پلیټ شمیره', 'en': 'Vehicle Plate Number'},
+    'register_btn': {'fa': 'ثبت‌نام راننده', 'ps': 'د چلونکي نوم لیکنه', 'en': 'Register Driver'},
+    'already_have_account': {'fa': 'قبلاً ثبت‌نام کرده‌اید؟ از اینجا وارد شوید', 'ps': 'مخکې له مخکې اکاونټ لرئ؟ ننوځئ', 'en': 'Already have an account? Login here'},
+    'registering_account': {'fa': 'در حال ثبت حساب کاربری شما...', 'ps': 'ستاسو د اکاونټ ثبتولو په حال کې...', 'en': 'Registering your account...'},
+    'select_pic_error': {'fa': 'لطفاً ابتدا عکس پروفایل خود را انتخاب کنید.', 'ps': 'مهرباني وکړئ لومړی د پروفایل عکس وټاکئ.', 'en': 'Please select your profile picture first.'},
+    'name_length_error': {'fa': 'نام شما باید حداقل ۴ کاراکتر باشد.', 'ps': 'ستاسو نوم باید لږترلږه ۴ توري وي.', 'en': 'Name must be at least 4 characters.'},
+    'phone_length_error': {'fa': 'شماره تلفن باید حداقل ۸ رقم باشد.', 'ps': 'د تلیفون شمیره باید لږترلږه ۸ شمیرې وي.', 'en': 'Phone number must be at least 8 digits.'},
+    'enter_vehicle_model_error': {'fa': 'لطفاً مدل وسیله نقلیه خود را وارد کنید.', 'ps': 'مهرباني وکړئ د خپل موټر ماډل دننه کړئ.', 'en': 'Please enter your vehicle model.'},
+    'enter_vehicle_color_error': {'fa': 'لطفاً رنگ وسیله نقلیه خود را وارد کنید.', 'ps': 'مهرباني وکړئ د خپل موټر رنګ دننه کړئ.', 'en': 'Please enter your vehicle color.'},
+    'enter_vehicle_plate_error': {'fa': 'لطفاً شماره پلاک یا فورم وسیله نقلیه را وارد کنید.', 'ps': 'مهرباني وکړئ د موټر پلیټ شمیره دننه کړئ.', 'en': 'Please enter vehicle plate number.'},
+    'economic_car': {'fa': 'موتر اقتصادی', 'ps': 'اقتصادي موټر', 'en': 'Economic Car'},
+    'modern_car': {'fa': 'موتر مدرن', 'ps': 'مډرن موټر', 'en': 'Modern Car'},
+    'motorbike': {'fa': 'موتورسایکل', 'ps': 'موټرسایکل', 'en': 'Motorbike'},
+
 
   };
 
