@@ -5,9 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_geofire/flutter_geofire.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
-import 'package:safir_drivers/const.dart'; // اصلاح نام پکیج به safir_drivers
-import '../global/global.dart';
+import 'package:safir_drivers/const.dart'; 
+import '../global/global.dart'; // 👈 استفاده از مسیر فایل تایید شده شما
 import '../models/direction_details.dart';
+import '../utils/lang_helper.dart'; // 👈 اضافه شدن هیلپر زبان
 
 class CommonMethods {
   // بررسی اتصال اینترنت راننده
@@ -18,9 +19,8 @@ class CommonMethods {
     if (connectionResults != ConnectivityResult.wifi &&
         connectionResults != ConnectivityResult.mobile) {
       if (!context.mounted) return;
-      displaySnackBar(
-          "اتصال اینترنت شما برقرار نیست. لطفاً شبکه خود را بررسی کرده و دوباره تلاش کنید.",
-          context);
+      // 👈 سه‌زبانه کردن پیام خطای اینترنت با استفاده از هیلپر
+      displaySnackBar(tr(context, 'no_internet_error'), context);
     } else {
       print("اینترنت متصل است");
     }
@@ -37,7 +37,7 @@ class CommonMethods {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
-  // غیرفعال کردن ردیابی زنده لوکیشن (زمانی که راننده آفلاین می‌شود یا در صفحه اصلی نیست)
+  // غیرفعال کردن ردیابی زنده لوکیشن
   void turnOffLocationUpdatesForHomePage() {
     if (positionStreamHomePage != null) {
       positionStreamHomePage!.pause();
@@ -116,36 +116,29 @@ class CommonMethods {
   calculateFareAmount(DirectionDetails directionDetails,
       {double surgeMultiplier = 1.0}) {
     
-    // مقادیر پایه قیمت‌گذاری (فرهاد جان، این اعداد را کاملاً بر اساس واحد پولی و سیستم خودت تغییر بده)
-    double distancePerKmAmount = 20;     // هزینه به ازای هر کیلومتر مسافت
-    double durationPerMinuteAmount = 15; // هزینه به ازای هر دقیقه زمان سفر
-    double baseFareAmount = 50;          // ورودیه اولیه یا کرایه پایه
-    double bookingFee = 10;              // حق کمیسیون یا هزینه خدمات خدمات
-    double minimumFare = 100;            // حداقل کرایه ممکن برای یک سفر کوتاه
+    double distancePerKmAmount = 20;     
+    double durationPerMinuteAmount = 15; 
+    double baseFareAmount = 50;          
+    double bookingFee = 10;              
+    double minimumFare = 100;            
 
-    // محاسبه قیمت بر اساس متراژ مسافت طی شده
     double totalDistanceTravelledFareAmount =
         (directionDetails.distanceValueDigits! / 1000) * distancePerKmAmount;
         
-    // محاسبه قیمت بر اساس ثانیه‌های زمان سفر
     double totalDurationSpendFareAmount =
         (directionDetails.durationValueDigits! / 60) * durationPerMinuteAmount;
 
-    // مجموع کل کرایه قبل از اعمال ضریب شلوغی
     double totalFareBeforeSurge = baseFareAmount +
         totalDistanceTravelledFareAmount +
         totalDurationSpendFareAmount +
         bookingFee;
 
-    // اعمال ضریب شلوغی (مثلاً زمان بارندگی یا ساعات اوج ترافیک)
     double overAllTotalFareAmount = totalFareBeforeSurge * surgeMultiplier;
 
-    // بررسی حداقل کرایه (اگر مبلغ نهایی کمتر از کف قیمت بود، حداقل کرایه ثبت می‌شود)
     if (overAllTotalFareAmount < minimumFare) {
       overAllTotalFareAmount = minimumFare;
     }
 
-    // بازگرداندن مبلغ نهایی تا دو رقم اعشار
     return overAllTotalFareAmount.toStringAsFixed(2);
   }
 }
