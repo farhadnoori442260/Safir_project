@@ -1,25 +1,17 @@
-import 'dart:convert';
-import 'package:flutter/services.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter/material.dart';
 
 class MapThemeMethods {
+  // آدرس تم لایت (روشن) رایگان و استاندارد اوپن‌استریت‌مپ
+  static const String lightThemeUrl = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
   
-  // متد اصلی بارگذاری استایل روی نقشه راننده
-  void updateMapTheme(GoogleMapController controller) {
-    // فرهاد جان، اینجا به صورت پیش‌فرض استایل شب را لود می‌کنیم
-    // اگر بعداً خواستی استایل رترو یا دارک خالص شود، کافیست نام فایل را در خط زیر تغییر دهی
-    getJsonFileFromThemes("themes/night_style.json").then((value) => setGoogleMapStyle(value, controller));
-  }
+  // آدرس تم دارک (تیره) استاندارد و باکیفیت از سرورهای CartoDB بدون نیاز به کلید
+  static const String darkThemeUrl = "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
 
-  // متد کمکی برای خواندن فایل‌های متنی JSON از پوشه themes
-  Future<String> getJsonFileFromThemes(String mapStylePath) async {
-    ByteData byteData = await rootBundle.load(mapStylePath);
-    var list = byteData.buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes);
-    return utf8.decode(list);
-  }
-
-  // اعمال نهایی استایل روی کنترلر نقشه گوگل
-  void setGoogleMapStyle(String googleMapStyle, GoogleMapController controller) {
-    controller.setMapStyle(googleMapStyle);
+  /// تابعی برای گرفتن آدرس کاشی‌های نقشه بر اساس وضعیت تم برنامه راننده سفیر
+  String getMapTileUrl(bool isDarkMode) {
+    if (isDarkMode) {
+      return darkThemeUrl;
+    }
+    return lightThemeUrl;
   }
 }
