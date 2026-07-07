@@ -163,6 +163,9 @@ String tr(BuildContext context, String key) {
     'economic_car': {'fa': 'موتر اقتصادی', 'ps': 'اقتصادي موټر', 'en': 'Economic Car'},
     'modern_car': {'fa': 'موتر مدرن', 'ps': 'مډرن موټر', 'en': 'Modern Car'},
     'motorbike': {'fa': 'موتورسایکل', 'ps': 'موټرسایکل', 'en': 'Motorbike'},
+        // --- اختصاصی متدهای عمومی (Common Methods) ---
+    'no_internet_error': {'fa': 'اتصال اینترنت شما برقرار نیست. لطفاً شبکه خود را بررسی کرده و دوباره تلاش کنید.', 'ps': 'ستاسو انټرنیټ وصل نه دی. مهرباني وکړئ خپله شبکه وڅیړئ او بیا هڅه وکړئ.', 'en': 'Your internet connection is offline. Please check your network and try again.'},
+
 
 
   };
