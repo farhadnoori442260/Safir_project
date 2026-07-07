@@ -1,0 +1,153 @@
+import 'package:flutter/material.dart';
+
+String tr(BuildContext context, String key) {
+  String lang = Localizations.localeOf(context).languageCode;
+
+  final Map<String, Map<String, String>> words = {
+    // --- عمومی و منوها ---
+    'app_name': {'fa': 'سفیر', 'ps': 'سفیر', 'en': 'Safir'},
+    'home': {'fa': 'صفحه اصلی', 'ps': 'اصلي صفحه', 'en': 'Home'},
+    'settings': {'fa': 'تنظیمات', 'ps': 'تنظیمات', 'en': 'Settings'},
+    'profile': {'fa': 'پروفایل', 'ps': 'پروفایل', 'en': 'Profile'},
+    'support': {'fa': 'پشتیبانی', 'ps': 'ملاتړ', 'en': 'Support'},
+    'exit': {'fa': 'خروج', 'ps': 'وتل', 'en': 'Logout'},
+    'confirm': {'fa': 'تایید', 'ps': 'تایید', 'en': 'Confirm'},
+    'cancel': {'fa': 'لغو', 'ps': 'لغوه', 'en': 'Cancel'},
+    'next_step': {'fa': 'تایید و ادامه', 'ps': 'تایید او دوام', 'en': 'Confirm & Continue'},
+    'error_occurred': {'fa': 'خطایی رخ داده است', 'ps': 'تیروتنه رامنځته شوه', 'en': 'An error occurred'},
+    'please_wait': {'fa': 'لطفاً منتظر بمانید...', 'ps': 'مهرباني وکړئ انتظار وکړئ...', 'en': 'Please wait...'},
+    'no_data_found': {'fa': 'اطلاعاتی یافت نشد.', 'ps': 'معلومات ونه موندل شول.', 'en': 'No data found.'},
+    'not_registered': {'fa': 'ثبت نشده', 'ps': 'نه دی ثبت شوی', 'en': 'Not Registered'},
+    'edit': {'fa': 'ویرایش', 'ps': 'تغیرول', 'en': 'Edit'},
+    'delete': {'fa': 'حذف', 'ps': 'حذف کول', 'en': 'Delete'},
+    'status': {'fa': 'وضعیت', 'ps': 'حالت', 'en': 'Status'},
+    'actions': {'fa': 'عملیات', 'ps': 'عملیات', 'en': 'Actions'},
+
+    // --- بخش مسافر و سفر ---
+    'welcome_passenger': {'fa': 'به سفیر خوش آمدید', 'ps': 'سفیر ته ښه راغلاست', 'en': 'Welcome to Safir'},
+    'where_to': {'fa': 'کجا می‌روید؟', 'ps': 'چیرته ځئ؟', 'en': 'Where to?'},
+    'search': {'fa': 'جستجو', 'ps': 'پلټنه', 'en': 'Search'},
+    'request_ride': {'fa': 'درخواست سفر', 'ps': 'د سفر غوښتنه', 'en': 'Request Ride'},
+    'finding_driver': {'fa': 'در حال جستجوی سفیر...', 'ps': 'د سفیر لټون...', 'en': 'Finding Safir...'},
+    'fare': {'fa': 'کرایه', 'ps': 'کرایه', 'en': 'Fare'},
+    'afn': {'fa': 'افغانی', 'ps': 'افغانۍ', 'en': 'AFN'},
+    'origin': {'fa': 'مبدأ', 'ps': 'مبدا', 'en': 'Origin'},
+    'destination': {'fa': 'مقصد', 'ps': 'مقصد', 'en': 'Destination'},
+    'select_pickup': {'fa': 'انتخاب مبدا (محل سوار شدن)', 'ps': 'د پورته کیدو ځای وټاکئ', 'en': 'Select Pickup'},
+    'select_dropoff': {'fa': 'انتخاب مقصد (محل پیاده شدن)', 'ps': 'د ښکته کیدو ځای وټاکئ', 'en': 'Select Destination'},
+    'confirm_pickup': {'fa': 'تایید مبدا', 'ps': 'مبدأ تایید کړئ', 'en': 'Confirm Pickup'},
+    'confirm_destination': {'fa': 'تایید مقصد', 'ps': 'منزل تایید کړئ', 'en': 'Confirm Destination'},
+    'driver_found': {'fa': 'راننده سفر شما را قبول کرد', 'ps': 'چلوونکي ستاسو سفر ومانه', 'en': 'Driver accepted your ride'},
+    'driver_arriving': {'fa': 'راننده در حال رسیدن است', 'ps': 'چلوونکی د رسیدو په حال کې دی', 'en': 'Driver is arriving'},
+    'confirm_cancel': {'fa': 'آیا از لغو سفر اطمینان دارید؟', 'ps': 'ایا تاسو ډاډه یاست چې سفر لغوه کوئ؟', 'en': 'Are you sure you want to cancel?'},
+    'trip_history': {'fa': 'تاریخچه سفرها', 'ps': 'د سفرونو تاریخچه', 'en': 'Trip History'},
+    'rate_driver': {'fa': 'امتیاز به راننده', 'ps': 'چلوونکي ته نمرې ورکول', 'en': 'Rate Driver'},
+    'enter_rating_comment': {'fa': 'نظرتان در مورد این سفر چیست؟', 'ps': 'د دې سفر په اړه ستاسو نظر څه دی؟', 'en': 'What is your feedback?'},
+    'submit_review': {'fa': 'ثبت نظر', 'ps': 'نظر ثبتول', 'en': 'Submit Review'},
+    'saved_places': {'fa': 'مکان‌های ذخیره شده', 'ps': 'خوندي شوي ځایونه', 'en': 'Saved Places'},
+
+    // --- مدیریت رانندگان، ثبت‌نام و اسناد (Admin & Driver App) ---
+    'reg_title': {'fa': 'ثبت‌نام سفیر جدید', 'ps': 'د نوي سفیر نوم لیکنه', 'en': 'New Driver Registration'},
+    'reg_success': {'fa': 'ثبت‌نام با موفقیت انجام شد', 'ps': 'نوم لیکنه بریالۍ وه', 'en': 'Registration successful'},
+    'driver_list': {'fa': 'لیست رانندگان سفیر', 'ps': 'د سفیر چلوونکو لیست', 'en': 'Safir Drivers List'},
+    'add_new_driver': {'fa': 'افزودن راننده جدید', 'ps': 'نوی چلوونکی زیات کړئ', 'en': 'Add New Driver'},
+    'search_driver': {'fa': 'جستجوی راننده (نام یا شماره تلفن)...', 'ps': 'د چلوونکي پلټنه...', 'en': 'Search driver...'},
+    'driver_details': {'fa': 'جزئیات اطلاعات راننده', 'ps': 'د چلوونکي د معلوماتو جزیات', 'en': 'Driver Details'},
+    'full_name': {'fa': 'نام و نام خانوادگی', 'ps': 'بشپړ نوم', 'en': 'Full Name'},
+    'father_name': {'fa': 'نام پدر', 'ps': 'د پلار نوم', 'en': 'Father\'s Name'},
+    'phone': {'fa': 'شماره تماس', 'ps': 'د اړیکې شمیره', 'en': 'Phone Number'},
+    'email': {'fa': 'ایمیل', 'ps': 'بریښنالیک', 'en': 'Email'},
+    'address': {'fa': 'آدرس', 'ps': 'پته', 'en': 'Address'},
+    'dob': {'fa': 'تاریخ تولد', 'ps': 'زیږون نیټه', 'en': 'Date of Birth'},
+    'id_card': {'fa': 'نمبر تذکره / کارت ملی', 'ps': 'د تذکرې شمیره', 'en': 'ID Card Number'},
+    'city_activity': {'fa': 'ولایت محل فعالیت', 'ps': 'د فعالیت ولایت', 'en': 'Working City'},
+    'upload_doc': {'fa': 'بارگذاری مدارک', 'ps': 'اسناد اپلوډ کړئ', 'en': 'Upload Documents'},
+    'image_too_large': {'fa': 'حجم عکس زیاد است (حداکثر ۲ مگ)', 'ps': 'د عکس اندازه لویه ده', 'en': 'Image too large (Max 2MB)'},
+    'invalid_image_format': {'fa': 'فرمت تصویر نامعتبر است', 'ps': 'د عکس بڼه سمه نه ده', 'en': 'Invalid image format'},
+    
+    // --- لغات اختصاصی تصاویر اسناد هویتی ماشین و راننده ---
+    'identity_docs': {'fa': 'تصاویر مدارک هویتی (کارت ملی):', 'ps': 'د هویت اسنادو انځورونه:', 'en': 'Identity Documents Images:'},
+    'id_front': {'fa': 'روی کارت هویتی', 'ps': 'د ملي کارت مخ', 'en': 'ID Card Front'},
+    'id_back': {'fa': 'پشت کارت هویتی', 'ps': 'د ملي کارت شا', 'en': 'ID Card Back'},
+    'selfie_with_id': {'fa': 'سلفی با کارت هویتی', 'ps': 'له ملي کارت سره سیلفي', 'en': 'Selfie with ID'},
+    'driving_license': {'fa': 'گواهینامه رانندگی:', 'ps': 'د چلولو جواز (لایسنس):', 'en': 'Driving License:'},
+    'license_number': {'fa': 'شماره گواهینامه', 'ps': 'د لایسنس شمیره', 'en': 'License Number'},
+    'license_front': {'fa': 'روی گواهینامه', 'ps': 'د لایسنس مخ', 'en': 'License Front'},
+    'license_back': {'fa': 'پشت گواهینامه', 'ps': 'د لایسنس شا', 'en': 'License Back'},
+    'car_card_front': {'fa': 'روی کارت ماشین', 'ps': 'د موټر کارت مخ', 'en': 'Car Card Front'},
+    'car_card_back': {'fa': 'پشت کارت ماشین', 'ps': 'د موټر کارت شا', 'en': 'Car Card Back'},
+
+    // --- وسایل نقلیه و اطلاعات موتر ---
+    'vehicle_info': {'fa': 'مشخصات موتر', 'ps': 'د موټر مشخصات', 'en': 'Vehicle Info'},
+    'vehicle_info_title': {'fa': 'اطلاعات وسیله نقلیه (سفیر):', 'ps': 'د وسایطو معلومات (سفیر):', 'en': 'Vehicle Information (Safir):'},
+    'vehicle_not_registered': {'fa': 'اطلاعات خودرو هنوز ثبت نشده است.', 'ps': 'د موټر معلومات لا ندي ثبت شوي.', 'en': 'Vehicle information is not registered yet.'},
+    'vehicle_type': {'fa': 'نوع وسیله نقلیه', 'ps': 'د واسطې ډول', 'en': 'Vehicle Type'},
+    'vehicle_brand': {'fa': 'مدل/برند', 'ps': 'ماډل/برانډ', 'en': 'Model/Brand'},
+    'vehicle_color': {'fa': 'رنگ', 'ps': 'رنګ', 'en': 'Color'},
+    'production_year': {'fa': 'سال تولید', 'ps': 'د تولید کال', 'en': 'Production Year'},
+    'plate_number': {'fa': 'نمبر پلیت', 'ps': 'د پلیټ شمیره', 'en': 'Plate Number'},
+    'safir_taxi': {'fa': 'سفیر سواری', 'ps': 'سوارلۍ سفیر', 'en': 'Safir Taxi'},
+    'safir_cargo': {'fa': 'سفیر باربر', 'ps': 'بار وړونکی سفیر', 'en': 'Safir Cargo'},
+    'safir_bike': {'fa': 'سفیر سریع (موتور)', 'ps': 'چټک سفیر', 'en': 'Safir Bike'},
+    'safir_luxury': {'fa': 'سفیر لوکس', 'ps': 'لوکس سفیر', 'en': 'Safir Luxury'},
+
+    // --- وضعیت‌های سفر و سفیر ---
+    'status_updated': {'fa': 'وضعیت سفر بروزرسانی شد', 'ps': 'د سفر حالت بدل شو', 'en': 'Ride status updated'},
+    'searching': {'fa': 'در جستجوی راننده', 'ps': 'د ډرایور په لټه کې', 'en': 'Searching'},
+    'accepted': {'fa': 'تایید شده', 'ps': 'تایید شوی', 'en': 'Accepted'},
+    'ride_accepted': {'fa': 'سفر با موفقیت قبول شد', 'ps': 'سفر په بریالیتوب سره قبول شو', 'en': 'Ride accepted successfully'},
+    'arrived': {'fa': 'سفیر رسید', 'ps': 'سفیر راورسید', 'en': 'Arrived'},
+    'picked_up': {'fa': 'مسافر سوار شد', 'ps': 'سپرلۍ پورته شوه', 'en': 'Passenger picked up'},
+    'started': {'fa': 'سفر آغاز شد', 'ps': 'سفر پیل شو', 'en': 'Started'},
+    'completed': {'fa': 'تکمیل شده', 'ps': 'بشپړ شوی', 'en': 'Completed'},
+    'ride_completed_success': {'fa': 'سفر با موفقیت به پایان رسید', 'ps': 'سفر په بریالیتوب پای ته ورسید', 'en': 'Ride completed successfully'},
+    'cancelled': {'fa': 'لغو شده', 'ps': 'لغوه شوی', 'en': 'Cancelled'},
+    'is_approved': {'fa': 'وضعیت تایید', 'ps': 'د تایید حالت', 'en': 'Verification Status'},
+    'not_approved': {'fa': 'منتظر تایید', 'ps': 'تایید ته انتظار', 'en': 'Pending'},
+    'not_approved_yet': {'fa': 'حساب شما هنوز تایید نشده است', 'ps': 'ستاسو حساب لا نه دی تایید شوی', 'en': 'Account not approved yet'},
+
+    // --- بخش مالی، کمیسیون و کیف پول ---
+    'total_earned': {'fa': 'مجموع درآمد', 'ps': 'ټوله ګټه', 'en': 'Total Earned'},
+    'wallet_balance': {'fa': 'موجودی کیف پول', 'ps': 'د بکس موجودي', 'en': 'Wallet Balance'},
+    'commission': {'fa': 'حق کمیسیون', 'ps': 'د کمیسیون حق', 'en': 'Commission'},
+    'driver_share': {'fa': 'سهم سفیر', 'ps': 'د سفیر برخه', 'en': 'Driver\'s Share'},
+    'wallet_recharged': {'fa': 'کیف پول با موفقیت شارژ شد', 'ps': 'بکس په بریالیتوب سره چارج شو', 'en': 'Wallet recharged successfully'},
+    'insufficient_balance': {'fa': 'موجودی کافی نیست', 'ps': 'ستاسو موجودي کمه ده', 'en': 'Insufficient balance'},
+    'cash': {'fa': 'نقد', 'ps': 'نغدې', 'en': 'Cash'},
+    'wallet': {'fa': 'کیف پول', 'ps': 'بکس (والټ)', 'en': 'Wallet'},
+    'charge_wallet': {'fa': 'شارژ کیف پول', 'ps': 'د بټوې چارج کول', 'en': 'Top Up Wallet'},
+    'your_wallet_balance': {'fa': 'موجودی کیف پول شما', 'ps': 'ستاسو د بټوې موجودیت', 'en': 'Your Wallet Balance'},
+
+    // --- افتخارات و پنل کناری (Side Panel) ---
+    'manage_users': {'fa': 'مدیریت مسافران', 'ps': 'د مسافرینو مدیریت', 'en': 'Manage Users'},
+    'top_driver_year': {'fa': 'سفیر برتر سال', 'ps': 'د کال غوره سفیر', 'en': 'Top Driver of the Year'},
+    'honors_and_medals': {'fa': 'نشان‌های افتخار', 'ps': 'د ویاړ نښې', 'en': 'Honors & Medals'},
+    'medals_and_honors': {'fa': 'مدال‌ها و افتخارات', 'ps': 'مډالونه اویاړونه', 'en': 'Medals & Honors'},
+    'years': {'fa': 'ساله', 'ps': 'کلن', 'en': 'Years'},
+    'popular': {'fa': 'محبوب', 'ps': 'محبوب', 'en': 'Popular'},
+    'active_rides': {'fa': 'سفرهای فعال', 'ps': 'فعال سفرونه', 'en': 'Active Rides'},
+    'referral_code': {'fa': 'کد معرف (اختیاری)', 'ps': 'د پیژندنې کوډ', 'en': 'Referral Code'},
+
+    // --- مکان‌یابی و امنیت ---
+    'gps_disabled': {'fa': 'لطفاً جی‌پی‌اس گوشی را روشن کنید', 'ps': 'مهرباني وکړئ GPS چالان کړئ', 'en': 'Please enable GPS'},
+    'location_denied': {'fa': 'اجازه دسترسی به مکان داده نشد', 'ps': 'ځای ته د لاسرسي اجازه ورنکړل شوه', 'en': 'Location access denied'},
+    'sos_sent_alert': {'fa': 'پیام اضطراری به مرکز ارسال شد', 'ps': 'بېړنی پیغام مرکز ته واستول شو', 'en': 'SOS alert sent to center'},
+    'is_sos_active': {'fa': 'وضعیت اضطراری', 'ps': 'بیړنی حالت', 'en': 'SOS Active'},
+    'distance': {'fa': 'مسافت (کیلومتر)', 'ps': 'واټن (کیلومتر)', 'en': 'Distance (KM)'},
+    'rating': {'fa': 'امتیاز', 'ps': 'امتیاز', 'en': 'Rating'},
+        // --- اختصاصی صفحه ورود رانندگان (Login Screen) ---
+    'driver_login_title': {'fa': 'ورود رانندگان سفیر', 'ps': 'د سفیر چلوونکو ننوتل', 'en': 'Safir Driver Login'},
+    'your_email': {'fa': 'ایمیل شما', 'ps': 'ستاسو بریښنالیک', 'en': 'Your Email'},
+    'password': {'fa': 'رمز عبور', 'ps': 'پټ نوم (پاسورډ)', 'en': 'Password'},
+    'login_btn': {'fa': 'ورود', 'ps': 'ننوتل', 'en': 'Login'},
+    'no_account_signup': {'fa': 'حسابی ندارید؟ از اینجا ثبت‌نام کنید', 'ps': 'اکاونټ نلرئ؟ له دې ځایه نوم لیکنه وکړئ', 'en': 'Don\'t have an account? Sign Up here'},
+    'logging_in': {'fa': 'در حال ورود به برنامه...', 'ps': 'پروګرام ته د ننوتلو په حال کې...', 'en': 'Logging in...'},
+    'invalid_email_error': {'fa': 'لطفاً یک ایمیل معتبر وارد کنید.', 'ps': 'مهرباني وکړئ یو معتبر بریښنالیک دننه کړئ.', 'en': 'Please enter a valid email address.'},
+    'password_length_error': {'fa': 'رمز عبور شما باید حداقل ۶ کاراکتر باشد.', 'ps': 'ستاسو پټ نوم باید لږترلږه ۶ توري وي.', 'en': 'Password must be at least 6 characters.'},
+    'blocked_account_error': {'fa': 'حساب شما مسدود شده است. لطفاً با پشتیبانی سفیر تماس بگیرید.', 'ps': 'ستاسو حساب بلاک شوی دی. مهرباني وکړئ د سفیر ملاتړ سره اړیکه ونیسئ.', 'en': 'Your account has been blocked. Please contact Safir support.'},
+    'no_driver_record': {'fa': 'رکورد شما به عنوان راننده در سیستم وجود ندارد.', 'ps': 'په سیسټم کې د چلوونکي په توګه ستاسو ریکارډ شتون نلري.', 'en': 'No driver record found for this account.'},
+
+  };
+
+  return words[key]?[lang] ?? key;
+}
