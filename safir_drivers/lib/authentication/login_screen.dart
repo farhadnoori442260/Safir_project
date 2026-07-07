@@ -1,9 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:safir_drivers/pages/dashboard.dart'; // اصلاح نام پکیج به safir_drivers
+import 'package:safir_drivers/pages/dashboard.dart'; 
 import '../methods/common_method.dart';
 import '../widgets/loading_dialog.dart';
+import '../utils/lang_helper.dart'; // 👈 اضافه شدن هیلپر ترجمه سه‌زبانه
 import 'signup_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -25,9 +26,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
   signInFormValidation() {
     if (!emailTextEditingController.text.contains("@")) {
-      cMethods.displaySnackBar("لطفاً یک ایمیل معتبر وارد کنید.", context);
-    } else if (passwordTextEditingController.text.trim().length < 5) {
-      cMethods.displaySnackBar("رمز عبور شما باید حداقل ۶ کاراکتر باشد.", context);
+      cMethods.displaySnackBar(tr(context, 'invalid_email_error'), context); // 👈 سه‌زبانه کردن پیام خطا
+    } else if (passwordTextEditingController.text.trim().length < 6) { // اصلاح منطق به ۶ کاراکتر مطابق پیام متن
+      cMethods.displaySnackBar(tr(context, 'password_length_error'), context); // 👈 سه‌زبانه کردن پیام خطا
     } else {
       signInUser();
     }
@@ -37,7 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (BuildContext context) => const LoadingDialog(messageText: "در حال ورود به برنامه..."),
+      builder: (BuildContext context) => LoadingDialog(messageText: tr(context, 'logging_in')), // 👈 متغیر داینامیک لودینگ
     );
 
     final User? userFirebase = (await FirebaseAuth.instance
@@ -62,11 +63,11 @@ class _LoginScreenState extends State<LoginScreen> {
             Navigator.push(context, MaterialPageRoute(builder: (c) => Dashboard()));
           } else {
             FirebaseAuth.instance.signOut();
-            cMethods.displaySnackBar("حساب شما مسدود شده است. لطفاً با پشتیبانی سفیر تماس بگیرید.", context);
+            cMethods.displaySnackBar(tr(context, 'blocked_account_error'), context); // 👈 سه‌زبانه کردن پیام مسدودی
           }
         } else {
           FirebaseAuth.instance.signOut();
-          cMethods.displaySnackBar("رکورد شما به عنوان راننده در سیستم وجود ندارد.", context);
+          cMethods.displaySnackBar(tr(context, 'no_driver_record'), context); // 👈 سه‌زبانه کردن پیام عدم وجود راننده
         }
       });
     }
@@ -82,7 +83,7 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               const SizedBox(height: 60),
 
-              // تصویر خودروی سفیر از پوشه تصاویر
+              // تصویر خودروی سفیر
               Image.asset(
                 "assets/images/uberexec.png",
                 width: 220,
@@ -90,9 +91,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
               const SizedBox(height: 30),
 
-              const Text(
-                "ورود رانندگان سفیر",
-                style: TextStyle(
+              Text(
+                tr(context, 'driver_login_title'), // 👈 تیتر سه‌زبانه صفحه ورود
+                style: const TextStyle(
                   fontFamily: 'IranYekan',
                   fontSize: 26,
                   fontWeight: FontWeight.bold,
@@ -106,9 +107,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     TextField(
                       controller: emailTextEditingController,
                       keyboardType: TextInputType.emailAddress,
-                      decoration: const InputDecoration(
-                        labelText: "ایمیل شما",
-                        labelStyle: TextStyle(
+                      decoration: InputDecoration(
+                        labelText: tr(context, 'your_email'), // 👈 لیبل ایمیل
+                        labelStyle: const TextStyle(
                           fontFamily: 'IranYekan',
                           fontSize: 14,
                         ),
@@ -125,9 +126,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       controller: passwordTextEditingController,
                       obscureText: true,
                       keyboardType: TextInputType.text,
-                      decoration: const InputDecoration(
-                        labelText: "رمز عبور",
-                        labelStyle: TextStyle(
+                      decoration: InputDecoration(
+                        labelText: tr(context, 'password'), // 👈 لیبل پسورد
+                        labelStyle: const TextStyle(
                           fontFamily: 'IranYekan',
                           fontSize: 14,
                         ),
@@ -145,11 +146,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         checkIfNetworkIsAvailable();
                       },
                       style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF145A41), // تغییر رنگ به سبز اختصاصی سفیر
+                          backgroundColor: const Color(0xFF145A41), 
                           padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 10)),
-                      child: const Text(
-                        "ورود",
-                        style: TextStyle(
+                      child: Text(
+                        tr(context, 'login_btn'), // 👈 دکمه ورود سه‌زبانه
+                        style: const TextStyle(
                           fontFamily: 'IranYekan',
                           fontSize: 16,
                           color: Colors.white,
@@ -166,9 +167,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(builder: (c) => const SignUpScreen()));
                 },
-                child: const Text(
-                  "حسابی ندارید؟ از اینجا ثبت‌نام کنید",
-                  style: TextStyle(
+                child: Text(
+                  tr(context, 'no_account_signup'), // 👈 متن دکمه ثبت‌نام
+                  style: const TextStyle(
                     fontFamily: 'IranYekan',
                     color: Colors.grey,
                   ),
