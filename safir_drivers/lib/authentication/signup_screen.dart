@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:safir_drivers/methods/common_method.dart';
 import 'package:safir_drivers/pages/dashboard.dart';
 import '../widgets/loading_dialog.dart';
+import '../utils/lang_helper.dart'; // 👈 اضافه شدن هیلپر ترجمه
 import 'login_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -28,39 +29,31 @@ class _SignUpScreenState extends State<SignUpScreen> {
   XFile? imageFile;
   String urlOfUploadedImage = "";
 
-  // متغیر ذخیره نوع وسیله نقلیه انتخابی (مقدار پیش‌فرض: موتر اقتصادی)
   String selectedVehicleType = "economic_car";
-
-  // لیست گزینه‌های منوی انتخابی برای رانندگان سفیر
-  final List<DropdownMenuItem<String>> vehicleTypeItems = [
-    const DropdownMenuItem(value: "economic_car", child: Text("موتر اقتصادی", style: TextStyle(fontFamily: 'IranYekan'))),
-    const DropdownMenuItem(value: "modern_car", child: Text("موتر مدرن", style: TextStyle(fontFamily: 'IranYekan'))),
-    const DropdownMenuItem(value: "motorbike", child: Text("موتورسایکل", style: TextStyle(fontFamily: 'IranYekan'))),
-  ];
 
   checkIfNetworkIsAvailable() {
     if (imageFile != null) {
       signUpFormValidation();
     } else {
-      cMethods.displaySnackBar("لطفاً ابتدا عکس پروفایل خود را انتخاب کنید.", context);
+      cMethods.displaySnackBar(tr(context, 'select_pic_error'), context);
     }
   }
 
   signUpFormValidation() {
-    if (userNameTextEditingController.text.trim().length < 3) {
-      cMethods.displaySnackBar("نام شما باید حداقل ۴ کاراکتر باشد.", context);
-    } else if (userPhoneTextEditingController.text.trim().length < 7) {
-      cMethods.displaySnackBar("شماره تلفن باید حداقل ۸ رقم باشد.", context);
+    if (userNameTextEditingController.text.trim().length < 4) { // اصلاح اعتبارسنجی با توجه به متن پیام ارور
+      cMethods.displaySnackBar(tr(context, 'name_length_error'), context);
+    } else if (userPhoneTextEditingController.text.trim().length < 8) { // اصلاح منطق مطابق حداقل ۸ رقم
+      cMethods.displaySnackBar(tr(context, 'phone_length_error'), context);
     } else if (!emailTextEditingController.text.contains("@")) {
-      cMethods.displaySnackBar("لطفاً یک ایمیل معتبر وارد کنید.", context);
-    } else if (passwordTextEditingController.text.trim().length < 5) {
-      cMethods.displaySnackBar("رمز عبور باید حداقل ۶ کاراکتر باشد.", context);
+      cMethods.displaySnackBar(tr(context, 'invalid_email_error'), context);
+    } else if (passwordTextEditingController.text.trim().length < 6) {
+      cMethods.displaySnackBar(tr(context, 'password_length_error'), context);
     } else if (vehicleModelTextEditingController.text.trim().isEmpty) {
-      cMethods.displaySnackBar("لطفاً مدل وسیله نقلیه خود را وارد کنید.", context);
+      cMethods.displaySnackBar(tr(context, 'enter_vehicle_model_error'), context);
     } else if (vehicleColorTextEditingController.text.trim().isEmpty) {
-      cMethods.displaySnackBar("لطفاً رنگ وسیله نقلیه خود را وارد کنید.", context);
+      cMethods.displaySnackBar(tr(context, 'enter_vehicle_color_error'), context);
     } else if (vehicleNumberTextEditingController.text.isEmpty) {
-      cMethods.displaySnackBar("لطفاً شماره پلاک یا فورم وسیله نقلیه را وارد کنید.", context);
+      cMethods.displaySnackBar(tr(context, 'enter_vehicle_plate_error'), context);
     } else {
       uploadImageToStorage();
     }
@@ -86,7 +79,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       showDialog(
         context: context,
         barrierDismissible: false,
-        builder: (BuildContext context) => const LoadingDialog(messageText: "در حال ثبت حساب کاربری شما..."),
+        builder: (BuildContext context) => LoadingDialog(messageText: tr(context, 'registering_account')),
       );
 
       final User? userFirebase = (await FirebaseAuth.instance.createUserWithEmailAndPassword(
@@ -101,7 +94,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       DatabaseReference usersRef = FirebaseDatabase.instance.ref().child("drivers").child(userFirebase!.uid);
 
       Map driverCarInfo = {
-        "type": selectedVehicleType, // نوع وسیله انتخابی به صورت کاملاً دقیق به سرور فرستاده می‌شود
+        "type": selectedVehicleType, 
         "carColor": vehicleColorTextEditingController.text.trim(),
         "carModel": vehicleModelTextEditingController.text.trim(),
         "carNumber": vehicleNumberTextEditingController.text.trim(),
@@ -137,6 +130,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // ایجاد داینامیک لیست کشویی برای پشتیبانی کامل از تغییر زبان منوها
+    final List<DropdownMenuItem<String>> vehicleTypeItems = [
+      DropdownMenuItem(value: "economic_car", child: Text(tr(context, 'economic_car'), style: const TextStyle(fontFamily: 'IranYekan'))),
+      DropdownMenuItem(value: "modern_car", child: Text(tr(context, 'modern_car'), style: const TextStyle(fontFamily: 'IranYekan'))),
+      DropdownMenuItem(value: "motorbike", child: Text(tr(context, 'motorbike'), style: const TextStyle(fontFamily: 'IranYekan'))),
+    ];
+
     return Scaffold(
       body: SingleChildScrollView(
         child: Padding(
@@ -167,9 +167,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 onTap: () {
                   chooseImageFromGallery();
                 },
-                child: const Text(
-                  "انتخاب عکس پروفایل",
-                  style: TextStyle(
+                child: Text(
+                  tr(context, 'choose_profile_pic'),
+                  style: const TextStyle(
                     fontFamily: 'IranYekan',
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -184,9 +184,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     TextField(
                       controller: userNameTextEditingController,
                       keyboardType: TextInputType.text,
-                      decoration: const InputDecoration(
-                        labelText: "نام و نام خانوادگی",
-                        labelStyle: TextStyle(fontFamily: 'IranYekan', fontSize: 14),
+                      decoration: InputDecoration(
+                        labelText: tr(context, 'full_name'),
+                        labelStyle: const TextStyle(fontFamily: 'IranYekan', fontSize: 14),
                       ),
                       style: const TextStyle(color: Colors.grey, fontSize: 15),
                     ),
@@ -194,9 +194,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     TextField(
                       controller: userPhoneTextEditingController,
                       keyboardType: TextInputType.phone,
-                      decoration: const InputDecoration(
-                        labelText: "شماره تلفن",
-                        labelStyle: TextStyle(fontFamily: 'IranYekan', fontSize: 14),
+                      decoration: InputDecoration(
+                        labelText: tr(context, 'phone'),
+                        labelStyle: const TextStyle(fontFamily: 'IranYekan', fontSize: 14),
                       ),
                       style: const TextStyle(color: Colors.grey, fontSize: 15),
                     ),
@@ -204,9 +204,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     TextField(
                       controller: emailTextEditingController,
                       keyboardType: TextInputType.emailAddress,
-                      decoration: const InputDecoration(
-                        labelText: "ایمیل",
-                        labelStyle: TextStyle(fontFamily: 'IranYekan', fontSize: 14),
+                      decoration: InputDecoration(
+                        labelText: tr(context, 'email'),
+                        labelStyle: const TextStyle(fontFamily: 'IranYekan', fontSize: 14),
                       ),
                       style: const TextStyle(color: Colors.grey, fontSize: 15),
                     ),
@@ -215,22 +215,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       controller: passwordTextEditingController,
                       obscureText: true,
                       keyboardType: TextInputType.text,
-                      decoration: const InputDecoration(
-                        labelText: "رمز عبور",
-                        labelStyle: TextStyle(fontFamily: 'IranYekan', fontSize: 14),
+                      decoration: InputDecoration(
+                        labelText: tr(context, 'password'),
+                        labelStyle: const TextStyle(fontFamily: 'IranYekan', fontSize: 14),
                       ),
                       style: const TextStyle(color: Colors.grey, fontSize: 15),
                     ),
                     
                     const SizedBox(height: 25),
                     
-                    // منوی کشویی انتخاب نوع وسیله نقلیه اختصاصی سفیر
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
-                          "نوع وسیله نقلیه:",
-                          style: TextStyle(fontFamily: 'IranYekan', fontSize: 15, color: Colors.grey),
+                        Text(
+                          "${tr(context, 'vehicle_type')}:",
+                          style: const TextStyle(fontFamily: 'IranYekan', fontSize: 15, color: Colors.grey),
                         ),
                         DropdownButton<String>(
                           value: selectedVehicleType,
@@ -248,9 +247,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     TextField(
                       controller: vehicleModelTextEditingController,
                       keyboardType: TextInputType.text,
-                      decoration: const InputDecoration(
-                        labelText: "مدل وسیله (مثلاً تویوتا کرولا / کورولا ۲۰۰8)",
-                        labelStyle: TextStyle(fontFamily: 'IranYekan', fontSize: 14),
+                      decoration: InputDecoration(
+                        labelText: tr(context, 'vehicle_model_hint'),
+                        labelStyle: const TextStyle(fontFamily: 'IranYekan', fontSize: 14),
                       ),
                       style: const TextStyle(color: Colors.grey, fontSize: 15),
                     ),
@@ -258,9 +257,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     TextField(
                       controller: vehicleColorTextEditingController,
                       keyboardType: TextInputType.text,
-                      decoration: const InputDecoration(
-                        labelText: "رنگ وسیله نقلیه",
-                        labelStyle: TextStyle(fontFamily: 'IranYekan', fontSize: 14),
+                      decoration: InputDecoration(
+                        labelText: tr(context, 'vehicle_color_label'),
+                        labelStyle: const TextStyle(fontFamily: 'IranYekan', fontSize: 14),
                       ),
                       style: const TextStyle(color: Colors.grey, fontSize: 15),
                     ),
@@ -268,9 +267,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     TextField(
                       controller: vehicleNumberTextEditingController,
                       keyboardType: TextInputType.text,
-                      decoration: const InputDecoration(
-                        labelText: "شماره پلاک یا پلیت وسیله نقلیه",
-                        labelStyle: TextStyle(fontFamily: 'IranYekan', fontSize: 14),
+                      decoration: InputDecoration(
+                        labelText: tr(context, 'vehicle_plate_label'),
+                        labelStyle: const TextStyle(fontFamily: 'IranYekan', fontSize: 14),
                       ),
                       style: const TextStyle(color: Colors.grey, fontSize: 15),
                     ),
@@ -280,11 +279,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         checkIfNetworkIsAvailable();
                       },
                       style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF145A41), // رنگ سبز اختصاصی سفیر
+                          backgroundColor: const Color(0xFF145A41), 
                           padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 10)),
-                      child: const Text(
-                        "ثبت‌نام راننده",
-                        style: TextStyle(
+                      child: Text(
+                        tr(context, 'register_btn'),
+                        style: const TextStyle(
                           fontFamily: 'IranYekan',
                           fontSize: 16,
                           color: Colors.white,
@@ -301,9 +300,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(builder: (c) => const LoginScreen()));
                 },
-                child: const Text(
-                  "قبلاً ثبت‌نام کرده‌اید؟ از اینجا وارد شوید",
-                  style: TextStyle(
+                child: Text(
+                  tr(context, 'already_have_account'),
+                  style: const TextStyle(
                     fontFamily: 'IranYekan',
                     color: Colors.grey,
                   ),
