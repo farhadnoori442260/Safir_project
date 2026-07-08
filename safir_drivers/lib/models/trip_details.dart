@@ -1,4 +1,4 @@
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:latlong2/latlong.dart'; // 👈 جایگزین گوگل‌مپ برای سازگاری با OpenStreetMap
 
 class TripDetails {
   String? tripID;          // شناسه یا آی‌دی منحصربه‌فرد سفر
