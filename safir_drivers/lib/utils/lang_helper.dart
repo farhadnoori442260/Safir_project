@@ -22,6 +22,7 @@ String tr(BuildContext context, String key) {
     'delete': {'fa': 'حذف', 'ps': 'حذف کول', 'en': 'Delete'},
     'status': {'fa': 'وضعیت', 'ps': 'حالت', 'en': 'Status'},
     'actions': {'fa': 'عملیات', 'ps': 'عملیات', 'en': 'Actions'},
+    'close': {'fa': 'بستن', 'ps': 'بندول', 'en': 'Close'},
 
     // --- بخش مسافر و سفر ---
     'welcome_passenger': {'fa': 'به سفیر خوش آمدید', 'ps': 'سفیر ته ښه راغلاست', 'en': 'Welcome to Safir'},
@@ -78,18 +79,22 @@ String tr(BuildContext context, String key) {
     'car_card_back': {'fa': 'پشت کارت ماشین', 'ps': 'د موټر کارت شا', 'en': 'Car Card Back'},
 
     // --- وسایل نقلیه و اطلاعات موتر ---
-    'vehicle_info': {'fa': 'مشخصات موتر', 'ps': 'د موټر مشخصات', 'en': 'Vehicle Info'},
-    'vehicle_info_title': {'fa': 'اطلاعات وسیله نقلیه (سفیر):', 'ps': 'د وسایطو معلومات (سفیر):', 'en': 'Vehicle Information (Safir):'},
+    'vehicle_info_title': {'fa': 'مشخصات وسیله نقلیه', 'ps': 'د وسایطو مشخصات', 'en': 'Vehicle Specifications'},
     'vehicle_not_registered': {'fa': 'اطلاعات خودرو هنوز ثبت نشده است.', 'ps': 'د موټر معلومات لا ندي ثبت شوي.', 'en': 'Vehicle information is not registered yet.'},
     'vehicle_type': {'fa': 'نوع وسیله نقلیه', 'ps': 'د واسطې ډول', 'en': 'Vehicle Type'},
-    'vehicle_brand': {'fa': 'مدل/برند', 'ps': 'ماډل/برانډ', 'en': 'Model/Brand'},
-    'vehicle_color': {'fa': 'رنگ', 'ps': 'رنګ', 'en': 'Color'},
-    'production_year': {'fa': 'سال تولید', 'ps': 'د تولید کال', 'en': 'Production Year'},
-    'plate_number': {'fa': 'نمبر پلیت', 'ps': 'د پلیټ شمیره', 'en': 'Plate Number'},
+    'vehicle_car': {'fa': 'موتر (ماشین)', 'ps': 'موټر', 'en': 'Car'},
+    'vehicle_bike': {'fa': 'موتورسایکل', 'ps': 'موټرسایکل', 'en': 'Motorcycle'},
+    'vehicle_auto': {'fa': 'ریکشا', 'ps': 'ریکشا', 'en': 'Rickshaw'},
+    'label_brand': {'fa': 'نام برند یا کمپنی (مثلاً تویوتا)', 'ps': 'د برانډ یا کپنۍ نوم (مثلا ټویوټا)', 'en': 'Brand or Company (e.g. Toyota)'},
+    'label_color': {'fa': 'رنگ وسیله نقلیه', 'ps': 'د وسایطو رنګ', 'en': 'Vehicle Color'},
+    'label_year': {'fa': 'سال تولید (مدل)', 'ps': 'د تولید کال (موډل)', 'en': 'Production Year (Model)'},
+    'label_plate': {'fa': 'شماره پلاک یا نمبر پلیت', 'ps': 'د پلیټ نمبر', 'en': 'License Plate Number'},
     'safir_taxi': {'fa': 'سفیر سواری', 'ps': 'سوارلۍ سفیر', 'en': 'Safir Taxi'},
     'safir_cargo': {'fa': 'سفیر باربر', 'ps': 'بار وړونکی سفیر', 'en': 'Safir Cargo'},
     'safir_bike': {'fa': 'سفیر سریع (موتور)', 'ps': 'چټک سفیر', 'en': 'Safir Bike'},
     'safir_luxury': {'fa': 'سفیر لوکس', 'ps': 'لوکس سفیر', 'en': 'Safir Luxury'},
+    'economic_car': {'fa': 'موتر اقتصادی', 'ps': 'اقتصادي موټر', 'en': 'Economic Car'},
+    'modern_car': {'fa': 'موتر مدرن', 'ps': 'مډرن موټر', 'en': 'Modern Car'},
 
     // --- وضعیت‌های سفر و سفیر ---
     'status_updated': {'fa': 'وضعیت سفر بروزرسانی شد', 'ps': 'د سفر حالت بدل شو', 'en': 'Ride status updated'},
@@ -116,13 +121,11 @@ String tr(BuildContext context, String key) {
     'cash': {'fa': 'نقد', 'ps': 'نغدې', 'en': 'Cash'},
     'wallet': {'fa': 'کیف پول', 'ps': 'بکس (والټ)', 'en': 'Wallet'},
     'charge_wallet': {'fa': 'شارژ کیف پول', 'ps': 'د بټوې چارج کول', 'en': 'Top Up Wallet'},
-    'your_wallet_balance': {'fa': 'موجودی کیف پول شما', 'ps': 'ستاسو د بټوې موجودیت', 'en': 'Your Wallet Balance'},
 
     // --- افتخارات و پنل کناری (Side Panel) ---
     'manage_users': {'fa': 'مدیریت مسافران', 'ps': 'د مسافرینو مدیریت', 'en': 'Manage Users'},
     'top_driver_year': {'fa': 'سفیر برتر سال', 'ps': 'د کال غوره سفیر', 'en': 'Top Driver of the Year'},
     'honors_and_medals': {'fa': 'نشان‌های افتخار', 'ps': 'د ویاړ نښې', 'en': 'Honors & Medals'},
-    'medals_and_honors': {'fa': 'مدال‌ها و افتخارات', 'ps': 'مډالونه اویاړونه', 'en': 'Medals & Honors'},
     'years': {'fa': 'ساله', 'ps': 'کلن', 'en': 'Years'},
     'popular': {'fa': 'محبوب', 'ps': 'محبوب', 'en': 'Popular'},
     'active_rides': {'fa': 'سفرهای فعال', 'ps': 'فعال سفرونه', 'en': 'Active Rides'},
@@ -135,7 +138,8 @@ String tr(BuildContext context, String key) {
     'is_sos_active': {'fa': 'وضعیت اضطراری', 'ps': 'بیړنی حالت', 'en': 'SOS Active'},
     'distance': {'fa': 'مسافت (کیلومتر)', 'ps': 'واټن (کیلومتر)', 'en': 'Distance (KM)'},
     'rating': {'fa': 'امتیاز', 'ps': 'امتیاز', 'en': 'Rating'},
-        // --- اختصاصی صفحه ورود رانندگان (Login Screen) ---
+
+    // --- اختصاصی صفحه ورود رانندگان (Login Screen) ---
     'driver_login_title': {'fa': 'ورود رانندگان سفیر', 'ps': 'د سفیر چلوونکو ننوتل', 'en': 'Safir Driver Login'},
     'your_email': {'fa': 'ایمیل شما', 'ps': 'ستاسو بریښنالیک', 'en': 'Your Email'},
     'password': {'fa': 'رمز عبور', 'ps': 'پټ نوم (پاسورډ)', 'en': 'Password'},
@@ -146,37 +150,33 @@ String tr(BuildContext context, String key) {
     'password_length_error': {'fa': 'رمز عبور شما باید حداقل ۶ کاراکتر باشد.', 'ps': 'ستاسو پټ نوم باید لږترلږه ۶ توري وي.', 'en': 'Password must be at least 6 characters.'},
     'blocked_account_error': {'fa': 'حساب شما مسدود شده است. لطفاً با پشتیبانی سفیر تماس بگیرید.', 'ps': 'ستاسو حساب بلاک شوی دی. مهرباني وکړئ د سفیر ملاتړ سره اړیکه ونیسئ.', 'en': 'Your account has been blocked. Please contact Safir support.'},
     'no_driver_record': {'fa': 'رکورد شما به عنوان راننده در سیستم وجود ندارد.', 'ps': 'په سیسټم کې د چلوونکي په توګه ستاسو ریکارډ شتون نلري.', 'en': 'No driver record found for this account.'},
-        // --- اختصاصی صفحه ثبت‌نام رانندگان (SignUp Screen) ---
+
+    // --- اختصاصی صفحه ثبت‌نام رانندگان (SignUp Screen) ---
     'choose_profile_pic': {'fa': 'انتخاب عکس پروفایل', 'ps': 'د پروفایل عکس غوره کړئ', 'en': 'Select Profile Picture'},
-    'vehicle_model_hint': {'fa': 'مدل وسیله (مثلاً تویوتا کرولا)', 'ps': 'د موټر ماډل (مثلاً ټیوټا کرولا)', 'en': 'Vehicle Model (e.g. Toyota Corolla)'},
-    'vehicle_color_label': {'fa': 'رنگ وسیله نقلیه', 'ps': 'د وسایطو رنګ', 'en': 'Vehicle Color'},
-    'vehicle_plate_label': {'fa': 'شماره پلاک یا پلیت وسیله نقلیه', 'ps': 'د ذیج نمبر یا پلیټ شمیره', 'en': 'Vehicle Plate Number'},
     'register_btn': {'fa': 'ثبت‌نام راننده', 'ps': 'د چلونکي نوم لیکنه', 'en': 'Register Driver'},
     'already_have_account': {'fa': 'قبلاً ثبت‌نام کرده‌اید؟ از اینجا وارد شوید', 'ps': 'مخکې له مخکې اکاونټ لرئ؟ ننوځئ', 'en': 'Already have an account? Login here'},
     'registering_account': {'fa': 'در حال ثبت حساب کاربری شما...', 'ps': 'ستاسو د اکاونټ ثبتولو په حال کې...', 'en': 'Registering your account...'},
     'select_pic_error': {'fa': 'لطفاً ابتدا عکس پروفایل خود را انتخاب کنید.', 'ps': 'مهرباني وکړئ لومړی د پروفایل عکس وټاکئ.', 'en': 'Please select your profile picture first.'},
     'name_length_error': {'fa': 'نام شما باید حداقل ۴ کاراکتر باشد.', 'ps': 'ستاسو نوم باید لږترلږه ۴ توري وي.', 'en': 'Name must be at least 4 characters.'},
     'phone_length_error': {'fa': 'شماره تلفن باید حداقل ۸ رقم باشد.', 'ps': 'د تلیفون شمیره باید لږترلږه ۸ شمیرې وي.', 'en': 'Phone number must be at least 8 digits.'},
-    'enter_vehicle_model_error': {'fa': 'لطفاً مدل وسیله نقلیه خود را وارد کنید.', 'ps': 'مهرباني وکړئ د خپل موټر ماډل دننه کړئ.', 'en': 'Please enter your vehicle model.'},
-    'enter_vehicle_color_error': {'fa': 'لطفاً رنگ وسیله نقلیه خود را وارد کنید.', 'ps': 'مهرباني وکړئ د خپل موټر رنګ دننه کړئ.', 'en': 'Please enter your vehicle color.'},
-    'enter_vehicle_plate_error': {'fa': 'لطفاً شماره پلاک یا فورم وسیله نقلیه را وارد کنید.', 'ps': 'مهرباني وکړئ د موټر پلیټ شمیره دننه کړئ.', 'en': 'Please enter vehicle plate number.'},
-    'economic_car': {'fa': 'موتر اقتصادی', 'ps': 'اقتصادي موټر', 'en': 'Economic Car'},
-    'modern_car': {'fa': 'موتر مدرن', 'ps': 'مډرن موټر', 'en': 'Modern Car'},
-    'motorbike': {'fa': 'موتورسایکل', 'ps': 'موټرسایکل', 'en': 'Motorbike'},
-        // --- اختصاصی متدهای عمومی (Common Methods) ---
+    
+    // --- اختصاصی متدهای عمومی (Common Methods) ---
     'no_internet_error': {'fa': 'اتصال اینترنت شما برقرار نیست. لطفاً شبکه خود را بررسی کرده و دوباره تلاش کنید.', 'ps': 'ستاسو انټرنیټ وصل نه دی. مهرباني وکړئ خپله شبکه وڅیړئ او بیا هڅه وکړئ.', 'en': 'Your internet connection is offline. Please check your network and try again.'},
-        // --- اختصاصی دکمه‌های وضعیت سفر ---
+
+    // --- اختصاصی دکمه‌های وضعیت سفر ---
     'btn_arrived': {'fa': 'رسیدم به مبدأ', 'ps': 'مبدأ ته ورسیدم', 'en': 'Arrived'},
     'btn_start_trip': {'fa': 'شروع سفر', 'ps': 'سفر پیل کړئ', 'en': 'Start Trip'},
     'btn_end_trip': {'fa': 'پایان سفر', 'ps': 'سفر پای ته ورسوئ', 'en': 'End Trip'},
     'ending_trip': {'fa': 'در حال اتمام سفر...', 'ps': 'د سفر د پای ته رسولو په حال کې...', 'en': 'Ending trip...'},
-        // --- اختصاصی صفحه ورود کد OTP ---
+
+    // --- اختصاصی صفحه ورود کد OTP ---
     'otp_title': {'fa': 'تأیید کد دسترسی', 'ps': 'د لاسرسي کوډ تایید', 'en': 'Verify OTP Code'},
     'otp_subtitle': {'fa': 'کد ۶ رقمی ارسال شده به شماره موبایل خود را وارد کنید', 'ps': 'هغه ۶ رقمي کوډ داخل کړئ چې ستاسو موبایل ته استول شوی', 'en': 'Enter the 6-digit code sent to your phone'},
     'didnt_receive_code': {'fa': 'کد را دریافت نکرده‌اید؟', 'ps': 'کوډ مو نه دی ترلاسه کړی؟', 'en': 'Didn\'t receive code?'},
     'resend_code': {'fa': 'ارسال مجدد', 'ps': 'بیا استول', 'en': 'Resend'},
     'complete_documents_error': {'fa': 'لطفاً اطلاعات و مدارک ناقص خود را تکمیل کنید.', 'ps': 'مهرباني وکړئ خپل نیمګړي اسناد او معلومات بشپړ کړئ.', 'en': 'Please complete your pending documents and information.'},
-        // --- اختصاصی صفحه ورود و ثبت نام (RegisterScreen) ---
+
+    // --- اختصاصی صفحه ورود و ثبت نام (RegisterScreen) ---
     'register_title': {'fa': 'ورود یا ثبت‌نام راننده سفیر', 'ps': 'د سفیر چلونکي ننوتل یا راجستر', 'en': 'Safir Driver Login or Register'},
     'register_subtitle': {'fa': 'لطفاً شماره موبایل خود را بدون صفر وارد کنید', 'ps': 'مهرباني وکړئ خپل موبایل شمیره بې له صفر داخل کړئ', 'en': 'Please enter your mobile number without zero'},
     'btn_continue': {'fa': 'ادامه', 'ps': 'ادامه', 'en': 'Continue'},
@@ -184,42 +184,26 @@ String tr(BuildContext context, String key) {
     'google_sign_in': {'fa': 'ادامه با حساب گوگل', 'ps': 'د ګوګل حساب سره دوام ورکړئ', 'en': 'Continue with Google'},
     'terms_and_conditions': {'fa': 'با ادامه کار، شما موافقت خود را با قوانین و مقررات سفیر جهت دریافت تماس، پیام در واتساپ یا پیامک تأیید هویت اعلام می‌دارید.', 'ps': 'د کار په دوام سره، تاسو د هویت تایید پیغامونو یا اړیکو ترلاسه کولو لپاره د سفیر د قوانینو او مقرراتو سره خپل موافقت اعلانوئ.', 'en': 'By continuing, you agree to Safir\'s terms and conditions to receive verification calls, SMS, or WhatsApp messages.'},
     'invalid_phone_error': {'fa': 'لطفاً یک شماره موبایل معتبر (مثل 771234567) وارد کنید.', 'ps': 'مهرباني وکړئ یو باوري موبایل شمیره (لکه 771234567) داخل کړئ.', 'en': 'Please enter a valid mobile number (e.g., 771234567).'},
-        // --- اختصاصی صفحه آپلود عکس وسیله نقلیه (DriverCarImageScreeen) ---
-    'vehicle_image_title': {'fa': 'تصویر وسیله نقلیه', 'ps': 'د وسایطو تصویر', 'en': 'Vehicle Image'},
-    'close': {'fa': 'بستن', 'ps': 'بندول', 'en': 'Close'},
+
+    // --- اختصاصی صفحه آپلود عکس وسیله نقلیه (DriverCarImageScreeen) ---
     'vehicle_image_hint': {'fa': 'لطفاً یک عکس واضح از نمای روبه‌رو یا جانبی وسیله نقلیه خود قرار دهید.', 'ps': 'مهرباني وکړئ د خپلې وسایطې واضح انځور له مخې یا اړخ څخه واخلئ.', 'en': 'Please upload a clear front or side photo of your vehicle.'},
     'take_photo_camera': {'fa': 'گرفتن عکس با دوربین', 'ps': 'د کلمې په واسطه انځور اخیستل', 'en': 'Take Photo with Camera'},
     'confirm_and_save': {'fa': 'تأیید و ذخیره', 'ps': 'تایید او خوندي کول', 'en': 'Confirm and Save'},
-        // --- اختصاصی صفحه مشخصات وسیله نقلیه (VehicleBasicInfoScreen) ---
-    'vehicle_info_title': {'fa': 'مشخصات وسیله نقلیه', 'ps': 'د وسایطو مشخصات', 'en': 'Vehicle Specifications'},
-    'vehicle_car': {'fa': 'موتر (ماشین)', 'ps': 'موټر', 'en': 'Car'},
-    'vehicle_bike': {'fa': 'موتورسایکل', 'ps': 'موټرسایکل', 'en': 'Motorcycle'},
-    'vehicle_auto': {'fa': 'ریکشا', 'ps': 'ریکشا', 'en': 'Rickshaw'},
-    'label_brand': {'fa': 'نام برند یا کمپنی (مثلاً تویوتا)', 'ps': 'د برانډ یا کپنۍ نوم (مثلا ټویوټا)', 'en': 'Brand or Company (e.g. Toyota)'},
-    'label_color': {'fa': 'رنگ وسیله نقلیه', 'ps': 'د وسایطو رنګ', 'en': 'Vehicle Color'},
-    'label_year': {'fa': 'سال تولید (مدل)', 'ps': 'د تولید کال (موډل)', 'en': 'Production Year (Model)'},
-    'label_plate': {'fa': 'شماره پلاک یا نمبر پلیت', 'ps': 'د پلیټ نمبر', 'en': 'License Plate Number'},
+
+    // --- اختصاصی صفحه مشخصات وسیله نقلیه (VehicleBasicInfoScreen) ---
     'err_brand_required': {'fa': 'وارد کردن نام برند الزامی است', 'ps': 'د برانډ نوم د ننه کول اړین دي', 'en': 'Brand name is required'},
     'err_color_required': {'fa': 'وارد کردن رنگ الزامی است', 'ps': 'د رنګ د ننه کول اړین دي', 'en': 'Color is required'},
     'err_year_required': {'fa': 'وارد کردن سال تولید الزامی است', 'ps': 'د تولید کال د ننه کول اړین دي', 'en': 'Production year is required'},
     'err_plate_required': {'fa': 'وارد کردن شماره پلاک الزامی است', 'ps': 'د پلیټ نمبر د ننه کول اړین دي', 'en': 'Plate number is required'},
     'btn_confirm_register': {'fa': 'تأیید و ثبت', 'ps': 'تایید او ثبت کول', 'en': 'Confirm & Register'},
-        // --- اختصاصی صفحه جواز سیر / سند وسیله نقلیه (VehicleRegistrationScreen) ---
+
+    // --- اختصاصی صفحه جواز سیر / سند وسیله نقلیه (VehicleRegistrationScreen) ---
     'vehicle_registration_title': {'fa': 'جواز سیر (سند وسیله نقلیه)', 'ps': 'د جواز سیر (سند) عکسونه', 'en': 'Vehicle Registration Document'},
     'registration_front_title': {'fa': 'تصویر روی جواز سیر (سند)', 'ps': 'د جواز سیر د مخ انځور', 'en': 'Vehicle Registration Front Image'},
     'registration_back_title': {'fa': 'تصویر پشت جواز سیر (سند)', 'ps': 'د جواز سیر د شا انځور', 'en': 'Vehicle Registration Back Image'},
     'take_photo_front': {'fa': 'گرفتن عکس از رو', 'ps': 'د مخ انځور اخیستل', 'en': 'Take Front Photo'},
     'take_photo_back': {'fa': 'گرفتن عکس از پشت', 'ps': 'د شا انځور اخیستل', 'en': 'Take Back Photo'},
     'confirm_and_save_final': {'fa': 'تأیید و ذخیره نهایی', 'ps': 'تایید او وروستی خوندي کول', 'en': 'Confirm and Final Save'},
-
-
-
-
-
-
-
-
-
   };
 
   return words[key]?[lang] ?? key;
