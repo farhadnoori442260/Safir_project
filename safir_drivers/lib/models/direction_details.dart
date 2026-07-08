@@ -1,9 +1,12 @@
+import 'package:latlong2/latlong.dart';
+
 class DirectionDetails {
-  String? distanceTextString; // متن مسافت (مثلاً 5.4 کیلومتر)
-  String? durationTextString; // متن زمان سفر (مثلاً 12 دقیقه)
+  String? distanceTextString; // متن مسافت (مثلاً ۵.۴ کیلومتر)
+  String? durationTextString; // متن زمان سفر (مثلاً ۱۲ دقیقه)
   int? distanceValueDigits;   // مقدار دقیق مسافت به متر (برای محاسبات ریاضی قیمت)
   int? durationValueDigits;   // مقدار دقیق زمان به ثانیه
-  String? encodedPoints;      // کدهای فشرده خطوط مسیر برای رسم رشته‌های پولی‌لاین روی نقشه
+  String? encodedPoints;      // جهت پشتیبانی از فرمول‌های قدیمی یا گوگل‌مپ
+  List<LatLng>? polylinePoints; // 👈 نقاط دقیق مسیر برای رسم خطوط روی OpenStreetMap
 
   DirectionDetails({
     this.distanceTextString,
@@ -11,5 +14,6 @@ class DirectionDetails {
     this.distanceValueDigits,
     this.durationValueDigits,
     this.encodedPoints,
+    this.polylinePoints,
   });
 }
