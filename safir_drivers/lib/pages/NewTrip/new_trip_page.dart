@@ -1,21 +1,19 @@
 import 'dart:async';
-
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:flutter_map/flutter_map.dart'; // 👈 جایگزین گوگل‌مپ
 import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:safir_drivers/methods/common_method.dart'; // اصلاح نام پکیج پروژه سفیر
-import 'package:safir_drivers/methods/map_theme_methods.dart'; // اصلاح نام پکیج پروژه سفیر
-import 'package:safir_drivers/models/trip_details.dart'; // اصلاح نام پکیج پروژه سفیر
-import 'package:safir_drivers/widgets/loading_dialog.dart'; // اصلاح نام پکیج پروژه سفیر
-import 'package:safir_drivers/widgets/payment_dialog.dart'; // اصلاح نام پکیج پروژه سفیر
+import 'package:latlong2/latlong.dart'; // 👈 مختصات OpenStreetMap
+import 'package:safir_drivers/methods/common_method.dart';
+import 'package:safir_drivers/methods/map_theme_methods.dart';
+import 'package:safir_drivers/models/trip_details.dart';
+import 'package:safir_drivers/widgets/loading_dialog.dart';
+import 'package:safir_drivers/widgets/payment_dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../global/global.dart';
+import '../../utils/lang_helper.dart'; // 👈 هیلپر زبان
 
 class NewTripPage extends StatefulWidget {
   final TripDetails? newTripDetailsInfo;
@@ -26,48 +24,28 @@ class NewTripPage extends StatefulWidget {
 }
 
 class _NewTripPageState extends State<NewTripPage> {
-  final Completer<GoogleMapController> googleMapCompleterController =
-      Completer<GoogleMapController>();
-  GoogleMapController? controllerGoogleMap;
+  final MapController mapController = MapController();
   MapThemeMethods themeMethods = MapThemeMethods();
-  double googleMapPaddingFromBottom = 0;
-  List<LatLng> coordinatesPolylineLatLngList = [];
-  PolylinePoints polylinePoints = PolylinePoints();
-  Set<Marker> markersSet = <Marker>{};
-  Set<Circle> circlesSet = <Circle>{};
-  Set<Polyline> polyLinesSet = <Polyline>{};
-  BitmapDescriptor? carMarkerIcon;
+
+  List<LatLng> polylinePointsList = [];
   bool directionRequested = false;
   String statusOfTrip = "accepted";
   String durationText = "";
-  
-  // متون دکمه‌ها بر اساس زبان فارسی و برند سفیر
-  String buttonTitleText = "رسیدم (Arrived)";
-  Color buttonColor = const Color(0xFF145A41); // رنگ سبز سفیر
   String distanceText = "";
+
+  String buttonTitleKey = "btn_arrived";
+  Color buttonColor = const Color(0xFF145A41); // سبز سفیر
   CommonMethods commonMethods = CommonMethods();
 
-  makeMarker() {
-    if (carMarkerIcon == null) {
-      ImageConfiguration configuration =
-          createLocalImageConfiguration(context, size: const Size(2, 2));
-
-      BitmapDescriptor.fromAssetImage(
-              configuration, "assets/images/tracking.png")
-          .then((valueIcon) {
-        carMarkerIcon = valueIcon;
-      });
-    }
-  }
-
+  // دریافت مسیر و تنظیم حدود نقشه OSRM
   obtainDirectionAndDrawRoute(
-      sourceLocationLatLng, destinationLocationLatLng) async {
+      LatLng sourceLocationLatLng, LatLng destinationLocationLatLng) async {
     try {
       showDialog(
         barrierDismissible: false,
         context: context,
-        builder: (BuildContext context) => const LoadingDialog(
-          messageText: 'لطفاً منتظر بمانید...',
+        builder: (BuildContext context) => LoadingDialog(
+          messageText: tr(context, 'please_wait'),
         ),
       );
 
@@ -76,118 +54,22 @@ class _NewTripPageState extends State<NewTripPage> {
 
       Navigator.pop(context);
 
-      if (tripDetailsInfo == null || tripDetailsInfo.encodedPoints == null) {
+      if (tripDetailsInfo == null || tripDetailsInfo.polylinePoints == null) {
         return;
       }
 
-      PolylinePoints pointsPolyline = PolylinePoints();
-      List<PointLatLng> latLngPoints =
-          pointsPolyline.decodePolyline(tripDetailsInfo.encodedPoints!);
-
-      coordinatesPolylineLatLngList.clear();
-
-      if (latLngPoints.isNotEmpty) {
-        for (var pointLatLng in latLngPoints) {
-          coordinatesPolylineLatLngList
-              .add(LatLng(pointLatLng.latitude, pointLatLng.longitude));
-        }
-      }
-
-      polyLinesSet.clear();
-
       setState(() {
-        Polyline polyline = Polyline(
-            polylineId: const PolylineId("routeID"),
-            color: const Color(0xFF145A41), // رنگ مسیر سبز سفیر
-            points: coordinatesPolylineLatLngList,
-            jointType: JointType.round,
-            width: 5,
-            startCap: Cap.roundCap,
-            endCap: Cap.roundCap,
-            geodesic: true);
-
-        polyLinesSet.add(polyline);
+        polylinePointsList = tripDetailsInfo.polylinePoints!;
       });
 
-      LatLngBounds boundsLatLng;
-
-      if (sourceLocationLatLng.latitude > destinationLocationLatLng.latitude &&
-          sourceLocationLatLng.longitude >
-              destinationLocationLatLng.longitude) {
-        boundsLatLng = LatLngBounds(
-          southwest: destinationLocationLatLng,
-          northeast: sourceLocationLatLng,
-        );
-      } else if (sourceLocationLatLng.longitude >
-          destinationLocationLatLng.longitude) {
-        boundsLatLng = LatLngBounds(
-          southwest: LatLng(sourceLocationLatLng.latitude,
-              destinationLocationLatLng.longitude),
-          northeast: LatLng(destinationLocationLatLng.latitude,
-              sourceLocationLatLng.longitude),
-        );
-      } else if (sourceLocationLatLng.latitude >
-          destinationLocationLatLng.latitude) {
-        boundsLatLng = LatLngBounds(
-          southwest: LatLng(destinationLocationLatLng.latitude,
-              sourceLocationLatLng.longitude),
-          northeast: LatLng(sourceLocationLatLng.latitude,
-              destinationLocationLatLng.longitude),
-        );
-      } else {
-        boundsLatLng = LatLngBounds(
-          southwest: sourceLocationLatLng,
-          northeast: destinationLocationLatLng,
-        );
-      }
-
-      controllerGoogleMap!
-          .animateCamera(CameraUpdate.newLatLngBounds(boundsLatLng, 72));
-
-      Marker sourceMarker = Marker(
-        markerId: const MarkerId('sourceID'),
-        position: sourceLocationLatLng,
-        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
-      );
-
-      Marker destinationMarker = Marker(
-        markerId: const MarkerId('destinationID'),
-        position: destinationLocationLatLng,
-        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
-      );
-
-      setState(() {
-        markersSet.add(sourceMarker);
-        markersSet.add(destinationMarker);
-      });
-
-      Circle sourceCircle = Circle(
-        circleId: const CircleId('sourceCircleID'),
-        strokeColor: Colors.orange,
-        strokeWidth: 4,
-        radius: 14,
-        center: sourceLocationLatLng,
-        fillColor: Colors.green,
-      );
-
-      Circle destinationCircle = Circle(
-        circleId: const CircleId('destinationCircleID'),
-        strokeColor: Colors.green,
-        strokeWidth: 4,
-        radius: 14,
-        center: destinationLocationLatLng,
-        fillColor: Colors.orange,
-      );
-
-      setState(() {
-        circlesSet.add(sourceCircle);
-        circlesSet.add(destinationCircle);
-      });
-    } catch (e, stackTrace) {
+      // تنظیم مرکز نقشه روی مبدأ
+      mapController.move(sourceLocationLatLng, 15.0);
+    } catch (e) {
       print("Error in obtainDirectionAndDrawRoute: $e");
     }
   }
 
+  // ردیابی زنده لوکیشن راننده
   getLiveLocationUpdatesOfDriver() {
     positionStreamNewTripPage =
         Geolocator.getPositionStream().listen((Position positionDriver) {
@@ -196,23 +78,7 @@ class _NewTripPageState extends State<NewTripPage> {
       LatLng driverCurrentPositionLatLng = LatLng(
           driverCurrentPosition!.latitude, driverCurrentPosition!.longitude);
 
-      Marker carMarker = Marker(
-        markerId: const MarkerId("carMarkerID"),
-        position: driverCurrentPositionLatLng,
-        icon: carMarkerIcon!,
-        infoWindow: const InfoWindow(title: "موقعیت من"),
-      );
-
-      setState(() {
-        CameraPosition cameraPosition =
-            CameraPosition(target: driverCurrentPositionLatLng, zoom: 16);
-        controllerGoogleMap!
-            .animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
-
-        markersSet
-            .removeWhere((element) => element.markerId.value == "carMarkerID");
-        markersSet.add(carMarker);
-      });
+      mapController.move(driverCurrentPositionLatLng, 16.0);
 
       updateTripDetailsInformation();
 
@@ -233,9 +99,7 @@ class _NewTripPageState extends State<NewTripPage> {
     if (!directionRequested) {
       directionRequested = true;
 
-      if (driverCurrentPosition == null) {
-        return;
-      }
+      if (driverCurrentPosition == null) return;
 
       var driverLocationLatLng = LatLng(
           driverCurrentPosition!.latitude, driverCurrentPosition!.longitude);
@@ -267,8 +131,8 @@ class _NewTripPageState extends State<NewTripPage> {
     showDialog(
       barrierDismissible: false,
       context: context,
-      builder: (BuildContext context) => const LoadingDialog(
-        messageText: 'در حال اتمام سفر...',
+      builder: (BuildContext context) => LoadingDialog(
+        messageText: tr(context, 'ending_trip'),
       ),
     );
 
@@ -280,7 +144,7 @@ class _NewTripPageState extends State<NewTripPage> {
     Navigator.pop(context);
 
     String finalFareAmount = "0";
-    if (bidAmount != "null") {
+    if (bidAmount != "null" && bidAmount.isNotEmpty) {
       finalFareAmount = bidAmount.toString();
     } else {
       finalFareAmount = fareAmount.toString();
@@ -345,22 +209,24 @@ class _NewTripPageState extends State<NewTripPage> {
       "carDetails": "$carModel - $carNumber - $carColor",
     };
 
-    Map<String, dynamic> driverCurrentLocation = {
-      'latitude': driverCurrentPosition!.latitude.toString(),
-      'longitude': driverCurrentPosition!.longitude.toString(),
-    };
+    if (driverCurrentPosition != null) {
+      Map<String, dynamic> driverCurrentLocation = {
+        'latitude': driverCurrentPosition!.latitude.toString(),
+        'longitude': driverCurrentPosition!.longitude.toString(),
+      };
+      await FirebaseDatabase.instance
+          .ref()
+          .child("tripRequest")
+          .child(widget.newTripDetailsInfo!.tripID!)
+          .child("driverLocation")
+          .update(driverCurrentLocation);
+    }
 
     await FirebaseDatabase.instance
         .ref()
         .child("tripRequest")
         .child(widget.newTripDetailsInfo!.tripID!)
         .update(driverDataMap);
-    await FirebaseDatabase.instance
-        .ref()
-        .child("tripRequest")
-        .child(widget.newTripDetailsInfo!.tripID!)
-        .child("driverLocation")
-        .update(driverCurrentLocation);
   }
 
   @override
@@ -371,42 +237,73 @@ class _NewTripPageState extends State<NewTripPage> {
 
   @override
   Widget build(BuildContext context) {
-    makeMarker();
+    bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return SafeArea(
       child: Scaffold(
         body: Stack(
           children: [
-            GoogleMap(
-              padding: EdgeInsets.only(bottom: googleMapPaddingFromBottom),
-              mapType: MapType.normal,
-              myLocationEnabled: true,
-              zoomControlsEnabled: false,
-              myLocationButtonEnabled: false,
-              markers: markersSet,
-              circles: circlesSet,
-              polylines: polyLinesSet,
-              initialCameraPosition: googlePlexInitialPosition,
-              onMapCreated: (GoogleMapController mapController) async {
-                controllerGoogleMap = mapController;
-                googleMapCompleterController.complete(controllerGoogleMap);
-
-                setState(() {
-                  googleMapPaddingFromBottom = 262;
-                });
-
-                var driverCurrentLocationLatLng = LatLng(
-                    driverCurrentPosition!.latitude,
-                    driverCurrentPosition!.longitude);
-
-                var userPickUpLocationLatLng =
-                    widget.newTripDetailsInfo!.pickUpLatLng;
-
-                await obtainDirectionAndDrawRoute(
-                    driverCurrentLocationLatLng, userPickUpLocationLatLng);
-
-                getLiveLocationUpdatesOfDriver();
-              },
+            // 👈 ویجت نقشه OpenStreetMap
+            FlutterMap(
+              mapController: mapController,
+              options: MapOptions(
+                initialCenter: driverCurrentPosition != null
+                    ? LatLng(driverCurrentPosition!.latitude,
+                        driverCurrentPosition!.longitude)
+                    : googlePlexInitialPosition.target != null
+                        ? LatLng(googlePlexInitialPosition.target.latitude,
+                            googlePlexInitialPosition.target.longitude)
+                        : const LatLng(34.5553, 69.2075),
+                initialZoom: 15.0,
+              ),
+              children: [
+                TileLayer(
+                  urlTemplate: themeMethods.getMapTileUrl(isDarkMode),
+                  userAgentPackageName: 'com.safir.drivers',
+                ),
+                // رسم خط مسیر سبز رنگ
+                PolylineLayer(
+                  polylines: [
+                    Polyline(
+                      points: polylinePointsList,
+                      strokeWidth: 5.0,
+                      color: const Color(0xFF145A41),
+                    ),
+                  ],
+                ),
+                // مارکرهای مبدأ، مقصد و موقعیت راننده
+                MarkerLayer(
+                  markers: [
+                    if (driverCurrentPosition != null)
+                      Marker(
+                        point: LatLng(driverCurrentPosition!.latitude,
+                            driverCurrentPosition!.longitude),
+                        width: 40,
+                        height: 40,
+                        child: Image.asset("assets/images/tracking.png"),
+                      ),
+                    if (widget.newTripDetailsInfo?.pickUpLatLng != null)
+                      Marker(
+                        point: widget.newTripDetailsInfo!.pickUpLatLng!,
+                        width: 35,
+                        height: 35,
+                        child: const Icon(Icons.location_on,
+                            color: Colors.green, size: 35),
+                      ),
+                    if (widget.newTripDetailsInfo?.dropOffLatLng != null)
+                      Marker(
+                        point: widget.newTripDetailsInfo!.dropOffLatLng!,
+                        width: 35,
+                        height: 35,
+                        child: const Icon(Icons.location_on,
+                            color: Colors.orange, size: 35),
+                      ),
+                  ],
+                ),
+              ],
             ),
+
+            // پنل پایینی اطلاعات سفر
             Positioned(
               left: 0,
               right: 0,
@@ -448,7 +345,8 @@ class _NewTripPageState extends State<NewTripPage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            widget.newTripDetailsInfo!.userName ?? "مسافر بدون نام",
+                            widget.newTripDetailsInfo!.userName ??
+                                tr(context, 'unknown_passenger'),
                             style: const TextStyle(
                                 fontFamily: 'IranYekan',
                                 color: Colors.white,
@@ -468,7 +366,8 @@ class _NewTripPageState extends State<NewTripPage> {
                                 color: Colors.white12,
                                 shape: BoxShape.circle,
                               ),
-                              child: const Icon(Icons.phone, color: Colors.green),
+                              child: const Icon(Icons.phone,
+                                  color: Colors.green),
                             ),
                           )
                         ],
@@ -486,10 +385,12 @@ class _NewTripPageState extends State<NewTripPage> {
                             const SizedBox(width: 8),
                             Flexible(
                               child: Text(
-                                "مبدأ: ${widget.newTripDetailsInfo!.pickupAddress}",
+                                "${tr(context, 'origin_label')}: ${widget.newTripDetailsInfo!.pickupAddress}",
                                 overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(
-                                    fontFamily: 'IranYekan', fontSize: 14, color: Colors.white70),
+                                    fontFamily: 'IranYekan',
+                                    fontSize: 14,
+                                    color: Colors.white70),
                               ),
                             ),
                           ],
@@ -508,10 +409,12 @@ class _NewTripPageState extends State<NewTripPage> {
                             const SizedBox(width: 8),
                             Flexible(
                               child: Text(
-                                "مقصد: ${widget.newTripDetailsInfo!.dropOffAddress}",
+                                "${tr(context, 'destination_label')}: ${widget.newTripDetailsInfo!.dropOffAddress}",
                                 overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(
-                                    fontFamily: 'IranYekan', fontSize: 14, color: Colors.white70),
+                                    fontFamily: 'IranYekan',
+                                    fontSize: 14,
+                                    color: Colors.white70),
                               ),
                             ),
                           ],
@@ -525,7 +428,7 @@ class _NewTripPageState extends State<NewTripPage> {
                           onPressed: () async {
                             if (statusOfTrip == "accepted") {
                               setState(() {
-                                buttonTitleText = "شروع سفر (Start Trip)";
+                                buttonTitleKey = "btn_start_trip";
                                 buttonColor = Colors.green.shade700;
                               });
                               statusOfTrip = "arrived";
@@ -539,20 +442,19 @@ class _NewTripPageState extends State<NewTripPage> {
                               showDialog(
                                 barrierDismissible: false,
                                 context: context,
-                                builder: (BuildContext context) =>
-                                    const LoadingDialog(
-                                  messageText: 'لطفاً منتظر بمانید...',
+                                builder: (BuildContext context) => LoadingDialog(
+                                  messageText: tr(context, 'please_wait'),
                                 ),
                               );
 
                               await obtainDirectionAndDrawRoute(
-                                  widget.newTripDetailsInfo!.pickUpLatLng,
+                                  widget.newTripDetailsInfo!.pickUpLatLng!,
                                   widget.newTripDetailsInfo!.dropOffLatLng!);
 
                               Navigator.pop(context);
                             } else if (statusOfTrip == "arrived") {
                               setState(() {
-                                buttonTitleText = "پایان سفر (End Trip)";
+                                buttonTitleKey = "btn_end_trip";
                                 buttonColor = Colors.red.shade700;
                                 statusOfTrip = "ontrip";
                                 FirebaseDatabase.instance
@@ -572,7 +474,7 @@ class _NewTripPageState extends State<NewTripPage> {
                                 borderRadius: BorderRadius.circular(10),
                               )),
                           child: Text(
-                            buttonTitleText,
+                            tr(context, buttonTitleKey),
                             style: const TextStyle(
                                 fontFamily: 'IranYekan',
                                 color: Colors.white,
