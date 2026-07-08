@@ -2,7 +2,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:safir_drivers/providers/registration_provider.dart'; // اصلاح نام پکیج با برند سفیر
+import 'package:safir_drivers/providers/registration_provider.dart';
+import 'package:safir_drivers/utils/lang_helper.dart'; // 👈 هیلپر زبان سفیر
 
 class DriverCarImageScreeen extends StatefulWidget {
   const DriverCarImageScreeen({super.key});
@@ -14,13 +15,12 @@ class DriverCarImageScreeen extends StatefulWidget {
 class _DriverCarImageScreeenState extends State<DriverCarImageScreeen> {
   @override
   Widget build(BuildContext context) {
-    
     return Consumer<RegistrationProvider>(
       builder: (context, registrationProvider, child) => Scaffold(
         appBar: AppBar(
-          title: const Text(
-            'تصویر وسیله نقلیه',
-            style: TextStyle(fontFamily: 'IranYekan', fontWeight: FontWeight.bold),
+          title: Text(
+            tr(context, 'vehicle_image_title'),
+            style: const TextStyle(fontFamily: 'IranYekan', fontWeight: FontWeight.bold),
           ),
           centerTitle: true,
           actions: [
@@ -28,9 +28,9 @@ class _DriverCarImageScreeenState extends State<DriverCarImageScreeen> {
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: const Text(
-                'بستن', 
-                style: TextStyle(fontFamily: 'IranYekan', color: Colors.black, fontWeight: FontWeight.bold)
+              child: Text(
+                tr(context, 'close'), 
+                style: const TextStyle(fontFamily: 'IranYekan', color: Colors.black, fontWeight: FontWeight.bold)
               ),
             ),
           ],
@@ -45,16 +45,16 @@ class _DriverCarImageScreeenState extends State<DriverCarImageScreeen> {
                 // بخش انتخاب تصویر موتر/موتورسایکل راننده
                 _buildImagePicker(
                   context,
-                  'لطفاً یک عکس واضح از نمای روبه‌رو یا جانبی وسیله نقلیه خود قرار دهید.',
+                  tr(context, 'vehicle_image_hint'),
                   registrationProvider.vehicleImage,
                   registrationProvider.pickVehicleImageFromCamera,
                 ),
                 const SizedBox(height: 25),
 
-                // دکمه تایید و ثبت نهایی
-                Widget/SizedBox (
+                // دکمه تایید و ثبت نهایی (ارور سینتکس SizedBox اصلاح شد)
+                SizedBox(
                   width: MediaQuery.of(context).size.width * 0.9,
-                  height: 50, // اندازه ثابت استاندارد برای دکمه
+                  height: 50,
                   child: ElevatedButton(
                     onPressed: registrationProvider.isVehiclePhotoAdded
                         ? () async {
@@ -74,9 +74,14 @@ class _DriverCarImageScreeenState extends State<DriverCarImageScreeen> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    child: const Text(
-                      'تأیید و ذخیره',
-                      style: TextStyle(fontFamily: 'IranYekan', color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                    child: Text(
+                      tr(context, 'confirm_and_save'),
+                      style: const TextStyle(
+                        fontFamily: 'IranYekan', 
+                        color: Colors.white, 
+                        fontSize: 16, 
+                        fontWeight: FontWeight.bold
+                      ),
                     ),
                   ),
                 ),
@@ -89,8 +94,12 @@ class _DriverCarImageScreeenState extends State<DriverCarImageScreeen> {
   }
 
   // ویجت سفارشی‌سازی شده برای کادر انتخاب تصویر
-  Widget _buildImagePicker(BuildContext context, String label, XFile? imageFile,
-      VoidCallback onPressed) {
+  Widget _buildImagePicker(
+    BuildContext context, 
+    String label, 
+    XFile? imageFile,
+    VoidCallback onPressed,
+  ) {
     return Container(
       decoration: BoxDecoration(
         border: Border.all(color: Colors.black12),
@@ -98,7 +107,10 @@ class _DriverCarImageScreeenState extends State<DriverCarImageScreeen> {
         color: Colors.white,
         boxShadow: const [
           BoxShadow(
-              color: Colors.black12, offset: Offset(0, 2), blurRadius: 6.0),
+            color: Colors.black12, 
+            offset: Offset(0, 2), 
+            blurRadius: 6.0
+          ),
         ],
       ),
       child: Column(
@@ -114,14 +126,14 @@ class _DriverCarImageScreeenState extends State<DriverCarImageScreeen> {
           ),
           const SizedBox(height: 16),
           
-          // اگر راننده عکس گرفته باشد، آن را نشان می‌دهد؛ در غیر این صورت یک تصویر موتر پیش‌فرض
+          // نمایش عکس گرفته‌شده یا آیکون پیش‌فرض
           imageFile != null
               ? Image.file(File(imageFile.path), height: 160, fit: BoxFit.cover)
-              : Icon(Icons.directions_car, size: 120, color: Colors.grey.shade400), // استفاده از آیکون به جای تصویر ثابت محلی جهت جلوگیری از کرش احتمالی نبود فایل
+              : Icon(Icons.directions_car, size: 120, color: Colors.grey.shade400),
               
           const SizedBox(height: 16),
           Container(
-            width: 200,
+            padding: const EdgeInsets.symmetric(horizontal: 12),
             height: 42,
             decoration: BoxDecoration(
               border: Border.all(color: const Color(0xFF145A41)), // مرز سبز سفیر
@@ -130,9 +142,13 @@ class _DriverCarImageScreeenState extends State<DriverCarImageScreeen> {
             child: TextButton.icon(
               onPressed: onPressed,
               icon: const Icon(Icons.camera_alt, color: Color(0xFF145A41)),
-              label: const Text(
-                'گرفتن عکس با دوربین',
-                style: TextStyle(fontFamily: 'IranYekan', color: Color(0xFF145A41), fontWeight: FontWeight.bold),
+              label: Text(
+                tr(context, 'take_photo_camera'),
+                style: const TextStyle(
+                  fontFamily: 'IranYekan', 
+                  color: Color(0xFF145A41), 
+                  fontWeight: FontWeight.bold
+                ),
               ),
             ),
           ),
