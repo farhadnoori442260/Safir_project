@@ -3,12 +3,11 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_geofire/flutter_geofire.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
-import 'package:safir_drivers/const.dart'; 
-import '../global/global.dart'; // 👈 استفاده از مسیر فایل تایید شده شما
+import 'package:latlong2/latlong.dart'; // 👈 جایگزین گوگل‌مپ برای OpenStreetMap
+import '../global/global.dart';
 import '../models/direction_details.dart';
-import '../utils/lang_helper.dart'; // 👈 اضافه شدن هیلپر زبان
+import '../utils/lang_helper.dart';
 
 class CommonMethods {
   // بررسی اتصال اینترنت راننده
@@ -19,7 +18,6 @@ class CommonMethods {
     if (connectionResults != ConnectivityResult.wifi &&
         connectionResults != ConnectivityResult.mobile) {
       if (!context.mounted) return;
-      // 👈 سه‌زبانه کردن پیام خطای اینترنت با استفاده از هیلپر
       displaySnackBar(tr(context, 'no_internet_error'), context);
     } else {
       print("اینترنت متصل است");
@@ -65,7 +63,7 @@ class CommonMethods {
     }
   }
 
-  // متد ارسال درخواست به API های نقشه
+  // متد ارسال درخواست به API های عمومی
   static sendRequestToAPI(String apiUrl) async {
     http.Response responseFromAPI = await http.get(Uri.parse(apiUrl));
 
@@ -82,32 +80,50 @@ class CommonMethods {
     }
   }
 
-  // دریافت جزئیات و خطوط مسیر بین مبدا و مقصد از گوگل
+  // 👈 دریافت جزئیات و نقاط مسیر از سرویس رایگان OSRM برای OpenStreetMap
   static Future<DirectionDetails?> getDirectionDetailsFromAPI(
       LatLng source, LatLng destination) async {
+    
     String urlDirectionsAPI =
-        "https://maps.googleapis.com/maps/api/directions/json?destination=${destination.latitude},${destination.longitude}&origin=${source.latitude},${source.longitude}&mode=driving&key=$googleMapKey";
+        "https://router.project-osrm.org/route/v1/driving/${source.longitude},${source.latitude};${destination.longitude},${destination.latitude}?overview=full&geometries=geojson";
 
     var responseFromDirectionsAPI = await sendRequestToAPI(urlDirectionsAPI);
-    print("پاسخ وب‌سرویس مسیر یابی: $responseFromDirectionsAPI");
-    if (responseFromDirectionsAPI == "error") {
+    print("پاسخ وب‌سرویس مسیریابی OSRM: $responseFromDirectionsAPI");
+
+    if (responseFromDirectionsAPI == "error" ||
+        responseFromDirectionsAPI["routes"] == null ||
+        (responseFromDirectionsAPI["routes"] as List).isEmpty) {
       return null;
     }
 
     DirectionDetails detailsModel = DirectionDetails();
 
-    detailsModel.distanceTextString =
-        responseFromDirectionsAPI["routes"][0]["legs"][0]["distance"]["text"];
-    detailsModel.distanceValueDigits =
-        responseFromDirectionsAPI["routes"][0]["legs"][0]["distance"]["value"];
+    // استخراج مسافت (به متر) و زمان (به ثانیه)
+    double distanceInMeters =
+        (responseFromDirectionsAPI["routes"][0]["distance"] as num).toDouble();
+    double durationInSeconds =
+        (responseFromDirectionsAPI["routes"][0]["duration"] as num).toDouble();
 
-    detailsModel.durationTextString =
-        responseFromDirectionsAPI["routes"][0]["legs"][0]["duration"]["text"];
-    detailsModel.durationValueDigits =
-        responseFromDirectionsAPI["routes"][0]["legs"][0]["duration"]["value"];
+    detailsModel.distanceValueDigits = distanceInMeters.round();
+    detailsModel.durationValueDigits = durationInSeconds.round();
 
-    detailsModel.encodedPoints =
-        responseFromDirectionsAPI["routes"][0]["overview_polyline"]["points"];
+    // تبدیل متنی مسافت و زمان
+    double distanceInKm = distanceInMeters / 1000;
+    double durationInMinutes = durationInSeconds / 60;
+
+    detailsModel.distanceTextString = "${distanceInKm.toStringAsFixed(1)} km";
+    detailsModel.durationTextString = "${durationInMinutes.round()} min";
+
+    // استخراج مختصات نقاط مسیر برای رسم خط روی OpenStreetMap
+    List<dynamic> coordinates =
+        responseFromDirectionsAPI["routes"][0]["geometry"]["coordinates"];
+    List<LatLng> polylinePointsList = [];
+
+    for (var point in coordinates) {
+      polylinePointsList.add(LatLng(point[1].toDouble(), point[0].toDouble()));
+    }
+
+    detailsModel.polylinePoints = polylinePointsList;
 
     return detailsModel;
   }
@@ -115,16 +131,15 @@ class CommonMethods {
   // فرمول محاسبه هوشمند کرایه بر اساس مسافت و زمان سفر برای سیستم سفیر
   calculateFareAmount(DirectionDetails directionDetails,
       {double surgeMultiplier = 1.0}) {
-    
-    double distancePerKmAmount = 20;     
-    double durationPerMinuteAmount = 15; 
-    double baseFareAmount = 50;          
-    double bookingFee = 10;              
-    double minimumFare = 100;            
+    double distancePerKmAmount = 20;
+    double durationPerMinuteAmount = 15;
+    double baseFareAmount = 50;
+    double bookingFee = 10;
+    double minimumFare = 100;
 
     double totalDistanceTravelledFareAmount =
         (directionDetails.distanceValueDigits! / 1000) * distancePerKmAmount;
-        
+
     double totalDurationSpendFareAmount =
         (directionDetails.durationValueDigits! / 60) * durationPerMinuteAmount;
 
