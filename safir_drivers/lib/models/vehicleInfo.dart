@@ -1,5 +1,5 @@
 class VehicleInfo {
-  final String type;                             // نوع وسیله نقلیه (موتر، موتورسایکل، ریکشا و غیره)
+  final String type;                             // نوع وسیله نقلیه (موتر، موتورسایکل، ریکشا)
   final String brand;                            // برند یا کمپنی سازنده
   final String color;                            // رنگ وسیله نقلیه
   final String registrationPlateNumber;          // شماره پلاک، پلیت یا فورم
@@ -19,6 +19,20 @@ class VehicleInfo {
     required this.registrationCertificateBackImage,
   });
 
+  // 👈 متد سازنده پیش‌فرض برای زمانی که هنوز اطلاعات وسیله نقلیه ثبت نشده است
+  factory VehicleInfo.empty() {
+    return VehicleInfo(
+      type: 'economic_car',
+      brand: '',
+      color: '',
+      registrationPlateNumber: '',
+      vehiclePicture: '',
+      productionYear: '',
+      registrationCertificateFrontImage: '',
+      registrationCertificateBackImage: '',
+    );
+  }
+
   // تبدیل شیء به مپ برای ذخیره در فایربیس
   Map<String, dynamic> toMap() {
     return {
@@ -33,17 +47,17 @@ class VehicleInfo {
     };
   }
 
-  // ساختن شیء از روی اطلاعات دریافتی از فایربیس
+  // ساختن شیء از روی اطلاعات دریافتی از فایربیس با مدیریت ایمن Null-Safety
   factory VehicleInfo.fromMap(Map<String, dynamic> map) {
     return VehicleInfo(
-      type: map['type'],
-      brand: map['brand'],
-      color: map['color'],
-      registrationPlateNumber: map['registrationPlateNumber'],
-      vehiclePicture: map['vehiclePicture'],
-      productionYear: map['productionYear'],
-      registrationCertificateFrontImage: map['registrationCertificateFrontImage'],
-      registrationCertificateBackImage: map['registrationCertificateBackImage'],
+      type: map['type'] ?? 'economic_car',
+      brand: map['brand'] ?? '',
+      color: map['color'] ?? '',
+      registrationPlateNumber: map['registrationPlateNumber'] ?? '',
+      vehiclePicture: map['vehiclePicture'] ?? '',
+      productionYear: map['productionYear'] ?? '',
+      registrationCertificateFrontImage: map['registrationCertificateFrontImage'] ?? '',
+      registrationCertificateBackImage: map['registrationCertificateBackImage'] ?? '',
     );
   }
 }
