@@ -165,6 +165,12 @@ String tr(BuildContext context, String key) {
     'motorbike': {'fa': 'موتورسایکل', 'ps': 'موټرسایکل', 'en': 'Motorbike'},
         // --- اختصاصی متدهای عمومی (Common Methods) ---
     'no_internet_error': {'fa': 'اتصال اینترنت شما برقرار نیست. لطفاً شبکه خود را بررسی کرده و دوباره تلاش کنید.', 'ps': 'ستاسو انټرنیټ وصل نه دی. مهرباني وکړئ خپله شبکه وڅیړئ او بیا هڅه وکړئ.', 'en': 'Your internet connection is offline. Please check your network and try again.'},
+        // --- اختصاصی دکمه‌های وضعیت سفر ---
+    'btn_arrived': {'fa': 'رسیدم به مبدأ', 'ps': 'مبدأ ته ورسیدم', 'en': 'Arrived'},
+    'btn_start_trip': {'fa': 'شروع سفر', 'ps': 'سفر پیل کړئ', 'en': 'Start Trip'},
+    'btn_end_trip': {'fa': 'پایان سفر', 'ps': 'سفر پای ته ورسوئ', 'en': 'End Trip'},
+    'ending_trip': {'fa': 'در حال اتمام سفر...', 'ps': 'د سفر د پای ته رسولو په حال کې...', 'en': 'Ending trip...'},
+
 
 
 
