@@ -2,13 +2,14 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:safir_drivers/providers/registration_provider.dart'; // اصلاح نام پکیج پروژه سفیر
+import 'package:safir_drivers/providers/registration_provider.dart';
+import 'package:safir_drivers/utils/lang_helper.dart'; // 👈 هیلپر زبان سفیر
 
 class VehicleRegistrationScreen extends StatefulWidget {
   const VehicleRegistrationScreen({super.key});
 
   @override
-  _VehicleRegistrationScreenState createState() =>
+  State<VehicleRegistrationScreen> createState() =>
       _VehicleRegistrationScreenState();
 }
 
@@ -20,9 +21,9 @@ class _VehicleRegistrationScreenState extends State<VehicleRegistrationScreen> {
     return Consumer<RegistrationProvider>(
       builder: (context, registrationProvider, child) => Scaffold(
         appBar: AppBar(
-          title: const Text(
-            'جواز سیر (سند وسیله نقلیه)',
-            style: TextStyle(fontFamily: 'IranYekan', fontSize: 16, fontWeight: FontWeight.bold),
+          title: Text(
+            tr(context, 'vehicle_registration_title'),
+            style: const TextStyle(fontFamily: 'IranYekan', fontSize: 16, fontWeight: FontWeight.bold),
           ),
           centerTitle: true,
           actions: [
@@ -30,7 +31,10 @@ class _VehicleRegistrationScreenState extends State<VehicleRegistrationScreen> {
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: const Text('بستن', style: TextStyle(fontFamily: 'IranYekan', color: Colors.black, fontWeight: FontWeight.bold)),
+              child: Text(
+                tr(context, 'close'), 
+                style: const TextStyle(fontFamily: 'IranYekan', color: Colors.black, fontWeight: FontWeight.bold)
+              ),
             ),
           ],
         ),
@@ -44,21 +48,27 @@ class _VehicleRegistrationScreenState extends State<VehicleRegistrationScreen> {
                 children: [
                   const SizedBox(height: 10),
                   // بارگذاری تصویر روی جواز سیر
-                  _buildImagePickerFront(
-                      context,
-                      'تصویر روی جواز سیر (سند)',
-                      registrationProvider.vehicleRegistrationFrontImage,
-                      () => registrationProvider
-                          .pickAndCropVehicleRegistrationImages(true)),
+                  _buildImagePicker(
+                    context: context,
+                    label: tr(context, 'registration_front_title'),
+                    imageFile: registrationProvider.vehicleRegistrationFrontImage,
+                    buttonText: tr(context, 'take_photo_front'),
+                    defaultAssetPath: 'assets/auth/cnic-front.png',
+                    onPressed: () => registrationProvider
+                        .pickAndCropVehicleRegistrationImages(true),
+                  ),
                   const SizedBox(height: 16),
 
                   // بارگذاری تصویر پشت جواز سیر
-                  _buildImagePickerBack(
-                      context,
-                      'تصویر پشت جواز سیر (سند)',
-                      registrationProvider.vehicleRegistrationBackImage,
-                      () => registrationProvider
-                          .pickAndCropVehicleRegistrationImages(false)),
+                  _buildImagePicker(
+                    context: context,
+                    label: tr(context, 'registration_back_title'),
+                    imageFile: registrationProvider.vehicleRegistrationBackImage,
+                    buttonText: tr(context, 'take_photo_back'),
+                    defaultAssetPath: 'assets/auth/cnic-back.png',
+                    onPressed: () => registrationProvider
+                        .pickAndCropVehicleRegistrationImages(false),
+                  ),
                   const SizedBox(height: 25),
 
                   // دکمه ثبت نهایی مدارک
@@ -87,9 +97,14 @@ class _VehicleRegistrationScreenState extends State<VehicleRegistrationScreen> {
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                      child: const Text(
-                        'تأیید و ذخیره نهایی',
-                        style: TextStyle(fontFamily: 'IranYekan', color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                      child: Text(
+                        tr(context, 'confirm_and_save_final'),
+                        style: const TextStyle(
+                          fontFamily: 'IranYekan', 
+                          color: Colors.white, 
+                          fontSize: 16, 
+                          fontWeight: FontWeight.bold
+                        ),
                       ),
                     ),
                   ),
@@ -102,8 +117,15 @@ class _VehicleRegistrationScreenState extends State<VehicleRegistrationScreen> {
     );
   }
 
-  Widget _buildImagePickerFront(BuildContext context, String label,
-      XFile? imageFile, VoidCallback onPressed) {
+  // ویجت یکپارچه برای ساخت کادر دریافت عکس روی/پشت جواز سیر
+  Widget _buildImagePicker({
+    required BuildContext context,
+    required String label,
+    required XFile? imageFile,
+    required String buttonText,
+    required String defaultAssetPath,
+    required VoidCallback onPressed,
+  }) {
     return Container(
       decoration: BoxDecoration(
         border: Border.all(color: Colors.black12),
@@ -124,13 +146,13 @@ class _VehicleRegistrationScreenState extends State<VehicleRegistrationScreen> {
           imageFile != null
               ? Image.file(File(imageFile.path), height: 150, fit: BoxFit.cover)
               : Image.asset(
-                  'assets/auth/cnic-front.png',
+                  defaultAssetPath,
                   height: 150,
                   errorBuilder: (c, e, s) => Icon(Icons.credit_card, size: 120, color: Colors.grey.shade300),
                 ),
           const SizedBox(height: 16),
           Container(
-            width: 200,
+            padding: const EdgeInsets.symmetric(horizontal: 12),
             height: 40,
             decoration: BoxDecoration(
               border: Border.all(color: const Color(0xFF145A41)),
@@ -139,58 +161,9 @@ class _VehicleRegistrationScreenState extends State<VehicleRegistrationScreen> {
             child: TextButton.icon(
               onPressed: onPressed,
               icon: const Icon(Icons.camera_alt, color: Color(0xFF145A41)),
-              label: const Text(
-                'گرفتن عکس از رو',
-                style: TextStyle(fontFamily: 'IranYekan', color: Color(0xFF145A41), fontWeight: FontWeight.bold),
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildImagePickerBack(BuildContext context, String label,
-      XFile? imageFile, VoidCallback onPressed) {
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.black12),
-        borderRadius: BorderRadius.circular(15),
-        color: Colors.white,
-        boxShadow: const [
-          BoxShadow(color: Colors.black12, offset: Offset(0, 2), blurRadius: 6.0),
-        ],
-      ),
-      child: Column(
-        children: [
-          const SizedBox(height: 16),
-          Text(
-            label,
-            style: const TextStyle(fontFamily: 'IranYekan', fontSize: 14, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 16),
-          imageFile != null
-              ? Image.file(File(imageFile.path), height: 150, fit: BoxFit.cover)
-              : Image.asset(
-                  'assets/auth/cnic-back.png',
-                  height: 150,
-                  errorBuilder: (c, e, s) => Icon(Icons.credit_card, size: 120, color: Colors.grey.shade300),
-                ),
-          const SizedBox(height: 16),
-          Container(
-            width: 200,
-            height: 40,
-            decoration: BoxDecoration(
-              border: Border.all(color: const Color(0xFF145A41)),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: TextButton.icon(
-              onPressed: onPressed,
-              icon: const Icon(Icons.camera_alt, color: Color(0xFF145A41)),
-              label: const Text(
-                'گرفتن عکس از پشت',
-                style: TextStyle(fontFamily: 'IranYekan', color: Color(0xFF145A41), fontWeight: FontWeight.bold),
+              label: Text(
+                buttonText,
+                style: const TextStyle(fontFamily: 'IranYekan', color: Color(0xFF145A41), fontWeight: FontWeight.bold),
               ),
             ),
           ),
