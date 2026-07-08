@@ -184,6 +184,36 @@ String tr(BuildContext context, String key) {
     'google_sign_in': {'fa': 'ادامه با حساب گوگل', 'ps': 'د ګوګل حساب سره دوام ورکړئ', 'en': 'Continue with Google'},
     'terms_and_conditions': {'fa': 'با ادامه کار، شما موافقت خود را با قوانین و مقررات سفیر جهت دریافت تماس، پیام در واتساپ یا پیامک تأیید هویت اعلام می‌دارید.', 'ps': 'د کار په دوام سره، تاسو د هویت تایید پیغامونو یا اړیکو ترلاسه کولو لپاره د سفیر د قوانینو او مقرراتو سره خپل موافقت اعلانوئ.', 'en': 'By continuing, you agree to Safir\'s terms and conditions to receive verification calls, SMS, or WhatsApp messages.'},
     'invalid_phone_error': {'fa': 'لطفاً یک شماره موبایل معتبر (مثل 771234567) وارد کنید.', 'ps': 'مهرباني وکړئ یو باوري موبایل شمیره (لکه 771234567) داخل کړئ.', 'en': 'Please enter a valid mobile number (e.g., 771234567).'},
+        // --- اختصاصی صفحه آپلود عکس وسیله نقلیه (DriverCarImageScreeen) ---
+    'vehicle_image_title': {'fa': 'تصویر وسیله نقلیه', 'ps': 'د وسایطو تصویر', 'en': 'Vehicle Image'},
+    'close': {'fa': 'بستن', 'ps': 'بندول', 'en': 'Close'},
+    'vehicle_image_hint': {'fa': 'لطفاً یک عکس واضح از نمای روبه‌رو یا جانبی وسیله نقلیه خود قرار دهید.', 'ps': 'مهرباني وکړئ د خپلې وسایطې واضح انځور له مخې یا اړخ څخه واخلئ.', 'en': 'Please upload a clear front or side photo of your vehicle.'},
+    'take_photo_camera': {'fa': 'گرفتن عکس با دوربین', 'ps': 'د کلمې په واسطه انځور اخیستل', 'en': 'Take Photo with Camera'},
+    'confirm_and_save': {'fa': 'تأیید و ذخیره', 'ps': 'تایید او خوندي کول', 'en': 'Confirm and Save'},
+        // --- اختصاصی صفحه مشخصات وسیله نقلیه (VehicleBasicInfoScreen) ---
+    'vehicle_info_title': {'fa': 'مشخصات وسیله نقلیه', 'ps': 'د وسایطو مشخصات', 'en': 'Vehicle Specifications'},
+    'vehicle_car': {'fa': 'موتر (ماشین)', 'ps': 'موټر', 'en': 'Car'},
+    'vehicle_bike': {'fa': 'موتورسایکل', 'ps': 'موټرسایکل', 'en': 'Motorcycle'},
+    'vehicle_auto': {'fa': 'ریکشا', 'ps': 'ریکشا', 'en': 'Rickshaw'},
+    'label_brand': {'fa': 'نام برند یا کمپنی (مثلاً تویوتا)', 'ps': 'د برانډ یا کپنۍ نوم (مثلا ټویوټا)', 'en': 'Brand or Company (e.g. Toyota)'},
+    'label_color': {'fa': 'رنگ وسیله نقلیه', 'ps': 'د وسایطو رنګ', 'en': 'Vehicle Color'},
+    'label_year': {'fa': 'سال تولید (مدل)', 'ps': 'د تولید کال (موډل)', 'en': 'Production Year (Model)'},
+    'label_plate': {'fa': 'شماره پلاک یا نمبر پلیت', 'ps': 'د پلیټ نمبر', 'en': 'License Plate Number'},
+    'err_brand_required': {'fa': 'وارد کردن نام برند الزامی است', 'ps': 'د برانډ نوم د ننه کول اړین دي', 'en': 'Brand name is required'},
+    'err_color_required': {'fa': 'وارد کردن رنگ الزامی است', 'ps': 'د رنګ د ننه کول اړین دي', 'en': 'Color is required'},
+    'err_year_required': {'fa': 'وارد کردن سال تولید الزامی است', 'ps': 'د تولید کال د ننه کول اړین دي', 'en': 'Production year is required'},
+    'err_plate_required': {'fa': 'وارد کردن شماره پلاک الزامی است', 'ps': 'د پلیټ نمبر د ننه کول اړین دي', 'en': 'Plate number is required'},
+    'btn_confirm_register': {'fa': 'تأیید و ثبت', 'ps': 'تایید او ثبت کول', 'en': 'Confirm & Register'},
+        // --- اختصاصی صفحه جواز سیر / سند وسیله نقلیه (VehicleRegistrationScreen) ---
+    'vehicle_registration_title': {'fa': 'جواز سیر (سند وسیله نقلیه)', 'ps': 'د جواز سیر (سند) عکسونه', 'en': 'Vehicle Registration Document'},
+    'registration_front_title': {'fa': 'تصویر روی جواز سیر (سند)', 'ps': 'د جواز سیر د مخ انځور', 'en': 'Vehicle Registration Front Image'},
+    'registration_back_title': {'fa': 'تصویر پشت جواز سیر (سند)', 'ps': 'د جواز سیر د شا انځور', 'en': 'Vehicle Registration Back Image'},
+    'take_photo_front': {'fa': 'گرفتن عکس از رو', 'ps': 'د مخ انځور اخیستل', 'en': 'Take Front Photo'},
+    'take_photo_back': {'fa': 'گرفتن عکس از پشت', 'ps': 'د شا انځور اخیستل', 'en': 'Take Back Photo'},
+    'confirm_and_save_final': {'fa': 'تأیید و ذخیره نهایی', 'ps': 'تایید او وروستی خوندي کول', 'en': 'Confirm and Final Save'},
+
+
+
 
 
 
