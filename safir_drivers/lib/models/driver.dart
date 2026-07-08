@@ -1,4 +1,4 @@
-import 'package:safir_drivers/models/vehicleInfo.dart'; // اصلاح نام پکیج به safir_drivers
+import 'package:safir_drivers/models/vehicleInfo.dart';
 
 class Driver {
   final String id;
@@ -19,7 +19,7 @@ class Driver {
   final String blockStatus;            // وضعیت مسدودی (yes/no)
   final String deviceToken;            // توکن دستگاه برای ارسال نوتیفیکیشن
   final String earnings;               // مجموع درآمد راننده
-  final String driverRattings;         // امتیاز راننده
+  final String driverRatings;          // امتیاز راننده
   final VehicleInfo vehicleInfo;       // اطلاعات وسیله نقلیه (موتر/موتورسایکل)
 
   Driver({
@@ -41,7 +41,7 @@ class Driver {
     required this.blockStatus,
     required this.deviceToken,
     required this.earnings,
-    required this.driverRattings,
+    required this.driverRatings,
     required this.vehicleInfo,
   });
 
@@ -66,34 +66,37 @@ class Driver {
       'blockStatus': blockStatus,
       'deviceToken': deviceToken,
       'earnings': earnings,
-      'driverRattings': driverRattings, 
+      'driverRatings': driverRatings,
       'vehicleInfo': vehicleInfo.toMap(), // تبدیل اطلاعات تودرتوی وسیله نقلیه
     };
   }
 
-  // ساختن شیء راننده از روی اطلاعات دریافتی از فایربیس
+  // ساختن شیء راننده از روی اطلاعات دریافتی از فایربیس با مدیریت ایمن Null-Safety
   factory Driver.fromMap(Map<String, dynamic> map) {
     return Driver(
-      id: map['id'],
-      profilePicture: map['profilePicture'],
-      firstName: map['firstName'],
-      secondName: map['secondName'],
-      phoneNumber: map['phoneNumber'],
-      address: map['address'],
-      dob: map['dob'],
-      email: map['email'],
-      cnicNumber: map['cnicNumber'],
-      cnicFrontImage: map['cnicFrontImage'],
-      cnicBackImage: map['cnicBackImage'],
-      driverFaceWithCnic: map['driverFaceWithCnic'],
-      drivingLicenseNumber: map['drivingLicenseNumber'],
-      drivingLicenseFrontImage: map['drivingLicenseFrontImage'],
-      drivingLicenseBackImage: map['drivingLicenseBackImage'],
-      blockStatus: map['blockStatus'],
-      deviceToken: map['deviceToken'],
-      earnings: map['earnings'],
-      driverRattings: map['driverRattings'], 
-      vehicleInfo: VehicleInfo.fromMap(map['vehicleInfo']),
+      id: map['id'] ?? '',
+      profilePicture: map['profilePicture'] ?? '',
+      firstName: map['firstName'] ?? '',
+      secondName: map['secondName'] ?? '',
+      phoneNumber: map['phoneNumber'] ?? '',
+      address: map['address'] ?? '',
+      dob: map['dob'] ?? '',
+      email: map['email'] ?? '',
+      cnicNumber: map['cnicNumber'] ?? '',
+      cnicFrontImage: map['cnicFrontImage'] ?? '',
+      cnicBackImage: map['cnicBackImage'] ?? '',
+      driverFaceWithCnic: map['driverFaceWithCnic'] ?? '',
+      drivingLicenseNumber: map['drivingLicenseNumber'] ?? '',
+      drivingLicenseFrontImage: map['drivingLicenseFrontImage'] ?? '',
+      drivingLicenseBackImage: map['drivingLicenseBackImage'] ?? '',
+      blockStatus: map['blockStatus'] ?? 'no',
+      deviceToken: map['deviceToken'] ?? '',
+      earnings: map['earnings'] ?? '0',
+      // پشتیبانی همزمان از کلید قدیمی و جدید برای جلوگیری از ارور
+      driverRatings: map['driverRatings'] ?? map['driverRattings'] ?? '0',
+      vehicleInfo: map['vehicleInfo'] != null 
+          ? VehicleInfo.fromMap(Map<String, dynamic>.from(map['vehicleInfo']))
+          : VehicleInfo.empty(), // در صورت خالی بودن مقدار خالی برمی‌گرداند
     );
   }
 }
