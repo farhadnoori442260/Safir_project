@@ -176,6 +176,15 @@ String tr(BuildContext context, String key) {
     'didnt_receive_code': {'fa': 'کد را دریافت نکرده‌اید؟', 'ps': 'کوډ مو نه دی ترلاسه کړی؟', 'en': 'Didn\'t receive code?'},
     'resend_code': {'fa': 'ارسال مجدد', 'ps': 'بیا استول', 'en': 'Resend'},
     'complete_documents_error': {'fa': 'لطفاً اطلاعات و مدارک ناقص خود را تکمیل کنید.', 'ps': 'مهرباني وکړئ خپل نیمګړي اسناد او معلومات بشپړ کړئ.', 'en': 'Please complete your pending documents and information.'},
+        // --- اختصاصی صفحه ورود و ثبت نام (RegisterScreen) ---
+    'register_title': {'fa': 'ورود یا ثبت‌نام راننده سفیر', 'ps': 'د سفیر چلونکي ننوتل یا راجستر', 'en': 'Safir Driver Login or Register'},
+    'register_subtitle': {'fa': 'لطفاً شماره موبایل خود را بدون صفر وارد کنید', 'ps': 'مهرباني وکړئ خپل موبایل شمیره بې له صفر داخل کړئ', 'en': 'Please enter your mobile number without zero'},
+    'btn_continue': {'fa': 'ادامه', 'ps': 'ادامه', 'en': 'Continue'},
+    'or_label': {'fa': 'یا', 'ps': 'یا', 'en': 'Or'},
+    'google_sign_in': {'fa': 'ادامه با حساب گوگل', 'ps': 'د ګوګل حساب سره دوام ورکړئ', 'en': 'Continue with Google'},
+    'terms_and_conditions': {'fa': 'با ادامه کار، شما موافقت خود را با قوانین و مقررات سفیر جهت دریافت تماس، پیام در واتساپ یا پیامک تأیید هویت اعلام می‌دارید.', 'ps': 'د کار په دوام سره، تاسو د هویت تایید پیغامونو یا اړیکو ترلاسه کولو لپاره د سفیر د قوانینو او مقرراتو سره خپل موافقت اعلانوئ.', 'en': 'By continuing, you agree to Safir\'s terms and conditions to receive verification calls, SMS, or WhatsApp messages.'},
+    'invalid_phone_error': {'fa': 'لطفاً یک شماره موبایل معتبر (مثل 771234567) وارد کنید.', 'ps': 'مهرباني وکړئ یو باوري موبایل شمیره (لکه 771234567) داخل کړئ.', 'en': 'Please enter a valid mobile number (e.g., 771234567).'},
+
 
 
 
