@@ -1,11 +1,12 @@
 import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:safir_drivers/methods/common_method.dart'; // اصلاح نام پکیج
-import 'package:safir_drivers/pages/dashboard.dart';       // اصلاح نام پکیج
-import 'package:safir_drivers/pages/driverRegistration/driver_registration.dart'; // اصلاح نام پکیج
-import 'package:safir_drivers/widgets/blocked_screen.dart';   // اصلاح نام پکیج
-import '../../providers/auth_provider.dart'; // اصلاح نام پکیج
+import 'package:safir_drivers/methods/common_method.dart';
+import 'package:safir_drivers/pages/dashboard.dart';
+import 'package:safir_drivers/pages/driverRegistration/driver_registration.dart';
+import 'package:safir_drivers/widgets/blocked_screen.dart';
+import '../../providers/auth_provider.dart';
+import '../../utils/lang_helper.dart'; // 👈 هیلپر زبان سفیر
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -51,9 +52,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 20),
-                const Text(
-                  "ورود یا ثبت‌نام راننده سفیر",
-                  style: TextStyle(
+                Text(
+                  tr(context, 'register_title'),
+                  style: const TextStyle(
                     fontFamily: 'IranYekan',
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -61,9 +62,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                const Text(
-                  "لطفاً شماره موبایل خود را بدون صفر وارد کنید",
-                  style: TextStyle(
+                Text(
+                  tr(context, 'register_subtitle'),
+                  style: const TextStyle(
                     fontFamily: 'IranYekan',
                     fontSize: 14,
                     color: Colors.grey,
@@ -84,9 +85,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       letterSpacing: 2,
                     ),
                     onChanged: (value) {
-                      setState(() {
-                        phoneController.text = value;
-                      });
+                      // 👈 حذف مقداردهی مجدد کنترلر به خودش جهت جلوگیری از پرش مارکر تایپ
+                      setState(() {});
                     },
                     decoration: InputDecoration(
                       counterText: '',
@@ -164,9 +164,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             strokeWidth: 2,
                             color: Colors.white,
                           )
-                        : const Text(
-                            "ادامه",
-                            style: TextStyle(
+                        : Text(
+                            tr(context, 'btn_continue'),
+                            style: const TextStyle(
                               fontFamily: 'IranYekan',
                               color: Colors.white,
                               fontSize: 16,
@@ -185,7 +185,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 12.0),
                       child: Text(
-                        "یا",
+                        tr(context, 'or_label'),
                         style: TextStyle(
                           fontFamily: 'IranYekan',
                           color: Colors.grey.shade500,
@@ -220,6 +220,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       bool isBlocked = await authProvider.checkIfDriverIsBlocked();
 
                                       if (isBlocked) {
+                                        if (!mounted) return;
                                         Navigator.pushReplacement(
                                           context,
                                           MaterialPageRoute(builder: (context) => const BlockedScreen()),
@@ -232,7 +233,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                           navigate(isSingedIn: true);
                                         } else {
                                           navigate(isSingedIn: false);
-                                          commonMethods.displaySnackBar("لطفاً اطلاعات ناقص خود را تکمیل کنید.", context);
+                                          if (!mounted) return;
+                                          commonMethods.displaySnackBar(tr(context, 'complete_documents_error'), context);
                                         }
                                       }
                                     } else {
@@ -262,14 +264,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Image.asset(
-                                'assets/images/google_logo.png', // حتما لوگوی گوگل را در متعلقات قرار بده یا از آیکون استفاده کن
+                                'assets/images/google_logo.png',
                                 height: 22,
                                 errorBuilder: (context, error, stackTrace) => const Icon(Icons.login, color: Colors.black80),
                               ),
                               const SizedBox(width: 10),
-                              const Text(
-                                "ادامه با حساب گوگل",
-                                style: TextStyle(
+                              Text(
+                                tr(context, 'google_sign_in'),
+                                style: const TextStyle(
                                   fontFamily: 'IranYekan',
                                   color: Colors.black80,
                                   fontSize: 15,
@@ -282,11 +284,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 
                 const SizedBox(height: 30),
                 
-                const Center(
+                Center(
                   child: Text(
-                    "با ادامه کار، شما موافقت خود را با قوانین و مقررات سفیر جهت دریافت تماس، پیام در واتساپ یا پیامک تأیید هویت اعلام می‌دارید.",
+                    tr(context, 'terms_and_conditions'),
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontFamily: 'IranYekan',
                       color: Colors.grey,
                       fontSize: 12,
@@ -309,7 +311,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     // ولیدیشن اختصاصی شماره تلفن‌های افغانستان (معمولاً شروع با 7 و کلاً 9 رقم بدون صفر)
     if (phoneNumber.isEmpty || phoneNumber.length != 9 || !RegExp(r'^[7][0-9]{8}$').hasMatch(phoneNumber)) {
       commonMethods.displaySnackBar(
-        "لطفاً یک شماره موبایل معتبر (مثل 771234567) وارد کنید.",
+        tr(context, 'invalid_phone_error'),
         context,
       );
       return;
@@ -324,6 +326,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   void navigate({required bool isSingedIn}) {
+    if (!mounted) return;
     if (isSingedIn) {
       Navigator.pushAndRemoveUntil(
           context,
