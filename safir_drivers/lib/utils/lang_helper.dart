@@ -170,6 +170,13 @@ String tr(BuildContext context, String key) {
     'btn_start_trip': {'fa': 'شروع سفر', 'ps': 'سفر پیل کړئ', 'en': 'Start Trip'},
     'btn_end_trip': {'fa': 'پایان سفر', 'ps': 'سفر پای ته ورسوئ', 'en': 'End Trip'},
     'ending_trip': {'fa': 'در حال اتمام سفر...', 'ps': 'د سفر د پای ته رسولو په حال کې...', 'en': 'Ending trip...'},
+        // --- اختصاصی صفحه ورود کد OTP ---
+    'otp_title': {'fa': 'تأیید کد دسترسی', 'ps': 'د لاسرسي کوډ تایید', 'en': 'Verify OTP Code'},
+    'otp_subtitle': {'fa': 'کد ۶ رقمی ارسال شده به شماره موبایل خود را وارد کنید', 'ps': 'هغه ۶ رقمي کوډ داخل کړئ چې ستاسو موبایل ته استول شوی', 'en': 'Enter the 6-digit code sent to your phone'},
+    'didnt_receive_code': {'fa': 'کد را دریافت نکرده‌اید؟', 'ps': 'کوډ مو نه دی ترلاسه کړی؟', 'en': 'Didn\'t receive code?'},
+    'resend_code': {'fa': 'ارسال مجدد', 'ps': 'بیا استول', 'en': 'Resend'},
+    'complete_documents_error': {'fa': 'لطفاً اطلاعات و مدارک ناقص خود را تکمیل کنید.', 'ps': 'مهرباني وکړئ خپل نیمګړي اسناد او معلومات بشپړ کړئ.', 'en': 'Please complete your pending documents and information.'},
+
 
 
 
