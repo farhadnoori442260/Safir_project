@@ -204,6 +204,27 @@ String tr(BuildContext context, String key) {
     'take_photo_front': {'fa': 'گرفتن عکس از رو', 'ps': 'د مخ انځور اخیستل', 'en': 'Take Front Photo'},
     'take_photo_back': {'fa': 'گرفتن عکس از پشت', 'ps': 'د شا انځور اخیستل', 'en': 'Take Back Photo'},
     'confirm_and_save_final': {'fa': 'تأیید و ذخیره نهایی', 'ps': 'تایید او وروستی خوندي کول', 'en': 'Confirm and Final Save'},
+        // --- اختصاصی صفحه اطلاعات فردی (BasicInfoScreen) ---
+    'basic_info_title': {'fa': 'اطلاعات فردی راننده', 'ps': 'د چلوونکي شخصي معلومات', 'en': 'Driver Personal Info'},
+    'add_profile_photo': {'fa': 'افزودن عکس پروفایل *', 'ps': 'د پروفایل عکس زیاتول *', 'en': 'Add Profile Photo *'},
+    'first_name': {'fa': 'نام', 'ps': 'نوم', 'en': 'First Name'},
+    'last_name': {'fa': 'تخلص (نام خانوادگی)', 'ps': 'تخلص (کورنی نوم)', 'en': 'Last Name'},
+    'home_address': {'fa': 'آدرس سکونت', 'ps': 'د استوګنې پته', 'en': 'Residential Address'},
+    'mobile_number': {'fa': 'شماره تلفن همراه', 'ps': 'د موبایل شمیره', 'en': 'Mobile Number'},
+    'err_first_name': {'fa': 'وارد کردن نام الزامی است', 'ps': 'د نوم د ننه کول اړین دي', 'en': 'First name is required'},
+    'err_last_name': {'fa': 'وارد کردن تخلص الزامی است', 'ps': 'د تخلص د ننه کول اړین دي', 'en': 'Last name is required'},
+    'err_address': {'fa': 'لطفاً آدرس دقیق و معتبر خود را وارد کنید', 'ps': 'مهرباني وکړئ خپله دقیقه پته دننه کړئ', 'en': 'Please enter a valid address'},
+    'err_phone': {'fa': 'شماره تلفن وارد شده معتبر نیست', 'ps': 'داخل شوې د تلیفون شمیره د اعتبار وړ نه ده', 'en': 'Invalid phone number'},
+    'confirm_and_submit': {'fa': 'تأیید و ثبت اطلاعات', 'ps': 'د معلوماتو تایید او ثبتول', 'en': 'Confirm & Submit Info'},
+    
+        // --- اختصاصی صفحه تذکره / کارت هویت (CNICScreen) ---
+    'cnic_screen_title': {'fa': 'تذکره / کارت هویت راننده', 'ps': 'د چلوونکي تذکره / د هویت کارت', 'en': 'Driver ID / CNIC Card'},
+    'cnic_front_hint': {'fa': 'تصویر روی تذکره / کارت هویت (ابتدا عکس بگیرید سپس برش دهید)', 'ps': 'د تذکرې / هویت کارت د مخ انځور', 'en': 'ID Card Front Image'},
+    'cnic_back_hint': {'fa': 'تصویر پشت تذکره / کارت هویت (ابتدا عکس بگیرید سپس برش دهید)', 'ps': 'د تذکرې / هویت کارت د شا انځور', 'en': 'ID Card Back Image'},
+    'cnic_number_label': {'fa': 'شماره تذکره / کارت هویت', 'ps': 'د تذکرې / هویت کارت شمیره', 'en': 'ID / CNIC Number'},
+    'err_cnic_required': {'fa': 'وارد کردن شماره هویت الزامی است', 'ps': 'د هویت شمیرې دننه کول اړین دي', 'en': 'ID number is required'},
+    'err_cnic_length': {'fa': 'شماره هویت باید دقیقاً ۱۳ رقم باشد', 'ps': 'د هویت شمیره باید په دقیق ډول ۱۳ رقمونه وي', 'en': 'ID number must be exactly 13 digits'},
+
   };
 
   return words[key]?[lang] ?? key;
