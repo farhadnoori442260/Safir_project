@@ -2,7 +2,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:safir_drivers/providers/registration_provider.dart'; // اصلاح نام پکیج پروژه سفیر
+import 'package:safir_drivers/providers/registration_provider.dart';
+import 'package:safir_drivers/utils/lang_helper.dart'; // 👈 هیلپر زبان سفیر
 
 class SelfieScreen extends StatefulWidget {
   const SelfieScreen({super.key});
@@ -17,9 +18,9 @@ class _SelfieScreenState extends State<SelfieScreen> {
     return Consumer<RegistrationProvider>(
       builder: (context, registrationProvider, child) => Scaffold(
         appBar: AppBar(
-          title: const Text(
-            'تایید هویت (سلفی با تذکره)',
-            style: TextStyle(fontFamily: 'IranYekan', fontSize: 16, fontWeight: FontWeight.bold),
+          title: Text(
+            tr(context, 'selfie_screen_title'),
+            style: const TextStyle(fontFamily: 'IranYekan', fontSize: 16, fontWeight: FontWeight.bold),
           ),
           centerTitle: true,
           actions: [
@@ -27,7 +28,10 @@ class _SelfieScreenState extends State<SelfieScreen> {
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: const Text('بستن', style: TextStyle(fontFamily: 'IranYekan', color: Colors.black, fontWeight: FontWeight.bold)),
+              child: Text(
+                tr(context, 'close'), 
+                style: const TextStyle(fontFamily: 'IranYekan', color: Colors.black, fontWeight: FontWeight.bold)
+              ),
             ),
           ],
         ),
@@ -40,12 +44,12 @@ class _SelfieScreenState extends State<SelfieScreen> {
                 const SizedBox(height: 10),
                 // بخش بارگذاری تصویر سلفی تایید هویت
                 _buildImagePicker(
-                    context,
-                    'تأیید تصویر شناسایی',
-                    registrationProvider.cnicWithSelfieImage,
-                    registrationProvider.pickCnincImageWithSelfie,
-                    'لطفاً تذکره یا کارت هویت خود را روبروی خود نگه داشته و یک عکس سلفی بگیرید. تصویر باید کاملاً واضح باشد تا چهره شما و اطلاعات مندرج روی کارت به شفافی قابل خواندن باشند. عکس را در محیطی با نور کافی و کیفیت مناسب تهیه کنید.'
-                    ),
+                  context: context,
+                  label: tr(context, 'selfie_label'),
+                  imageFile: registrationProvider.cnicWithSelfieImage,
+                  onPressed: registrationProvider.pickCnincImageWithSelfie,
+                  description: tr(context, 'selfie_description'),
+                ),
                 const SizedBox(height: 25),
 
                 // دکمه تایید نهایی سلفی
@@ -70,9 +74,14 @@ class _SelfieScreenState extends State<SelfieScreen> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    child: const Text(
-                      'تأیید و ذخیره',
-                      style: TextStyle(fontFamily: 'IranYekan', color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                    child: Text(
+                      tr(context, 'confirm_and_save'),
+                      style: const TextStyle(
+                        fontFamily: 'IranYekan', 
+                        color: Colors.white, 
+                        fontSize: 16, 
+                        fontWeight: FontWeight.bold
+                      ),
                     ),
                   ),
                 ),
@@ -84,8 +93,13 @@ class _SelfieScreenState extends State<SelfieScreen> {
     );
   }
 
-  Widget _buildImagePicker(BuildContext context, String label, XFile? imageFile,
-      VoidCallback onPressed, String description) {
+  Widget _buildImagePicker({
+    required BuildContext context,
+    required String label,
+    required XFile? imageFile,
+    required VoidCallback onPressed,
+    required String description,
+  }) {
     return Container(
       decoration: BoxDecoration(
         border: Border.all(color: Colors.black12),
@@ -115,7 +129,7 @@ class _SelfieScreenState extends State<SelfieScreen> {
                 ),
           const SizedBox(height: 16),
           Container(
-            width: 200,
+            padding: const EdgeInsets.symmetric(horizontal: 12),
             height: 40,
             decoration: BoxDecoration(
               border: Border.all(color: const Color(0xFF145A41)),
@@ -124,9 +138,9 @@ class _SelfieScreenState extends State<SelfieScreen> {
             child: TextButton.icon(
               onPressed: onPressed,
               icon: const Icon(Icons.camera_alt, color: Color(0xFF145A41)),
-              label: const Text(
-                'گرفتن عکس سلفی',
-                style: TextStyle(fontFamily: 'IranYekan', color: Color(0xFF145A41), fontWeight: FontWeight.bold),
+              label: Text(
+                tr(context, 'selfie_take_photo'),
+                style: const TextStyle(fontFamily: 'IranYekan', color: Color(0xFF145A41), fontWeight: FontWeight.bold),
               ),
             ),
           ),
