@@ -2,7 +2,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:safir_drivers/providers/registration_provider.dart'; // اصلاح نام پکیج پروژه سفیر
+import 'package:safir_drivers/providers/registration_provider.dart';
+import 'package:safir_drivers/utils/lang_helper.dart'; // 👈 هیلپر زبان سفیر
 
 class DrivingLicenseScreen extends StatefulWidget {
   const DrivingLicenseScreen({super.key});
@@ -13,15 +14,15 @@ class DrivingLicenseScreen extends StatefulWidget {
 
 class _DrivingLicenseScreenState extends State<DrivingLicenseScreen> {
   final _formKey = GlobalKey<FormState>();
-  
+
   @override
   Widget build(BuildContext context) {
     return Consumer<RegistrationProvider>(
       builder: (context, registrationProvider, child) => Scaffold(
         appBar: AppBar(
-          title: const Text(
-            'جواز رانندگی (گواهینامه)',
-            style: TextStyle(fontFamily: 'IranYekan', fontSize: 16, fontWeight: FontWeight.bold),
+          title: Text(
+            tr(context, 'license_screen_title'),
+            style: const TextStyle(fontFamily: 'IranYekan', fontSize: 16, fontWeight: FontWeight.bold),
           ),
           centerTitle: true,
           actions: [
@@ -29,7 +30,10 @@ class _DrivingLicenseScreenState extends State<DrivingLicenseScreen> {
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: const Text('بستن', style: TextStyle(fontFamily: 'IranYekan', color: Colors.black, fontWeight: FontWeight.bold)),
+              child: Text(
+                tr(context, 'close'), 
+                style: const TextStyle(fontFamily: 'IranYekan', color: Colors.black, fontWeight: FontWeight.bold)
+              ),
             ),
           ],
         ),
@@ -43,19 +47,25 @@ class _DrivingLicenseScreenState extends State<DrivingLicenseScreen> {
                 children: [
                   const SizedBox(height: 10),
                   // بارگذاری تصویر روی جواز رانندگی
-                  _buildImagePickerFront(
-                      context,
-                      'تصویر روی جواز رانندگی (ابتدا عکس بگیرید سپس برش دهید)',
-                      registrationProvider.drivingLicenseFrontImage,
-                      () => registrationProvider.pickAndCropDrivingLicenseImage(true)),
+                  _buildImagePicker(
+                    context: context,
+                    label: tr(context, 'license_front_hint'),
+                    imageFile: registrationProvider.drivingLicenseFrontImage,
+                    buttonText: tr(context, 'take_photo_front'),
+                    defaultAssetPath: 'assets/auth/license-front.png',
+                    onPressed: () => registrationProvider.pickAndCropDrivingLicenseImage(true),
+                  ),
                   const SizedBox(height: 16),
 
                   // بارگذاری تصویر پشت جواز رانندگی
-                  _buildImagePickerBack(
-                      context,
-                      'تصویر پشت جواز رانندگی (ابتدا عکس بگیرید سپس برش دهید)',
-                      registrationProvider.drivingLicenseBackImage,
-                      () => registrationProvider.pickAndCropDrivingLicenseImage(false)),
+                  _buildImagePicker(
+                    context: context,
+                    label: tr(context, 'license_back_hint'),
+                    imageFile: registrationProvider.drivingLicenseBackImage,
+                    buttonText: tr(context, 'take_photo_back'),
+                    defaultAssetPath: 'assets/auth/license-back.png',
+                    onPressed: () => registrationProvider.pickAndCropDrivingLicenseImage(false),
+                  ),
                   const SizedBox(height: 16),
 
                   // فیلد نمبر جواز رانندگی
@@ -80,12 +90,12 @@ class _DrivingLicenseScreenState extends State<DrivingLicenseScreen> {
                           textDirection: TextDirection.ltr,
                           child: TextFormField(
                             controller: registrationProvider.drivingLicenseController,
-                            decoration: const InputDecoration(
-                              labelText: 'نمبر جواز رانندگی',
-                              labelStyle: TextStyle(fontFamily: 'IranYekan', fontSize: 14),
-                              helperText: 'فرمت نمونه: ST-24-7174',
-                              helperStyle: TextStyle(fontSize: 11),
-                              border: OutlineInputBorder(
+                            decoration: InputDecoration(
+                              labelText: tr(context, 'license_number_label'),
+                              labelStyle: const TextStyle(fontFamily: 'IranYekan', fontSize: 14),
+                              helperText: tr(context, 'license_number_helper'),
+                              helperStyle: const TextStyle(fontSize: 11),
+                              border: const OutlineInputBorder(
                                 borderRadius: BorderRadius.all(Radius.circular(12)),
                                 borderSide: BorderSide(),
                               ),
@@ -93,10 +103,10 @@ class _DrivingLicenseScreenState extends State<DrivingLicenseScreen> {
                             keyboardType: TextInputType.text,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'وارد کردن نمبر جواز رانندگی الزامی است';
+                                return tr(context, 'err_license_required');
                               }
                               if (!registrationProvider.licenseRegExp.hasMatch(value)) {
-                                return 'لطفاً نمبر جواز را با فرمت معتبر (مانند ST-24-7174) وارد کنید';
+                                return tr(context, 'err_license_format');
                               }
                               return null;
                             },
@@ -132,9 +142,14 @@ class _DrivingLicenseScreenState extends State<DrivingLicenseScreen> {
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                      child: const Text(
-                        'تأیید و ذخیره',
-                        style: TextStyle(fontFamily: 'IranYekan', color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                      child: Text(
+                        tr(context, 'confirm_and_save'),
+                        style: const TextStyle(
+                          fontFamily: 'IranYekan', 
+                          color: Colors.white, 
+                          fontSize: 16, 
+                          fontWeight: FontWeight.bold
+                        ),
                       ),
                     ),
                   ),
@@ -147,8 +162,15 @@ class _DrivingLicenseScreenState extends State<DrivingLicenseScreen> {
     );
   }
 
-  Widget _buildImagePickerFront(BuildContext context, String label,
-      XFile? imageFile, VoidCallback onPressed) {
+  // ویجت یکپارچه ساخت کادر دریافت عکس روی/پشت جواز رانندگی
+  Widget _buildImagePicker({
+    required BuildContext context,
+    required String label,
+    required XFile? imageFile,
+    required String buttonText,
+    required String defaultAssetPath,
+    required VoidCallback onPressed,
+  }) {
     return Container(
       decoration: BoxDecoration(
         border: Border.all(color: Colors.black12),
@@ -173,13 +195,13 @@ class _DrivingLicenseScreenState extends State<DrivingLicenseScreen> {
           imageFile != null
               ? Image.file(File(imageFile.path), height: 150, fit: BoxFit.cover)
               : Image.asset(
-                  'assets/auth/license-front.png', 
+                  defaultAssetPath, 
                   height: 150,
                   errorBuilder: (c, e, s) => Icon(Icons.badge, size: 120, color: Colors.grey.shade300),
                 ),
           const SizedBox(height: 16),
           Container(
-            width: 200,
+            padding: const EdgeInsets.symmetric(horizontal: 12),
             height: 40,
             decoration: BoxDecoration(
               border: Border.all(color: const Color(0xFF145A41)),
@@ -188,62 +210,9 @@ class _DrivingLicenseScreenState extends State<DrivingLicenseScreen> {
             child: TextButton.icon(
               onPressed: onPressed,
               icon: const Icon(Icons.camera_alt, color: Color(0xFF145A41)),
-              label: const Text(
-                'گرفتن عکس از رو',
-                style: TextStyle(fontFamily: 'IranYekan', color: Color(0xFF145A41), fontWeight: FontWeight.bold),
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildImagePickerBack(BuildContext context, String label,
-      XFile? imageFile, VoidCallback onPressed) {
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.black12),
-        borderRadius: BorderRadius.circular(15),
-        color: Colors.white,
-        boxShadow: const [
-          BoxShadow(color: Colors.black12, offset: Offset(0, 2), blurRadius: 6.0),
-        ],
-      ),
-      child: Column(
-        children: [
-          const SizedBox(height: 16),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Text(
-              label,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontFamily: 'IranYekan', fontSize: 13, fontWeight: FontWeight.bold),
-            ),
-          ),
-          const SizedBox(height: 16),
-          imageFile != null
-              ? Image.file(File(imageFile.path), height: 150, fit: BoxFit.cover)
-              : Image.asset(
-                  'assets/auth/license-back.png', 
-                  height: 150,
-                  errorBuilder: (c, e, s) => Icon(Icons.badge, size: 120, color: Colors.grey.shade300),
-                ),
-          const SizedBox(height: 16),
-          Container(
-            width: 200,
-            height: 40,
-            decoration: BoxDecoration(
-              border: Border.all(color: const Color(0xFF145A41)),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: TextButton.icon(
-              onPressed: onPressed,
-              icon: const Icon(Icons.camera_alt, color: Color(0xFF145A41)),
-              label: const Text(
-                'گرفتن عکس از پشت',
-                style: TextStyle(fontFamily: 'IranYekan', color: Color(0xFF145A41), fontWeight: FontWeight.bold),
+              label: Text(
+                buttonText,
+                style: const TextStyle(fontFamily: 'IranYekan', color: Color(0xFF145A41), fontWeight: FontWeight.bold),
               ),
             ),
           ),
