@@ -2,7 +2,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:safir_drivers/providers/registration_provider.dart'; // اصلاح نام پکیج پروژه سفیر
+import 'package:safir_drivers/providers/registration_provider.dart';
+import 'package:safir_drivers/utils/lang_helper.dart'; // 👈 هیلپر زبان سفیر
 
 class CNICScreen extends StatefulWidget {
   const CNICScreen({super.key});
@@ -19,9 +20,9 @@ class _CNICScreenState extends State<CNICScreen> {
     return Consumer<RegistrationProvider>(
       builder: (context, registrationProvider, child) => Scaffold(
         appBar: AppBar(
-          title: const Text(
-            'تذکره / کارت هویت راننده',
-            style: TextStyle(fontFamily: 'IranYekan', fontSize: 16, fontWeight: FontWeight.bold),
+          title: Text(
+            tr(context, 'cnic_screen_title'),
+            style: const TextStyle(fontFamily: 'IranYekan', fontSize: 16, fontWeight: FontWeight.bold),
           ),
           centerTitle: true,
           actions: [
@@ -29,7 +30,10 @@ class _CNICScreenState extends State<CNICScreen> {
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: const Text('بستن', style: TextStyle(fontFamily: 'IranYekan', color: Colors.black, fontWeight: FontWeight.bold)),
+              child: Text(
+                tr(context, 'close'), 
+                style: const TextStyle(fontFamily: 'IranYekan', color: Colors.black, fontWeight: FontWeight.bold)
+              ),
             ),
           ],
         ),
@@ -43,19 +47,25 @@ class _CNICScreenState extends State<CNICScreen> {
                 children: [
                   const SizedBox(height: 10),
                   // بارگذاری تصویر روی تذکره/کارت هویت
-                  _buildImagePickerFront(
-                      context,
-                      'تصویر روی تذکره / کارت هویت (ابتدا عکس بگیرید سپس برش دهید)',
-                      registrationProvider.cnincFrontImage,
-                      () => registrationProvider.pickAndCropCnincImage(true)),
+                  _buildImagePicker(
+                    context: context,
+                    label: tr(context, 'cnic_front_hint'),
+                    imageFile: registrationProvider.cnincFrontImage,
+                    buttonText: tr(context, 'take_photo_front'),
+                    defaultAssetPath: 'assets/auth/cnic-front.png',
+                    onPressed: () => registrationProvider.pickAndCropCnincImage(true),
+                  ),
                   const SizedBox(height: 16),
 
                   // بارگذاری تصویر پشت تذکره/کارت هویت
-                  _buildImagePickerBack(
-                      context,
-                      'تصویر پشت تذکره / کارت هویت (ابتدا عکس بگیرید سپس برش دهید)',
-                      registrationProvider.cnincBackImage,
-                      () => registrationProvider.pickAndCropCnincImage(false)),
+                  _buildImagePicker(
+                    context: context,
+                    label: tr(context, 'cnic_back_hint'),
+                    imageFile: registrationProvider.cnincBackImage,
+                    buttonText: tr(context, 'take_photo_back'),
+                    defaultAssetPath: 'assets/auth/cnic-back.png',
+                    onPressed: () => registrationProvider.pickAndCropCnincImage(false),
+                  ),
                   const SizedBox(height: 16),
 
                   // فیلد شماره تذکره/کارت هویت
@@ -67,29 +77,32 @@ class _CNICScreenState extends State<CNICScreen> {
                       color: Colors.white,
                       boxShadow: const [
                         BoxShadow(
-                            color: Colors.black12,
-                            offset: Offset(0, 2),
-                            blurRadius: 6.0),
+                          color: Colors.black12,
+                          offset: Offset(0, 2),
+                          blurRadius: 6.0,
+                        ),
                       ],
                     ),
                     child: Directionality(
                       textDirection: TextDirection.ltr,
                       child: TextFormField(
                         controller: registrationProvider.cnicController,
-                        decoration: const InputDecoration(
-                            labelText: 'شماره تذکره / کارت هویت',
-                            labelStyle: TextStyle(fontFamily: 'IranYekan', fontSize: 14),
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(12)),
-                                borderSide: BorderSide())),
+                        decoration: InputDecoration(
+                          labelText: tr(context, 'cnic_number_label'),
+                          labelStyle: const TextStyle(fontFamily: 'IranYekan', fontSize: 14),
+                          border: const OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(12)),
+                            borderSide: BorderSide(),
+                          ),
+                        ),
                         keyboardType: TextInputType.number,
                         maxLength: 13,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'وارد کردن شماره هویت الزامی است';
+                            return tr(context, 'err_cnic_required');
                           }
                           if (value.length != 13) {
-                            return 'شماره هویت باید دقیقاً ۱۳ رقم باشد';
+                            return tr(context, 'err_cnic_length');
                           }
                           return null;
                         },
@@ -124,9 +137,14 @@ class _CNICScreenState extends State<CNICScreen> {
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                      child: const Text(
-                        'تأیید و ذخیره',
-                        style: TextStyle(fontFamily: 'IranYekan', color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                      child: Text(
+                        tr(context, 'confirm_and_save'),
+                        style: const TextStyle(
+                          fontFamily: 'IranYekan', 
+                          color: Colors.white, 
+                          fontSize: 16, 
+                          fontWeight: FontWeight.bold
+                        ),
                       ),
                     ),
                   ),
@@ -139,8 +157,15 @@ class _CNICScreenState extends State<CNICScreen> {
     );
   }
 
-  Widget _buildImagePickerFront(BuildContext context, String label,
-      XFile? imageFile, VoidCallback onPressed) {
+  // ویجت یکپارچه برای دریافت عکس روی/پشت تذکره
+  Widget _buildImagePicker({
+    required BuildContext context,
+    required String label,
+    required XFile? imageFile,
+    required String buttonText,
+    required String defaultAssetPath,
+    required VoidCallback onPressed,
+  }) {
     return Container(
       decoration: BoxDecoration(
         border: Border.all(color: Colors.black12),
@@ -165,13 +190,13 @@ class _CNICScreenState extends State<CNICScreen> {
           imageFile != null
               ? Image.file(File(imageFile.path), height: 150, fit: BoxFit.cover)
               : Image.asset(
-                  'assets/auth/cnic-front.png', 
+                  defaultAssetPath, 
                   height: 150,
                   errorBuilder: (c, e, s) => Icon(Icons.credit_card, size: 120, color: Colors.grey.shade300),
                 ),
           const SizedBox(height: 16),
           Container(
-            width: 200,
+            padding: const EdgeInsets.symmetric(horizontal: 12),
             height: 40,
             decoration: BoxDecoration(
               border: Border.all(color: const Color(0xFF145A41)),
@@ -180,62 +205,9 @@ class _CNICScreenState extends State<CNICScreen> {
             child: TextButton.icon(
               onPressed: onPressed,
               icon: const Icon(Icons.camera_alt, color: Color(0xFF145A41)),
-              label: const Text(
-                'گرفتن عکس از رو',
-                style: TextStyle(fontFamily: 'IranYekan', color: Color(0xFF145A41), fontWeight: FontWeight.bold),
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildImagePickerBack(BuildContext context, String label,
-      XFile? imageFile, VoidCallback onPressed) {
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.black12),
-        borderRadius: BorderRadius.circular(15),
-        color: Colors.white,
-        boxShadow: const [
-          BoxShadow(color: Colors.black12, offset: Offset(0, 2), blurRadius: 6.0),
-        ],
-      ),
-      child: Column(
-        children: [
-          const SizedBox(height: 16),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Text(
-              label,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontFamily: 'IranYekan', fontSize: 13, fontWeight: FontWeight.bold),
-            ),
-          ),
-          const SizedBox(height: 16),
-          imageFile != null
-              ? Image.file(File(imageFile.path), height: 150, fit: BoxFit.cover)
-              : Image.asset(
-                  'assets/auth/cnic-back.png', 
-                  height: 150,
-                  errorBuilder: (c, e, s) => Icon(Icons.credit_card, size: 120, color: Colors.grey.shade300),
-                ),
-          const SizedBox(height: 16),
-          Container(
-            width: 200,
-            height: 40,
-            decoration: BoxDecoration(
-              border: Border.all(color: const Color(0xFF145A41)),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: TextButton.icon(
-              onPressed: onPressed,
-              icon: const Icon(Icons.camera_alt, color: Color(0xFF145A41)),
-              label: const Text(
-                'گرفتن عکس از پشت',
-                style: TextStyle(fontFamily: 'IranYekan', color: Color(0xFF145A41), fontWeight: FontWeight.bold),
+              label: Text(
+                buttonText,
+                style: const TextStyle(fontFamily: 'IranYekan', color: Color(0xFF145A41), fontWeight: FontWeight.bold),
               ),
             ),
           ),
