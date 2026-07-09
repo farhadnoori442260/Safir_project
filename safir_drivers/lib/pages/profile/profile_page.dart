@@ -1,9 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:safir_drivers/pages/profileUpdation/driver_main_info.dart'; // اصلاح نام پکیج پروژه سفیر
-import 'package:safir_drivers/providers/auth_provider.dart'; // اصلاح نام پکیج پروژه سفیر
-import 'package:safir_drivers/providers/registration_provider.dart'; // اصلاح نام پکیج پروژه سفیر
+import 'package:safir_drivers/pages/profileUpdation/driver_main_info.dart'; 
+import 'package:safir_drivers/providers/auth_provider.dart'; 
+import 'package:safir_drivers/providers/registration_provider.dart'; 
+import 'package:safir_drivers/utils/lang_helper.dart'; // 👈 اضافه شدن هیلپر زبان سفیر
 
 import '../../global/global.dart';
 import '../../widgets/ratting_stars.dart';
@@ -157,7 +158,7 @@ class _ProfilePageState extends State<ProfilePage> {
               _buildProfileMenuOption(
                 context,
                 icon: Icons.account_circle_outlined,
-                title: "اطلاعات حساب کاربری",
+                title: tr(context, 'profile_menu_account'),
                 onTap: () async {
                   await Navigator.push(
                       context,
@@ -172,7 +173,7 @@ class _ProfilePageState extends State<ProfilePage> {
               _buildProfileMenuOption(
                 context,
                 icon: Icons.settings_outlined,
-                title: "تنظیمات برنامه",
+                title: tr(context, 'profile_menu_settings'),
                 onTap: () {},
               ),
               
@@ -182,7 +183,7 @@ class _ProfilePageState extends State<ProfilePage> {
               _buildProfileMenuOption(
                 context,
                 icon: Icons.help_outline,
-                title: "مرکز پشتیبانی سفیر",
+                title: tr(context, 'profile_menu_support'),
                 onTap: () {},
               ),
             ],
@@ -195,17 +196,20 @@ class _ProfilePageState extends State<ProfilePage> {
             await authProvider.signOut(context);
           },
           icon: const Icon(Icons.logout, color: Colors.white, size: 18),
-          label: const Text(
-            "خروج از حساب",
-            style: TextStyle(fontFamily: 'IranYekan', color: Colors.white, fontWeight: FontWeight.bold),
+          label: Text(
+            tr(context, 'profile_logout'),
+            style: const TextStyle(fontFamily: 'IranYekan', color: Colors.white, fontWeight: FontWeight.bold),
           ),
         ),
       ),
     );
   }
 
-  // متد کمکی جهت ساخت منوهای راست‌چین و شکیل پروفایل
+  // متد کمکی جهت ساخت منوهای متناسب با جهت زبان و راست‌چین/چپ‌چین شدن برنامه
   Widget _buildProfileMenuOption(BuildContext context, {required IconData icon, required String title, required VoidCallback onTap}) {
+    // تشخیص هوشمند جهت زبان برای نمایش درست آیکون فلش راهنما در انتها
+    final isRtl = Directionality.of(context) == TextDirection.rtl;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 4),
       width: MediaQuery.of(context).size.width * 0.93,
@@ -230,7 +234,11 @@ class _ProfilePageState extends State<ProfilePage> {
             title,
             style: const TextStyle(fontFamily: 'IranYekan', fontSize: 14, fontWeight: FontWeight.w500),
           ),
-          trailing: const Icon(Icons.arrow_back_ios_new, size: 14, color: Colors.black38),
+          trailing: Icon(
+            isRtl ? Icons.arrow_back_ios_new : Icons.arrow_forward_ios, 
+            size: 14, 
+            color: Colors.black38
+          ),
         ),
       ),
     );
