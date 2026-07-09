@@ -1,8 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:safir_drivers/providers/auth_provider.dart'; // اصلاح نام پکیج
-import 'package:safir_drivers/providers/registration_provider.dart'; // اصلاح نام پکیج
+import 'package:safir_drivers/providers/auth_provider.dart';
+import 'package:safir_drivers/providers/registration_provider.dart';
+import 'package:safir_drivers/utils/lang_helper.dart'; // 👈 هیلپر زبان سفیر
 
 class BasicInfoScreen extends StatefulWidget {
   const BasicInfoScreen({super.key});
@@ -27,9 +28,9 @@ class _BasicInfoScreenState extends State<BasicInfoScreen> {
     return Consumer<RegistrationProvider>(
       builder: (context, registrationProvider, child) => Scaffold(
         appBar: AppBar(
-          title: const Text(
-            'اطلاعات فردی راننده',
-            style: TextStyle(fontFamily: 'IranYekan', fontWeight: FontWeight.bold),
+          title: Text(
+            tr(context, 'basic_info_title'),
+            style: const TextStyle(fontFamily: 'IranYekan', fontWeight: FontWeight.bold),
           ),
           centerTitle: true,
           actions: [
@@ -37,9 +38,9 @@ class _BasicInfoScreenState extends State<BasicInfoScreen> {
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: const Text(
-                'بستن', 
-                style: TextStyle(fontFamily: 'IranYekan', color: Colors.black, fontWeight: FontWeight.bold)
+              child: Text(
+                tr(context, 'close'), 
+                style: const TextStyle(fontFamily: 'IranYekan', color: Colors.black, fontWeight: FontWeight.bold)
               ),
             ),
           ],
@@ -93,9 +94,9 @@ class _BasicInfoScreenState extends State<BasicInfoScreen> {
                               registrationProvider.pickProfileImageFromGallary();
                             },
                             icon: const Icon(Icons.add_a_photo, color: Color(0xFF145A41), size: 18),
-                            label: const Text(
-                              'افزودن عکس پروفایل *',
-                              style: TextStyle(fontFamily: 'IranYekan', color: Color(0xFF145A41), fontWeight: FontWeight.bold),
+                            label: Text(
+                              tr(context, 'add_profile_photo'),
+                              style: const TextStyle(fontFamily: 'IranYekan', color: Color(0xFF145A41), fontWeight: FontWeight.bold),
                             ),
                           ),
                         ),
@@ -125,16 +126,16 @@ class _BasicInfoScreenState extends State<BasicInfoScreen> {
                         children: [
                           TextFormField(
                             controller: registrationProvider.firstNameController,
-                            decoration: const InputDecoration(
-                              labelText: 'نام',
-                              labelStyle: TextStyle(fontFamily: 'IranYekan', fontSize: 14),
-                              border: OutlineInputBorder(
+                            decoration: InputDecoration(
+                              labelText: tr(context, 'first_name'),
+                              labelStyle: const TextStyle(fontFamily: 'IranYekan', fontSize: 14),
+                              border: const OutlineInputBorder(
                                 borderRadius: BorderRadius.all(Radius.circular(15)),
                               ),
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'وارد کردن نام الزامی است';
+                                return tr(context, 'err_first_name');
                               }
                               return null;
                             },
@@ -143,16 +144,16 @@ class _BasicInfoScreenState extends State<BasicInfoScreen> {
                           const SizedBox(height: 16),
                           TextFormField(
                             controller: registrationProvider.lastNameController,
-                            decoration: const InputDecoration(
-                              labelText: 'تخلص (نام خانوادگی)',
-                              labelStyle: TextStyle(fontFamily: 'IranYekan', fontSize: 14),
-                              border: OutlineInputBorder(
+                            decoration: InputDecoration(
+                              labelText: tr(context, 'last_name'),
+                              labelStyle: const TextStyle(fontFamily: 'IranYekan', fontSize: 14),
+                              border: const OutlineInputBorder(
                                 borderRadius: BorderRadius.all(Radius.circular(15)),
                               ),
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'وارد کردن تخلص الزامی است';
+                                return tr(context, 'err_last_name');
                               }
                               return null;
                             },
@@ -162,16 +163,16 @@ class _BasicInfoScreenState extends State<BasicInfoScreen> {
                           TextFormField(
                             controller: registrationProvider.emailController,
                             keyboardType: TextInputType.emailAddress,
-                            decoration: const InputDecoration(
-                              labelText: 'ایمیل',
-                              labelStyle: TextStyle(fontFamily: 'IranYekan', fontSize: 14),
-                              border: OutlineInputBorder(
+                            decoration: InputDecoration(
+                              labelText: tr(context, 'email'),
+                              labelStyle: const TextStyle(fontFamily: 'IranYekan', fontSize: 14),
+                              border: const OutlineInputBorder(
                                 borderRadius: BorderRadius.all(Radius.circular(15)),
                               ),
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty || !value.contains('@')) {
-                                return 'لطفاً یک ایمیل معتبر وارد کنید';
+                                return tr(context, 'invalid_email_error');
                               }
                               return null;
                             },
@@ -180,16 +181,16 @@ class _BasicInfoScreenState extends State<BasicInfoScreen> {
                           const SizedBox(height: 16),
                           TextFormField(
                             controller: registrationProvider.addressController,
-                            decoration: const InputDecoration(
-                              labelText: 'آدرس سکونت',
-                              labelStyle: TextStyle(fontFamily: 'IranYekan', fontSize: 14),
-                              border: OutlineInputBorder(
+                            decoration: InputDecoration(
+                              labelText: tr(context, 'home_address'),
+                              labelStyle: const TextStyle(fontFamily: 'IranYekan', fontSize: 14),
+                              border: const OutlineInputBorder(
                                 borderRadius: BorderRadius.all(Radius.circular(15)),
                               ),
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty || value.length < 5) {
-                                return 'لطفاً آدرس دقیق و معتبر خود را وارد کنید';
+                                return tr(context, 'err_address');
                               }
                               return null;
                             },
@@ -197,20 +198,20 @@ class _BasicInfoScreenState extends State<BasicInfoScreen> {
                           ),
                           const SizedBox(height: 16),
                           Directionality(
-                            textDirection: TextDirection.ltr, // جهت لفت‌تو‌رایت برای شماره تلفن
+                            textDirection: TextDirection.ltr, // جهت LTR برای شماره تلفن
                             child: TextFormField(
                               controller: registrationProvider.phoneController,
                               keyboardType: TextInputType.phone,
-                              decoration: const InputDecoration(
-                                labelText: 'شماره تلفن همراه',
-                                labelStyle: TextStyle(fontFamily: 'IranYekan', fontSize: 14),
-                                border: OutlineInputBorder(
+                              decoration: InputDecoration(
+                                labelText: tr(context, 'mobile_number'),
+                                labelStyle: const TextStyle(fontFamily: 'IranYekan', fontSize: 14),
+                                border: const OutlineInputBorder(
                                   borderRadius: BorderRadius.all(Radius.circular(15)),
                                 ),
                               ),
                               validator: (value) {
                                 if (value == null || value.isEmpty || value.length < 9) {
-                                  return 'شماره تلفن وارد شده معتبر نیست';
+                                  return tr(context, 'err_phone');
                                 }
                                 return null;
                               },
@@ -220,13 +221,13 @@ class _BasicInfoScreenState extends State<BasicInfoScreen> {
                           const SizedBox(height: 16),
                           TextFormField(
                             controller: registrationProvider.dobController,
-                            decoration: const InputDecoration(
-                              labelText: 'تاریخ تولد',
-                              labelStyle: TextStyle(fontFamily: 'IranYekan', fontSize: 14),
-                              border: OutlineInputBorder(
+                            decoration: InputDecoration(
+                              labelText: tr(context, 'dob'),
+                              labelStyle: const TextStyle(fontFamily: 'IranYekan', fontSize: 14),
+                              border: const OutlineInputBorder(
                                 borderRadius: BorderRadius.all(Radius.circular(15)),
                               ),
-                              suffixIcon: Icon(Icons.calendar_month),
+                              suffixIcon: const Icon(Icons.calendar_month),
                             ),
                             onTap: () async {
                               DateTime? pickedDate = await showDatePicker(
@@ -272,9 +273,9 @@ class _BasicInfoScreenState extends State<BasicInfoScreen> {
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                      child: const Text(
-                        'تأیید و ثبت اطلاعات',
-                        style: TextStyle(fontFamily: 'IranYekan', color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                      child: Text(
+                        tr(context, 'confirm_and_submit'),
+                        style: const TextStyle(fontFamily: 'IranYekan', color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                     ),
                   ),
