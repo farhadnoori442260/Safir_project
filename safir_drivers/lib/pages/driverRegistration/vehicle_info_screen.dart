@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:safir_drivers/pages/driverRegistration/vehicle_registration/driver_car_image_screeen.dart'; // اصلاح نام پکیج
-import 'package:safir_drivers/pages/driverRegistration/vehicle_registration/vehicle_baisc_info.dart'; // اصلاح نام پکیج
-import 'package:safir_drivers/pages/driverRegistration/vehicle_registration/vehicle_registration_screen.dart'; // اصلاح نام پکیج
-import 'package:safir_drivers/providers/registration_provider.dart'; // اصلاح نام پکیج
+import 'package:safir_drivers/pages/driverRegistration/vehicle_registration/driver_car_image_screeen.dart';
+import 'package:safir_drivers/pages/driverRegistration/vehicle_registration/vehicle_baisc_info.dart';
+import 'package:safir_drivers/pages/driverRegistration/vehicle_registration/vehicle_registration_screen.dart';
+import 'package:safir_drivers/providers/registration_provider.dart';
+import 'package:safir_drivers/utils/lang_helper.dart'; // 👈 هیلپر زبان سفیر
 
 class VehicleInfoScreen extends StatefulWidget {
   const VehicleInfoScreen({super.key});
@@ -26,9 +27,9 @@ class _VehicleInfoScreenState extends State<VehicleInfoScreen> {
     return Consumer<RegistrationProvider>(
       builder: (context, registrationProvider, child) => Scaffold(
         appBar: AppBar(
-          title: const Text(
-            'مشخصات و اطلاعات موتر',
-            style: TextStyle(fontFamily: 'IranYekan', fontWeight: FontWeight.bold, fontSize: 16),
+          title: Text(
+            tr(context, 'vehicle_screen_title'),
+            style: const TextStyle(fontFamily: 'IranYekan', fontWeight: FontWeight.bold, fontSize: 16),
           ),
           centerTitle: true,
           backgroundColor: Colors.white,
@@ -66,8 +67,8 @@ class _VehicleInfoScreenState extends State<VehicleInfoScreen> {
                       switch (index) {
                         case 0:
                           return _buildListTile(
-                            title: 'مشخصات اولیه موتر',
-                            subtitle: 'ثبت نوعیت موتر، مدل، برند و نمبر پلیت',
+                            title: tr(context, 'v_step_basic_title'),
+                            subtitle: tr(context, 'v_step_basic_sub'),
                             isCompleted: isBasicInfoComplete,
                             onTap: () async {
                               bool? result = await Navigator.push(
@@ -85,8 +86,8 @@ class _VehicleInfoScreenState extends State<VehicleInfoScreen> {
                           );
                         case 1:
                           return _buildListTile(
-                            title: 'تصویر موتر',
-                            subtitle: 'بارگذاری عکس واضح از نمای ظاهری موتر',
+                            title: tr(context, 'v_step_pic_title'),
+                            subtitle: tr(context, 'v_step_pic_sub'),
                             isCompleted: isVehiclePictureComplete,
                             onTap: () async {
                               bool? result = await Navigator.push(
@@ -104,8 +105,8 @@ class _VehicleInfoScreenState extends State<VehicleInfoScreen> {
                           );
                         case 2:
                           return _buildListTile(
-                            title: 'اسناد اسکن اسناد موتر (جواز سیر)',
-                            subtitle: 'بارگذاری تصاویر اسناد رسمی و جواز سیر موتر',
+                            title: tr(context, 'v_step_docs_title'),
+                            subtitle: tr(context, 'v_step_docs_sub'),
                             isCompleted: isCertificateOfVehicleComplete,
                             onTap: () async {
                               bool? result = await Navigator.push(
@@ -146,7 +147,7 @@ class _VehicleInfoScreenState extends State<VehicleInfoScreen> {
                           }
                         : null,
                     child: Text(
-                      'تأیید و ذخیره مشخصات موتر',
+                      tr(context, 'v_submit_btn'),
                       style: TextStyle(
                         fontFamily: 'IranYekan',
                         fontSize: 15,
