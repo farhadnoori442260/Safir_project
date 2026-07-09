@@ -224,6 +224,52 @@ String tr(BuildContext context, String key) {
     'cnic_number_label': {'fa': 'شماره تذکره / کارت هویت', 'ps': 'د تذکرې / هویت کارت شمیره', 'en': 'ID / CNIC Number'},
     'err_cnic_required': {'fa': 'وارد کردن شماره هویت الزامی است', 'ps': 'د هویت شمیرې دننه کول اړین دي', 'en': 'ID number is required'},
     'err_cnic_length': {'fa': 'شماره هویت باید دقیقاً ۱۳ رقم باشد', 'ps': 'د هویت شمیره باید په دقیق ډول ۱۳ رقمونه وي', 'en': 'ID number must be exactly 13 digits'},
+        // --- اختصاصی صفحه اصلی ثبت‌نام راننده (DriverRegistration) ---
+    'reg_steps_title': {'fa': 'تکمیل مراحل ثبت‌نام راننده', 'ps': 'د چلوونکي د ثبت نام مرحلې بشپړول', 'en': 'Complete Driver Registration'},
+    'step_basic_info_title': {'fa': 'اطلاعات فردی راننده', 'ps': 'د چلوونکي شخصي معلومات', 'en': 'Driver Personal Info'},
+    'step_basic_info_sub': {'fa': 'مشخصات فردی، آدرس و ایمیل راننده', 'ps': 'شخصي مشخصات، پته او بریښنالیک', 'en': 'Personal details, address & email'},
+    'step_cnic_title': {'fa': 'تذکره / کارت هویت', 'ps': 'تذکره / د هویت کارت', 'en': 'National ID / CNIC'},
+    'step_cnic_sub': {'fa': 'عکس رو و پشت تذکره الکترونیکی یا کارت هویت', 'ps': 'د الکترونیکي تذکرې یا کارت مخ او شا انځور', 'en': 'Front & back photo of ID card'},
+    'step_selfie_title': {'fa': 'عکس سلفی همراه با تذکره', 'ps': 'له تذکرې سره سیلفي انځور', 'en': 'Selfie with ID Card'},
+    'step_selfie_sub': {'fa': 'گرفتن تصویر سلفی به همراه تذکره جهت تایید هویت', 'ps': 'د هویت تایید لپاره له تذکرې سره سیلفي', 'en': 'Take selfie holding ID card'},
+    'step_license_title': {'fa': 'اطلاعات جواز سیر / گواهینامه', 'ps': 'د لایسنس / موټر چلولو جواز معلومات', 'en': 'Driving License Info'},
+    'step_license_sub': {'fa': 'وارد کردن شماره گواهینامه رانندگی و تصاویر آن', 'ps': 'د لایسنس شمیره او د هغې انځورونه', 'en': 'License number & images'},
+    'step_vehicle_title': {'fa': 'مشخصات و اطلاعات موتر', 'ps': 'د موټر مشخصات او معلومات', 'en': 'Vehicle Details'},
+    'step_vehicle_sub': {'fa': 'ثبت رنگ، مدل، نمبر پلیت و تصاویر موتر', 'ps': 'د موټر رنګ، ماډل، پلیټ او انځورونه', 'en': 'Color, model, plate & photos'},
+    'submit_all_docs': {'fa': 'تأیید و ارسال نهایی مدارک', 'ps': 'د اسنادو وروستی تایید او استول', 'en': 'Confirm & Submit Documents'},
+    'reg_success_msg': {'fa': 'حساب کاربری شما در سفیر با موفقیت ایجاد شد.', 'ps': 'په سفیر کې ستاسو اکاونټ په بریالیتوب جوړ شو.', 'en': 'Your Safir driver account was successfully created.'},
+    'reg_terms_note': {'fa': 'با کلیک بر روی گزینه ارسال، شما با شرایط، ضوابط و قوانین حریم خصوصی تاکسی اینترنتی سفیر موافقت می‌کنید.', 'ps': 'د استولو په کلیک کولو سره، تاسو د سفیر انټرنیټي ټکسي شرایطو او قوانین منئ.', 'en': 'By clicking submit, you agree to Safir\'s terms, conditions & privacy policy.'},
+        // --- اختصاصی صفحه جواز رانندگی (DrivingLicenseScreen) ---
+    'license_screen_title': {'fa': 'جواز رانندگی (گواهینامه)', 'ps': 'د موټر چلولو جواز (لایسنس)', 'en': 'Driving License'},
+    'license_front_hint': {'fa': 'تصویر روی جواز رانندگی (ابتدا عکس بگیرید سپس برش دهید)', 'ps': 'د لایسنس د مخ انځور', 'en': 'License Front Image'},
+    'license_back_hint': {'fa': 'تصویر پشت جواز رانندگی (ابتدا عکس بگیرید سپس برش دهید)', 'ps': 'د لایسنس د شا انځور', 'en': 'License Back Image'},
+    'license_number_label': {'fa': 'نمبر جواز رانندگی', 'ps': 'د لایسنس شمیره', 'en': 'License Number'},
+    'license_number_helper': {'fa': 'فرمت نمونه: ST-24-7174', 'ps': 'بېلګه: ST-24-7174', 'en': 'Sample format: ST-24-7174'},
+    'err_license_required': {'fa': 'وارد کردن نمبر جواز رانندگی الزامی است', 'ps': 'د لایسنس شمیرې دننه کول اړین دي', 'en': 'License number is required'},
+    'err_license_format': {'fa': 'لطفاً نمبر جواز را با فرمت معتبر (مانند ST-24-7174) وارد کنید', 'ps': 'مهرباني وکړئ د لایسنس شمیره په سمه بڼه دننه کړئ', 'en': 'Please enter license number in valid format'},
+        // --- اختصاصی صفحه سلفی همراه تذکره (SelfieScreen) ---
+    'selfie_screen_title': {'fa': 'تایید هویت (سلفی با تذکره)', 'ps': 'د هویت تایید (له تذکرې سره سیلفي)', 'en': 'Identity Verification (Selfie with ID)'},
+    'selfie_label': {'fa': 'تأیید تصویر شناسایی', 'ps': 'د تایید انځور', 'en': 'Verification Photo'},
+    'selfie_take_photo': {'fa': 'گرفتن عکس سلفی', 'ps': 'د سیلفي اخیستل', 'en': 'Take Selfie Photo'},
+    'selfie_description': {
+      'fa': 'لطفاً تذکره یا کارت هویت خود را روبروی خود نگه داشته و یک عکس سلفی بگیرید. تصویر باید کاملاً واضح باشد تا چهره شما و اطلاعات مندرج روی کارت به شفافی قابل خواندن باشند. عکس را در محیطی با نور کافی و کیفیت مناسب تهیه کنید.',
+      'ps': 'مهرباني وکړئ خپله تذکره یا د هویت کارت د ځان مخې ته ونیسئ او سیلفي واخلئ. انځور باید روښانه وي ترڅو ستاسو مخ او په کارت کې شته معلومات په څرګند ډول د لوستلو وړ وي.',
+      'en': 'Please hold your ID card in front of you and take a selfie. The photo must be clear so that your face and the information on the card are easily readable.'
+    },
+        // --- اختصاصی چک‌لیست اطلاعات موتر (VehicleInfoScreen) ---
+    'vehicle_screen_title': {'fa': 'مشخصات و اطلاعات موتر', 'ps': 'د موټر مشخصات او معلومات', 'en': 'Vehicle Specifications'},
+    'v_step_basic_title': {'fa': 'مشخصات اولیه موتر', 'ps': 'د موټر لومړني مشخصات', 'en': 'Basic Vehicle Info'},
+    'v_step_basic_sub': {'fa': 'ثبت نوعیت موتر، مدل، برند و نمبر پلیت', 'ps': 'د موټر ډول، ماډل، برانډ او د پلیټ شمیره', 'en': 'Vehicle type, model, brand & plate number'},
+    'v_step_pic_title': {'fa': 'تصویر موتر', 'ps': 'د موټر انځور', 'en': 'Vehicle Photo'},
+    'v_step_pic_sub': {'fa': 'بارگذاری عکس واضح از نمای ظاهری موتر', 'ps': 'د موټر د بهرني لید روښانه انځور اپلوډ کړئ', 'en': 'Upload a clear photo of the vehicle exterior'},
+    'v_step_docs_title': {'fa': 'اسناد اسکن اسناد موتر (جواز سیر)', 'ps': 'د موټر د اسنادو سکین (جواز سیر)', 'en': 'Vehicle Documents (Registration)'},
+    'v_step_docs_sub': {'fa': 'بارگذاری تصاویر اسناد رسمی و جواز سیر موتر', 'ps': 'د موټر د رسمي اسنادو او جواز سیر انځورونه', 'en': 'Upload official vehicle registration documents'},
+    'v_submit_btn': {'fa': 'تأیید و ذخیره مشخصات موتر', 'ps': 'د موټر د مشخصاتو تایید او خوندي کول', 'en': 'Confirm & Save Vehicle Details'},
+    
+
+
+
+
 
   };
 
