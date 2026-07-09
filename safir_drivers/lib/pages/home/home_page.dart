@@ -1,21 +1,16 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:typed_data';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_geofire/flutter_geofire.dart';
+import 'package:flutter_map/flutter_map.dart'; // 👈 جایگزین گوگل مپ
 import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:latlong2/latlong.dart'; // 👈 مختصات LatLng جدید
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:safir_drivers/global/global.dart';
 import 'package:safir_drivers/providers/registration_provider.dart';
-import 'package:safir_drivers/utils/lang_helper.dart'; // 👈 هیلپر زبان سفیر
+import 'package:safir_drivers/utils/lang_helper.dart';
 
-import '../../methods/map_theme_methods.dart';
 import '../../pushNotifications/push_notification.dart';
 
 class HomePage extends StatefulWidget {
@@ -26,30 +21,28 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final Completer<GoogleMapController> googleMapCompleterController =
-      Completer<GoogleMapController>();
-  GoogleMapController? controllerGoogleMap;
-  Position? currentPositionOfDriver;
+  // کنترلر نقشه OpenStreetMap
+  final MapController mapController = MapController();
   
-  // تنظیمات رنگ اولیه
-  Color colorToShow = const Color(0xFF145A41); // سبز سفیر برای آنلاین شدن
+  Position? currentPositionOfDriver;
+  LatLng currentLatLng = const LatLng(34.5553, 69.2075); // مختصات پیش‌فرض (مثلاً کابل)
+  
+  Color colorToShow = const Color(0xFF145A41);
   bool isDriverAvailable = false;
   DatabaseReference? newTripRequestReference;
-  MapThemeMethods themeMethods = MapThemeMethods();
+  StreamSubscription<Position>? positionStreamHomePage;
 
   getCurrentLiveLocationOfDriver() async {
     Position positionOfUser = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.bestForNavigation);
     currentPositionOfDriver = positionOfUser;
-    driverCurrentPosition = currentPositionOfDriver;
 
-    LatLng positionOfUserInLatLng = LatLng(
-        currentPositionOfDriver!.latitude, currentPositionOfDriver!.longitude);
+    setState(() {
+      currentLatLng = LatLng(currentPositionOfDriver!.latitude, currentPositionOfDriver!.longitude);
+    });
 
-    CameraPosition cameraPosition =
-        CameraPosition(target: positionOfUserInLatLng, zoom: 15);
-    controllerGoogleMap!
-        .animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
+    // انیمیشن جابه‌جایی دوربین نقشه به موقعیت راننده
+    mapController.move(currentLatLng, 15.0);
   }
 
   _loadDriverStatus() async {
@@ -57,9 +50,9 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       isDriverAvailable = prefs.getBool('isDriverAvailable') ?? false;
       if (isDriverAvailable) {
-        colorToShow = Colors.orange.shade800; // رنگ نارنجی/سرخ برای آفلاین شدن
+        colorToShow = Colors.orange.shade800;
       } else {
-        colorToShow = const Color(0xFF145A41); // رنگ سبز سفیر برای آنلاین شدن
+        colorToShow = const Color(0xFF145A41);
       }
     });
   }
@@ -70,14 +63,15 @@ class _HomePageState extends State<HomePage> {
   }
 
   goOnlineNow() {
-    // مقداردهی اولیه ژئوفایر برای رانندگان آنلاین
     Geofire.initialize("onlineDrivers");
 
-    Geofire.setLocation(
-      FirebaseAuth.instance.currentUser!.uid,
-      currentPositionOfDriver!.latitude,
-      currentPositionOfDriver!.longitude,
-    );
+    if (currentPositionOfDriver != null) {
+      Geofire.setLocation(
+        FirebaseAuth.instance.currentUser!.uid,
+        currentPositionOfDriver!.latitude,
+        currentPositionOfDriver!.longitude,
+      );
+    }
 
     newTripRequestReference = FirebaseDatabase.instance
         .ref()
@@ -93,8 +87,13 @@ class _HomePageState extends State<HomePage> {
     positionStreamHomePage =
         Geolocator.getPositionStream().listen((Position position) {
       currentPositionOfDriver = position;
+      LatLng newLatLng = LatLng(position.latitude, position.longitude);
 
-      if (isDriverAvailable == true) {
+      setState(() {
+        currentLatLng = newLatLng;
+      });
+
+      if (isDriverAvailable) {
         Geofire.setLocation(
           FirebaseAuth.instance.currentUser!.uid,
           currentPositionOfDriver!.latitude,
@@ -102,20 +101,20 @@ class _HomePageState extends State<HomePage> {
         );
       }
 
-      LatLng positionLatLng = LatLng(position.latitude, position.longitude);
-      controllerGoogleMap!
-          .animateCamera(CameraUpdate.newLatLng(positionLatLng));
+      mapController.move(newLatLng, mapController.camera.zoom);
     });
   }
 
   goOfflineNow() {
-    // توقف اشتراک‌گذاری موقعیت زنده راننده
     Geofire.removeLocation(FirebaseAuth.instance.currentUser!.uid);
 
-    // قطع شنود وضعیت سفر جدید
-    newTripRequestReference!.onDisconnect();
-    newTripRequestReference!.remove();
-    newTripRequestReference = null;
+    if (newTripRequestReference != null) {
+      newTripRequestReference!.onDisconnect();
+      newTripRequestReference!.remove();
+      newTripRequestReference = null;
+    }
+    
+    positionStreamHomePage?.cancel();
   }
 
   initializePushNotificationSystem() {
@@ -131,6 +130,15 @@ class _HomePageState extends State<HomePage> {
     initializePushNotificationSystem();
     Provider.of<RegistrationProvider>(context, listen: false)
         .retrieveCurrentDriverInfo();
+    
+    // دریافت موقیت اولیه راننده
+    getCurrentLiveLocationOfDriver();
+  }
+
+  @override
+  void dispose() {
+    positionStreamHomePage?.cancel();
+    super.dispose();
   }
 
   @override
@@ -139,24 +147,35 @@ class _HomePageState extends State<HomePage> {
       child: Scaffold(
         body: Stack(
           children: [
-            /// نقشه گوگل
-            GoogleMap(
-              padding: const EdgeInsets.only(top: 136),
-              mapType: MapType.normal,
-              myLocationEnabled: true,
-              zoomControlsEnabled: false,
-              myLocationButtonEnabled: false,
-              initialCameraPosition: googlePlexInitialPosition,
-              onMapCreated: (GoogleMapController mapController) {
-                controllerGoogleMap = mapController;
-                googleMapCompleterController.complete(controllerGoogleMap);
-                getCurrentLiveLocationOfDriver();
-              },
-            ),
-
-            Container(
-              height: 136,
-              width: double.infinity,
+            /// نقشه OpenStreetMap با استفاده از پکیج flutter_map
+            FlutterMap(
+              mapController: mapController,
+              options: MapOptions(
+                initialCenter: currentLatLng,
+                initialZoom: 15.0,
+              ),
+              children: [
+                // لایه کاشی‌های نقشه (Tile Layer) از سرورهای OpenStreetMap
+                TileLayer(
+                  urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                  userAgentPackageName: 'com.safir.drivers',
+                ),
+                // نشانگر موقعیت فعلی راننده رو نقشه
+                MarkerLayer(
+                  markers: [
+                    Marker(
+                      point: currentLatLng,
+                      width: 50,
+                      height: 50,
+                      child: const Icon(
+                        Icons.navigation,
+                        color: Color(0xFF145A41),
+                        size: 38,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
 
             /// دکمه تغییر وضعیت آنلاین / آفلاین
@@ -225,7 +244,6 @@ class _HomePageState extends State<HomePage> {
                                     const SizedBox(height: 24),
                                     Row(
                                       children: [
-                                        // دکمه تایید عمل
                                         Expanded(
                                           child: ElevatedButton(
                                             onPressed: () {
@@ -267,7 +285,6 @@ class _HomePageState extends State<HomePage> {
                                           ),
                                         ),
                                         const SizedBox(width: 16),
-                                        // دکمه انصراف
                                         Expanded(
                                           child: ElevatedButton(
                                             onPressed: () {
