@@ -3,7 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:safir_drivers/providers/registration_provider.dart'; // اصلاح نام پکیج پروژه سفیر
+import 'package:safir_drivers/providers/registration_provider.dart';
+import 'package:safir_drivers/utils/lang_helper.dart'; // 👈 هیلپر زبان سفیر
 
 import '../../../global/global.dart';
 
@@ -24,18 +25,18 @@ class _DriverCarImageUpdateScreenState
     return Consumer<RegistrationProvider>(
       builder: (context, registrationProvider, child) => Scaffold(
         appBar: AppBar(
-          title: const Text(
-            'تصویر موتر',
-            style: TextStyle(fontFamily: 'IranYekan', fontWeight: FontWeight.bold, fontSize: 16),
+          title: Text(
+            tr(context, 'car_img_title'),
+            style: const TextStyle(fontFamily: 'IranYekan', fontWeight: FontWeight.bold, fontSize: 16),
           ),
           centerTitle: true,
           leading: TextButton(
             onPressed: () {
               Navigator.pop(context);
             },
-            child: const Text(
-              'بستن',
-              style: TextStyle(fontFamily: 'IranYekan', color: Colors.black87, fontWeight: FontWeight.bold),
+            child: Text(
+              tr(context, 'close'),
+              style: const TextStyle(fontFamily: 'IranYekan', color: Colors.black87, fontWeight: FontWeight.bold),
             ),
           ),
           leadingWidth: 70,
@@ -48,7 +49,7 @@ class _DriverCarImageUpdateScreenState
               children: [
                 _buildImagePicker(
                   context,
-                  'عکس موتر (وسیله نقلیه) خود را وارد کنید',
+                  tr(context, 'car_img_picker_label'),
                   registrationProvider.vehicleImage,
                   registrationProvider.pickVehicleImageFromCamera,
                 ),
@@ -57,7 +58,7 @@ class _DriverCarImageUpdateScreenState
                 // دکمه ثبت نهایی
                 SizedBox(
                   width: MediaQuery.of(context).size.width * 0.9,
-                  height: 52, // اندازه استاندارد و بهینه برای دکمه
+                  height: 52,
                   child: ElevatedButton(
                     onPressed: registrationProvider.isVehiclePhotoAdded &&
                             registrationProvider.isLoading == false
@@ -65,8 +66,10 @@ class _DriverCarImageUpdateScreenState
                             try {
                               await registrationProvider
                                   .updateVehicleImage(context);
-                              commonMethods.displaySnackBar(
-                                  "تصویر موتر شما با موفقیت به‌روزرسانی شد", context);
+                              if (context.mounted) {
+                                commonMethods.displaySnackBar(
+                                    tr(context, 'car_img_success'), context);
+                              }
                             } catch (e) {
                               print("Error while saving data: $e");
                             }
@@ -83,9 +86,9 @@ class _DriverCarImageUpdateScreenState
                         ? const CircularProgressIndicator(
                             color: Colors.white,
                           )
-                        : const Text(
-                            'تأیید نهایی',
-                            style: TextStyle(fontFamily: 'IranYekan', color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15),
+                        : Text(
+                            tr(context, 'final_confirm'),
+                            style: const TextStyle(fontFamily: 'IranYekan', color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15),
                           ),
                   ),
                 ),
@@ -137,9 +140,9 @@ class _DriverCarImageUpdateScreenState
             child: TextButton.icon(
               onPressed: onPressed,
               icon: const Icon(Icons.camera_alt, color: Color(0xFF145A41), size: 18),
-              label: const Text(
-                'گرفتن عکس جدید',
-                style: TextStyle(fontFamily: 'IranYekan', color: Color(0xFF145A41), fontWeight: FontWeight.bold),
+              label: Text(
+                tr(context, 'car_img_take_photo'),
+                style: const TextStyle(fontFamily: 'IranYekan', color: Color(0xFF145A41), fontWeight: FontWeight.bold),
               ),
             ),
           ),
