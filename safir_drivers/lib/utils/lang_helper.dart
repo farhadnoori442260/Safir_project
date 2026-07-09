@@ -265,7 +265,69 @@ String tr(BuildContext context, String key) {
     'v_step_docs_title': {'fa': 'اسناد اسکن اسناد موتر (جواز سیر)', 'ps': 'د موټر د اسنادو سکین (جواز سیر)', 'en': 'Vehicle Documents (Registration)'},
     'v_step_docs_sub': {'fa': 'بارگذاری تصاویر اسناد رسمی و جواز سیر موتر', 'ps': 'د موټر د رسمي اسنادو او جواز سیر انځورونه', 'en': 'Upload official vehicle registration documents'},
     'v_submit_btn': {'fa': 'تأیید و ذخیره مشخصات موتر', 'ps': 'د موټر د مشخصاتو تایید او خوندي کول', 'en': 'Confirm & Save Vehicle Details'},
+
+        // --- اختصاصی صفحه درآمد (EarningsPage) ---
+    'total_earnings_title': {'fa': 'کل درآمد شما:', 'ps': 'ستاسو ټول عاید:', 'en': 'Your Total Earnings:'},
+    'currency_unit': {'fa': 'افغانی', 'ps': 'افغانۍ', 'en': 'AFN'},
+        // --- اختصاصی صفحه اصلی و نقشه (HomePage) ---
+    'status_online_btn': {'fa': 'شروع به کار (آنلاین)', 'ps': 'کار پیل کول (آنلاین)', 'en': 'Go Online'},
+    'status_offline_btn': {'fa': 'خروج از کار (آفلاین)', 'ps': 'له کاره وتل (آفلاین)', 'en': 'Go Offline'},
+    'change_to_online_title': {'fa': 'تغییر وضعیت به آنلاین', 'ps': 'آنلاین حالت ته بدلول', 'en': 'Switch to Online'},
+    'change_to_offline_title': {'fa': 'تغییر وضعیت به آفلاین', 'ps': 'آفلاین حالت ته بدلول', 'en': 'Switch to Offline'},
+    'change_to_online_desc': {
+      'fa': 'شما در حال آنلاین شدن هستید؛ با این کار آمادگی شما جهت دریافت درخواست‌های سفر از سوی مسافرین سفیر ثبت خواهد شد.',
+      'ps': 'تاسو آنلاین کیږئ؛ په دې سره به تاسو د سفیر د مسافرو د سفر غوښتنې ترلاسه کولو لپاره چمتو شئ.',
+      'en': 'You are going online; this will allow you to receive trip requests from Safir passengers.'
+    },
+    'change_to_offline_desc': {
+      'fa': 'شما در حال آفلاین شدن هستید؛ با خروج از این وضعیت، دیگر درخواست سفر جدیدی دریافت نخواهید کرد.',
+      'ps': 'تاسو آفلاین کیږئ؛ له دې حالت څخه په وتلو سره به تاسو نور د سفر نوې غوښتنې ترلاسه نکړئ.',
+      'en': 'You are going offline; you will no longer receive new trip requests.'
+    },
+    'cancel': {'fa': 'لغو', 'ps': 'لغوه', 'en': 'Cancel'},
+    'confirm': {'fa': 'تأیید', 'ps': 'تایید', 'en': 'Confirm'},
+        // --- اختصاصی صفحه پروفایل (ProfilePage) ---
+    'profile_menu_account': {'fa': 'اطلاعات حساب کاربری', 'ps': 'د حساب معلومات', 'en': 'Account Information'},
+    'profile_menu_settings': {'fa': 'تنظیمات برنامه', 'ps': 'د اپلیکیشن تنظیمات', 'en': 'App Settings'},
+    'profile_menu_support': {'fa': 'مرکز پشتیبانی سفیر', 'ps': 'د سفیر د ملاتړ مرکز', 'en': 'Safir Support Center'},
+    'profile_logout': {'fa': 'خروج از حساب', 'ps': 'له حساب څخه وتل', 'en': 'Log Out'},
+        // --- اختصاصی صفحه تصویر موتر (DriverCarImageUpdateScreen) ---
+    'car_img_title': {'fa': 'تصویر موتر', 'ps': 'د موټر عکس', 'en': 'Vehicle Image'},
+    'car_img_picker_label': {'fa': 'عکس موتر (وسیله نقلیه) خود را وارد کنید', 'ps': 'د خپل موټر عکس دننه کړئ', 'en': 'Please upload your vehicle image'},
+    'car_img_take_photo': {'fa': 'گرفتن عکس جدید', 'ps': 'نوی عکس اخیستل', 'en': 'Take New Photo'},
+    'car_img_success': {'fa': 'تصویر موتر شما با موفقیت به‌روزرسانی شد', 'ps': 'ستاسو د موټر عکس په بریالیتوب سره تازه شو', 'en': 'Your vehicle image has been successfully updated'},
+    'close': {'fa': 'بستن', 'ps': 'بندول', 'en': 'Close'},
+    'final_confirm': {'fa': 'تأیید نهایی', 'ps': 'وروستی تایید', 'en': 'Final Confirm'},
+        // --- اختصاصی صفحه اطلاعات موتر (VehicleBaiscInfoUpdateScreen) ---
+    'vehicle_info_title': {'fa': 'اطلاعات موتر', 'ps': 'د موټر معلومات', 'en': 'Vehicle Information'},
+    'vehicle_type_car': {'fa': 'موتر (Car)', 'ps': 'موټر (Car)', 'en': 'Car'},
+    'vehicle_type_bike': {'fa': 'موتوربایک (Bike)', 'ps': 'موټرسایکل (Bike)', 'en': 'Motorbike'},
+    'vehicle_type_auto': {'fa': 'ریکشا / سه چرخ (Auto)', 'ps': 'ریکشا / درې څرخ (Auto)', 'en': 'Rickshaw / Auto'},
+    'vehicle_brand_label': {'fa': 'نام برند / مدل موتر', 'ps': 'د موټر نښه / ماډل', 'en': 'Vehicle Brand / Model'},
+    'vehicle_color_label': {'fa': 'رنگ موتر', 'ps': 'د موټر رنګ', 'en': 'Vehicle Color'},
+    'vehicle_year_label': {'fa': 'سال تولید', 'ps': 'د تولید کال', 'en': 'Production Year'},
+    'vehicle_plate_label': {'fa': 'شماره پلیت (اسناد)', 'ps': 'د پلیټ شمیره (اسناد)', 'en': 'License Plate Number'},
+    'vehicle_update_btn': {'fa': 'به‌روزرسانی اطلاعات', 'ps': 'د معلوماتو تازه کول', 'en': 'Update Information'},
+    'vehicle_update_success': {'fa': 'اطلاعات موتر شما موفقانه به‌روزرسانی شد', 'ps': 'ستاسو د موټر معلومات په بریالیتوب سره تازه شول', 'en': 'Your vehicle information has been successfully updated'},
     
+    // خطاهای اعتبارسنجی (Validation)
+    'val_required_brand': {'fa': 'وارد کردن نام برند الزامی است', 'ps': 'د نښې نوم دننه کول اړین دي', 'en': 'Brand name is required'},
+    'val_required_color': {'fa': 'وارد کردن رنگ الزامی است', 'ps': 'د رنګ دننه کول اړین دي', 'en': 'Color is required'},
+    'val_required_year': {'fa': 'وارد کردن سال تولید الزامی است', 'ps': 'د تولید کال دننه کول اړین دي', 'en': 'Production year is required'},
+    'val_required_plate': {'fa': 'وارد کردن شماره پلیت الزامی است', 'ps': 'د پلیټ شمیره دننه کول اړین دي', 'en': 'License plate is required'},
+        // --- اختصاصی صفحه جواز سیر موتر (VehicleRegistrationUpdateScreen) ---
+    'reg_card_title': {'fa': 'جواز سیر موتر (کارت موتر)', 'ps': 'د موټر سیر جواز (کارت)', 'en': 'Vehicle Registration Card'},
+    'reg_card_front_label': {'fa': 'تصویر روی جواز سیر موتر', 'ps': 'د موټر د سیر جواز د مخ عکس', 'en': 'Vehicle Registration Card (Front)'},
+    'reg_card_back_label': {'fa': 'تصویر پشت جواز سیر موتر', 'ps': 'د موټر د سیر جواز د شا عکس', 'en': 'Vehicle Registration Card (Back)'},
+    'take_photo': {'fa': 'گرفتن عکس', 'ps': 'عکس اخیستل', 'en': 'Take Photo'},
+    'update_docs': {'fa': 'به‌روزرسانی اسناد', 'ps': 'د اسنادو تازه کول', 'en': 'Update Documents'},
+    'reg_card_success': {'fa': 'تصاویر جواز سیر موتر با موفقیت به‌روزرسانی شد', 'ps': 'د موټر د سیر جواز عکسونه په بریالیتوب سره تازه شول', 'en': 'Vehicle registration images updated successfully'},
+
+
+
+
+
+
 
 
 
