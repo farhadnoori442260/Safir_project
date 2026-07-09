@@ -11,8 +11,9 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:safir_drivers/global/global.dart'; // اصلاح نام پکیج پروژه سفیر
-import 'package:safir_drivers/providers/registration_provider.dart'; // اصلاح نام پکیج پروژه سفیر
+import 'package:safir_drivers/global/global.dart';
+import 'package:safir_drivers/providers/registration_provider.dart';
+import 'package:safir_drivers/utils/lang_helper.dart'; // 👈 هیلپر زبان سفیر
 
 import '../../methods/map_theme_methods.dart';
 import '../../pushNotifications/push_notification.dart';
@@ -30,9 +31,8 @@ class _HomePageState extends State<HomePage> {
   GoogleMapController? controllerGoogleMap;
   Position? currentPositionOfDriver;
   
-  // تنظیمات رنگ و متن اولیه بر اساس برند سفیر
+  // تنظیمات رنگ اولیه
   Color colorToShow = const Color(0xFF145A41); // سبز سفیر برای آنلاین شدن
-  String titleToShow = "شروع به کار (آنلاین)";
   bool isDriverAvailable = false;
   DatabaseReference? newTripRequestReference;
   MapThemeMethods themeMethods = MapThemeMethods();
@@ -58,10 +58,8 @@ class _HomePageState extends State<HomePage> {
       isDriverAvailable = prefs.getBool('isDriverAvailable') ?? false;
       if (isDriverAvailable) {
         colorToShow = Colors.orange.shade800; // رنگ نارنجی/سرخ برای آفلاین شدن
-        titleToShow = "خروج از کار (آفلاین)";
       } else {
         colorToShow = const Color(0xFF145A41); // رنگ سبز سفیر برای آنلاین شدن
-        titleToShow = "شروع به کار (آنلاین)";
       }
     });
   }
@@ -151,7 +149,6 @@ class _HomePageState extends State<HomePage> {
               initialCameraPosition: googlePlexInitialPosition,
               onMapCreated: (GoogleMapController mapController) {
                 controllerGoogleMap = mapController;
-                //themeMethods.updateMapTheme(controllerGoogleMap!);
                 googleMapCompleterController.complete(controllerGoogleMap);
                 getCurrentLiveLocationOfDriver();
               },
@@ -202,8 +199,8 @@ class _HomePageState extends State<HomePage> {
                                     const SizedBox(height: 5),
                                     Text(
                                       (!isDriverAvailable)
-                                          ? "تغییر وضعیت به آنلاین"
-                                          : "تغییر وضعیت به آفلاین",
+                                          ? tr(context, 'change_to_online_title')
+                                          : tr(context, 'change_to_offline_title'),
                                       textAlign: TextAlign.center,
                                       style: const TextStyle(
                                         fontFamily: 'IranYekan',
@@ -215,8 +212,8 @@ class _HomePageState extends State<HomePage> {
                                     const SizedBox(height: 16),
                                     Text(
                                       (!isDriverAvailable)
-                                          ? "شما در حال آنلاین شدن هستید؛ با این کار آمادگی شما جهت دریافت درخواست‌های سفر از سوی مسافرین سفیر ثبت خواهد شد."
-                                          : "شما در حال آفلاین شدن هستید؛ با خروج از این وضعیت، دیگر درخواست سفر جدیدی دریافت نخواهید کرد.",
+                                          ? tr(context, 'change_to_online_desc')
+                                          : tr(context, 'change_to_offline_desc'),
                                       textAlign: TextAlign.center,
                                       style: const TextStyle(
                                         fontFamily: 'IranYekan',
@@ -228,7 +225,7 @@ class _HomePageState extends State<HomePage> {
                                     const SizedBox(height: 24),
                                     Row(
                                       children: [
-                                        // دکمه تایید عمل (سمت راست در چینش فارسی)
+                                        // دکمه تایید عمل
                                         Expanded(
                                           child: ElevatedButton(
                                             onPressed: () {
@@ -238,7 +235,6 @@ class _HomePageState extends State<HomePage> {
                                                 Navigator.pop(context);
                                                 setState(() {
                                                   colorToShow = Colors.orange.shade800;
-                                                  titleToShow = "خروج از کار (آفلاین)";
                                                   isDriverAvailable = true;
                                                 });
                                                 _saveDriverStatus(true);
@@ -247,7 +243,6 @@ class _HomePageState extends State<HomePage> {
                                                 Navigator.pop(context);
                                                 setState(() {
                                                   colorToShow = const Color(0xFF145A41);
-                                                  titleToShow = "شروع به کار (آنلاین)";
                                                   isDriverAvailable = false;
                                                 });
                                                 _saveDriverStatus(false);
@@ -261,14 +256,18 @@ class _HomePageState extends State<HomePage> {
                                                 borderRadius: BorderRadius.circular(10),
                                               ),
                                             ),
-                                            child: const Text(
-                                              "تأیید",
-                                              style: TextStyle(fontFamily: 'IranYekan', color: Colors.white, fontWeight: FontWeight.bold),
+                                            child: Text(
+                                              tr(context, 'confirm'),
+                                              style: const TextStyle(
+                                                fontFamily: 'IranYekan', 
+                                                color: Colors.white, 
+                                                fontWeight: FontWeight.bold
+                                              ),
                                             ),
                                           ),
                                         ),
                                         const SizedBox(width: 16),
-                                        // دکمه بازگشت و انصراف
+                                        // دکمه انصراف
                                         Expanded(
                                           child: ElevatedButton(
                                             onPressed: () {
@@ -280,9 +279,12 @@ class _HomePageState extends State<HomePage> {
                                                 borderRadius: BorderRadius.circular(10),
                                               ),
                                             ),
-                                            child: const Text(
-                                              "لغو",
-                                              style: TextStyle(fontFamily: 'IranYekan', color: Colors.white),
+                                            child: Text(
+                                              tr(context, 'cancel'),
+                                              style: const TextStyle(
+                                                fontFamily: 'IranYekan', 
+                                                color: Colors.white
+                                              ),
                                             ),
                                           ),
                                         ),
@@ -303,7 +305,9 @@ class _HomePageState extends State<HomePage> {
                       elevation: 4,
                     ),
                     child: Text(
-                      titleToShow,
+                      isDriverAvailable 
+                          ? tr(context, 'status_offline_btn') 
+                          : tr(context, 'status_online_btn'),
                       style: const TextStyle(
                         fontFamily: 'IranYekan', 
                         color: Colors.white, 
