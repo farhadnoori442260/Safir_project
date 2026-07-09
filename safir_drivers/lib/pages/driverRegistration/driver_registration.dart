@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:safir_drivers/methods/common_method.dart'; // اصلاح نام پکیج
-import 'package:safir_drivers/pages/dashboard.dart'; // اصلاح نام پکیج
-import 'package:safir_drivers/pages/driverRegistration/basic_info_screen.dart'; // اصلاح نام پکیج
-import 'package:safir_drivers/pages/driverRegistration/cninc_screen.dart'; // اصلاح نام پکیج
-import 'package:safir_drivers/pages/driverRegistration/driving_license_screen.dart'; // اصلاح نام پکیج
-import 'package:safir_drivers/pages/driverRegistration/selfie_screen.dart'; // اصلاح نام پکیج
-import 'package:safir_drivers/providers/registration_provider.dart'; // اصلاح نام پکیج
+import 'package:safir_drivers/methods/common_method.dart';
+import 'package:safir_drivers/pages/dashboard.dart';
+import 'package:safir_drivers/pages/driverRegistration/basic_info_screen.dart';
+import 'package:safir_drivers/pages/driverRegistration/cninc_screen.dart';
+import 'package:safir_drivers/pages/driverRegistration/driving_license_screen.dart';
+import 'package:safir_drivers/pages/driverRegistration/selfie_screen.dart';
+import 'package:safir_drivers/providers/registration_provider.dart';
+import 'package:safir_drivers/utils/lang_helper.dart'; // 👈 هیلپر زبان سفیر
 import 'vehicle_info_screen.dart';
 
 class DriverRegistration extends StatefulWidget {
@@ -40,9 +41,9 @@ class _DriverRegistrationState extends State<DriverRegistration> {
     return Consumer<RegistrationProvider>(
       builder: (context, registrationProvider, child) => Scaffold(
         appBar: AppBar(
-          title: const Text(
-            'تکمیل مراحل ثبت‌نام راننده',
-            style: TextStyle(fontFamily: 'IranYekan', fontWeight: FontWeight.bold, fontSize: 18),
+          title: Text(
+            tr(context, 'reg_steps_title'),
+            style: const TextStyle(fontFamily: 'IranYekan', fontWeight: FontWeight.bold, fontSize: 18),
           ),
           centerTitle: true,
         ),
@@ -76,8 +77,8 @@ class _DriverRegistrationState extends State<DriverRegistration> {
                     itemBuilder: (context, index) {
                       if (index == 0) {
                         return _buildListTile(
-                          title: 'اطلاعات فردی راننده',
-                          subtitle: 'مشخصات فردی، آدرس و ایمیل راننده',
+                          title: tr(context, 'step_basic_info_title'),
+                          subtitle: tr(context, 'step_basic_info_sub'),
                           isCompleted: isBasicInfoComplete,
                           onTap: () async {
                             bool? result = await Navigator.push(
@@ -96,8 +97,8 @@ class _DriverRegistrationState extends State<DriverRegistration> {
                         );
                       } else if (index == 1) {
                         return _buildListTile(
-                          title: 'تذکره / کارت هویت',
-                          subtitle: 'عکس رو و پشت تذکره الکترونیکی یا کارت هویت',
+                          title: tr(context, 'step_cnic_title'),
+                          subtitle: tr(context, 'step_cnic_sub'),
                           isCompleted: isCnicComplete,
                           onTap: () async {
                             bool? result = await Navigator.push(
@@ -116,8 +117,8 @@ class _DriverRegistrationState extends State<DriverRegistration> {
                         );
                       } else if (index == 2) {
                         return _buildListTile(
-                          title: 'عکس سلفی همراه با تذکره',
-                          subtitle: 'گرفتن تصویر سلفی به همراه تذکره جهت تایید هویت',
+                          title: tr(context, 'step_selfie_title'),
+                          subtitle: tr(context, 'step_selfie_sub'),
                           isCompleted: isSelfieComplete,
                           onTap: () async {
                             bool? result = await Navigator.push(
@@ -136,8 +137,8 @@ class _DriverRegistrationState extends State<DriverRegistration> {
                         );
                       } else if (index == 3) {
                         return _buildListTile(
-                          title: 'اطلاعات جواز سیر / گواهینامه',
-                          subtitle: 'وارد کردن شماره گواهینامه رانندگی و تصاویر آن',
+                          title: tr(context, 'step_license_title'),
+                          subtitle: tr(context, 'step_license_sub'),
                           isCompleted: isDrivingLicenseInfoComplete,
                           onTap: () async {
                             bool? result = await Navigator.push(
@@ -156,8 +157,8 @@ class _DriverRegistrationState extends State<DriverRegistration> {
                         );
                       } else {
                         return _buildListTile(
-                          title: 'مشخصات و اطلاعات موتر',
-                          subtitle: 'ثبت رنگ، مدل، نمبر پلیت و تصاویر موتر',
+                          title: tr(context, 'step_vehicle_title'),
+                          subtitle: tr(context, 'step_vehicle_sub'),
                           isCompleted: isVehicleInfoComplete,
                           onTap: () async {
                             bool? result = await Navigator.push(
@@ -199,7 +200,7 @@ class _DriverRegistrationState extends State<DriverRegistration> {
                                 );
                                 CommonMethods commonMethods = CommonMethods();
                                 commonMethods.displaySnackBar(
-                                    "حساب کاربری شما در سفیر با موفقیت ایجاد شد.",
+                                    tr(context, 'reg_success_msg'),
                                     context);
                               }
                             } catch (e) {
@@ -217,19 +218,24 @@ class _DriverRegistrationState extends State<DriverRegistration> {
                     ),
                     child: registrationProvider.isLoading
                         ? const CircularProgressIndicator(color: Colors.white)
-                        : const Text(
-                            'تأیید و ارسال نهایی مدارک',
-                            style: TextStyle(fontFamily: 'IranYekan', color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                        : Text(
+                            tr(context, 'submit_all_docs'),
+                            style: const TextStyle(
+                              fontFamily: 'IranYekan', 
+                              color: Colors.white, 
+                              fontSize: 16, 
+                              fontWeight: FontWeight.bold
+                            ),
                           ),
                   ),
                 ),
                 const SizedBox(height: 10),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
                   child: Text(
-                    'با کلیک بر روی گزینه ارسال، شما با شرایط، ضوابط و قوانین حریم خصوصی تاکسی اینترنتی سفیر موافقت می‌کنید.',
+                    tr(context, 'reg_terms_note'),
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontFamily: 'IranYekan', fontSize: 11, color: Colors.black54),
+                    style: const TextStyle(fontFamily: 'IranYekan', fontSize: 11, color: Colors.black54),
                   ),
                 ),
               ],
