@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:safir_drivers/providers/registration_provider.dart'; // اصلاح نام پکیج پروژه سفیر
+import 'package:safir_drivers/providers/registration_provider.dart';
+import 'package:safir_drivers/utils/lang_helper.dart'; // 👈 هیلپر زبان سفیر
 
 class EarningsPage extends StatefulWidget {
   const EarningsPage({super.key});
@@ -24,7 +25,7 @@ class _EarningsPageState extends State<EarningsPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: const Color(0xFF145A41), // تغییر رنگ پس‌زمینه به رنگ برند سفیر
+        backgroundColor: const Color(0xFF145A41), // رنگ برند سفیر
         body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -47,9 +48,9 @@ class _EarningsPageState extends State<EarningsPage> {
                         ),
                       ),
                       const SizedBox(height: 15),
-                      const Text(
-                        "کل درآمد شما:",
-                        style: TextStyle(
+                      Text(
+                        tr(context, 'total_earnings_title'),
+                        style: const TextStyle(
                           fontFamily: 'IranYekan',
                           color: Colors.white70,
                           fontSize: 16,
@@ -79,9 +80,9 @@ class _EarningsPageState extends State<EarningsPage> {
                                   ),
                                 ),
                                 const SizedBox(width: 5),
-                                const Text(
-                                  "افغانی",
-                                  style: TextStyle(
+                                Text(
+                                  tr(context, 'currency_unit'),
+                                  style: const TextStyle(
                                     fontFamily: 'IranYekan',
                                     color: Colors.white,
                                     fontSize: 14,
