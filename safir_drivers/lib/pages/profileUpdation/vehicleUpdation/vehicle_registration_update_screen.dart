@@ -3,7 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:safir_drivers/providers/registration_provider.dart'; // اصلاح نام پکیج پروژه سفیر
+import 'package:safir_drivers/providers/registration_provider.dart';
+import 'package:safir_drivers/utils/lang_helper.dart'; // 👈 هیلپر زبان سفیر
 
 import '../../../global/global.dart';
 
@@ -26,18 +27,18 @@ class _VehicleRegistrationUpdateScreenState
     return Consumer<RegistrationProvider>(
       builder: (context, registrationProvider, child) => Scaffold(
         appBar: AppBar(
-          title: const Text(
-            'جواز سیر موتر (کارت موتر)',
-            style: TextStyle(fontFamily: 'IranYekan', fontSize: 15, fontWeight: FontWeight.bold),
+          title: Text(
+            tr(context, 'reg_card_title'),
+            style: const TextStyle(fontFamily: 'IranYekan', fontSize: 15, fontWeight: FontWeight.bold),
           ),
           centerTitle: true,
           leading: TextButton(
             onPressed: () {
               Navigator.pop(context);
             },
-            child: const Text(
-              'بستن',
-              style: TextStyle(fontFamily: 'IranYekan', color: Colors.black87, fontWeight: FontWeight.bold),
+            child: Text(
+              tr(context, 'close'),
+              style: const TextStyle(fontFamily: 'IranYekan', color: Colors.black87, fontWeight: FontWeight.bold),
             ),
           ),
           leadingWidth: 70,
@@ -53,7 +54,7 @@ class _VehicleRegistrationUpdateScreenState
                   // بارگذاری روی جواز سیر
                   _buildImagePickerFront(
                       context,
-                      'تصویر روی جواز سیر موتر',
+                      tr(context, 'reg_card_front_label'),
                       registrationProvider.vehicleRegistrationFrontImage,
                       () => registrationProvider
                           .pickAndCropVehicleRegistrationImages(true)),
@@ -62,7 +63,7 @@ class _VehicleRegistrationUpdateScreenState
                   // بارگذاری پشت جواز سیر
                   _buildImagePickerBack(
                       context,
-                      'تصویر پشت جواز سیر موتر',
+                      tr(context, 'reg_card_back_label'),
                       registrationProvider.vehicleRegistrationBackImage,
                       () => registrationProvider
                           .pickAndCropVehicleRegistrationImages(false)),
@@ -81,9 +82,11 @@ class _VehicleRegistrationUpdateScreenState
                                 try {
                                   await registrationProvider
                                       .updateVehicleRegistraionImages(context);
-                                  commonMethods.displaySnackBar(
-                                      "تصاویر جواز سیر موتر با موفقیت به‌روزرسانی شد",
-                                      context);
+                                  if (context.mounted) {
+                                    commonMethods.displaySnackBar(
+                                        tr(context, 'reg_card_success'),
+                                        context);
+                                  }
                                 } catch (e) {
                                   print("Error while saving data: $e");
                                 }
@@ -101,9 +104,9 @@ class _VehicleRegistrationUpdateScreenState
                           ? const CircularProgressIndicator(
                               color: Colors.white,
                             )
-                          : const Text(
-                              'به‌روزرسانی اسناد',
-                              style: TextStyle(fontFamily: 'IranYekan', color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15),
+                          : Text(
+                              tr(context, 'update_docs'),
+                              style: const TextStyle(fontFamily: 'IranYekan', color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15),
                             ),
                     ),
                   ),
@@ -115,105 +118,105 @@ class _VehicleRegistrationUpdateScreenState
       ),
     );
   }
-}
 
-Widget _buildImagePickerFront(BuildContext context, String label,
-    XFile? imageFile, VoidCallback onPressed) {
-  return Container(
-    decoration: BoxDecoration(
-      border: Border.all(color: Colors.black12),
-      borderRadius: BorderRadius.circular(15),
-      color: Colors.white,
-      boxShadow: const [
-        BoxShadow(color: Colors.black12, offset: Offset(0, 2), blurRadius: 6.0),
-      ],
-    ),
-    child: Column(
-      children: [
-        const SizedBox(height: 16),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Text(
-            label,
-            style: const TextStyle(fontFamily: 'IranYekan', fontSize: 14, fontWeight: FontWeight.w500),
-          ),
-        ),
-        const SizedBox(height: 16),
-        imageFile != null
-            ? ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: Image.file(File(imageFile.path), height: 150, width: 240, fit: BoxFit.cover),
-              )
-            : Image.asset('assets/auth/cnic-front.png', height: 150, width: 240, fit: BoxFit.contain),
-        const SizedBox(height: 16),
-        Container(
-          width: 180,
-          height: 42,
-          decoration: BoxDecoration(
-            border: Border.all(color: const Color(0xFF145A41)),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: TextButton.icon(
-            onPressed: onPressed,
-            icon: const Icon(Icons.camera_alt, color: Color(0xFF145A41), size: 18),
-            label: const Text(
-              'گرفتن عکس',
-              style: TextStyle(fontFamily: 'IranYekan', color: Color(0xFF145A41), fontWeight: FontWeight.bold),
+  Widget _buildImagePickerFront(BuildContext context, String label,
+      XFile? imageFile, VoidCallback onPressed) {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.black12),
+        borderRadius: BorderRadius.circular(15),
+        color: Colors.white,
+        boxShadow: const [
+          BoxShadow(color: Colors.black12, offset: Offset(0, 2), blurRadius: 6.0),
+        ],
+      ),
+      child: Column(
+        children: [
+          const SizedBox(height: 16),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Text(
+              label,
+              style: const TextStyle(fontFamily: 'IranYekan', fontSize: 14, fontWeight: FontWeight.w500),
             ),
           ),
-        ),
-        const SizedBox(height: 16),
-      ],
-    ),
-  );
-}
-
-Widget _buildImagePickerBack(BuildContext context, String label,
-    XFile? imageFile, VoidCallback onPressed) {
-  return Container(
-    decoration: BoxDecoration(
-      border: Border.all(color: Colors.black12),
-      borderRadius: BorderRadius.circular(15),
-      color: Colors.white,
-      boxShadow: const [
-        BoxShadow(color: Colors.black12, offset: Offset(0, 2), blurRadius: 6.0),
-      ],
-    ),
-    child: Column(
-      children: [
-        const SizedBox(height: 16),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Text(
-            label,
-            style: const TextStyle(fontFamily: 'IranYekan', fontSize: 14, fontWeight: FontWeight.w500),
-          ),
-        ),
-        const SizedBox(height: 16),
-        imageFile != null
-            ? ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: Image.file(File(imageFile.path), height: 150, width: 240, fit: BoxFit.cover),
-              )
-            : Image.asset('assets/auth/cnic-back.png', height: 150, width: 240, fit: BoxFit.contain),
-        const SizedBox(height: 16),
-        Container(
-          width: 180,
-          height: 42,
-          decoration: BoxDecoration(
+          const SizedBox(height: 16),
+          imageFile != null
+              ? ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.file(File(imageFile.path), height: 150, width: 240, fit: BoxFit.cover),
+                )
+              : Image.asset('assets/auth/cnic-front.png', height: 150, width: 240, fit: BoxFit.contain),
+          const SizedBox(height: 16),
+          Container(
+            width: 180,
+            height: 42,
+            decoration: BoxDecoration(
               border: Border.all(color: const Color(0xFF145A41)),
-              borderRadius: BorderRadius.circular(12)),
-          child: TextButton.icon(
-            onPressed: onPressed,
-            icon: const Icon(Icons.camera_alt, color: Color(0xFF145A41), size: 18),
-            label: const Text(
-              'گرفتن عکس',
-              style: TextStyle(fontFamily: 'IranYekan', color: Color(0xFF145A41), fontWeight: FontWeight.bold),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: TextButton.icon(
+              onPressed: onPressed,
+              icon: const Icon(Icons.camera_alt, color: Color(0xFF145A41), size: 18),
+              label: Text(
+                tr(context, 'take_photo'),
+                style: const TextStyle(fontFamily: 'IranYekan', color: Color(0xFF145A41), fontWeight: FontWeight.bold),
+              ),
             ),
           ),
-        ),
-        const SizedBox(height: 16),
-      ],
-    ),
-  );
+          const SizedBox(height: 16),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildImagePickerBack(BuildContext context, String label,
+      XFile? imageFile, VoidCallback onPressed) {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.black12),
+        borderRadius: BorderRadius.circular(15),
+        color: Colors.white,
+        boxShadow: const [
+          BoxShadow(color: Colors.black12, offset: Offset(0, 2), blurRadius: 6.0),
+        ],
+      ),
+      child: Column(
+        children: [
+          const SizedBox(height: 16),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Text(
+              label,
+              style: const TextStyle(fontFamily: 'IranYekan', fontSize: 14, fontWeight: FontWeight.w500),
+            ),
+          ),
+          const SizedBox(height: 16),
+          imageFile != null
+              ? ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.file(File(imageFile.path), height: 150, width: 240, fit: BoxFit.cover),
+                )
+              : Image.asset('assets/auth/cnic-back.png', height: 150, width: 240, fit: BoxFit.contain),
+          const SizedBox(height: 16),
+          Container(
+            width: 180,
+            height: 42,
+            decoration: BoxDecoration(
+                border: Border.all(color: const Color(0xFF145A41)),
+                borderRadius: BorderRadius.circular(12)),
+            child: TextButton.icon(
+              onPressed: onPressed,
+              icon: const Icon(Icons.camera_alt, color: Color(0xFF145A41), size: 18),
+              label: Text(
+                tr(context, 'take_photo'),
+                style: const TextStyle(fontFamily: 'IranYekan', color: Color(0xFF145A41), fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+        ],
+      ),
+    );
+  }
 }
