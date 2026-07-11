@@ -13,12 +13,12 @@ class LoadingDialog extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
         child: Directionality(
-          textDirection: TextDirection.rtl,
+          textDirection: Directionality.of(context), // تنظیم داینامیک جهت متن متناسب با زبان سیستم
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               const CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF145A41)), // تغییر به سبز سفیر
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF145A41)), // سبز سفیر
                 strokeWidth: 3,
               ),
               const SizedBox(width: 20),
