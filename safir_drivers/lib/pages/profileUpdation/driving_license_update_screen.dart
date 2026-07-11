@@ -3,8 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:safir_drivers/pages/profileUpdation/cninc_update_screen.dart'; // اصلاح نام پکیج سفیر
-import 'package:safir_drivers/providers/registration_provider.dart'; // اصلاح نام پکیج سفیر
+import 'package:safir_drivers/pages/profileUpdation/cninc_update_screen.dart'; 
+import 'package:safir_drivers/providers/registration_provider.dart'; 
+import 'package:safir_drivers/helpers/helper.dart';
 
 class DrivingLicenseUpdateScreen extends StatefulWidget {
   const DrivingLicenseUpdateScreen({super.key});
@@ -25,18 +26,18 @@ class _DrivingLicenseUpdateScreenState
     return Consumer<RegistrationProvider>(
       builder: (context, registrationProvider, child) => Scaffold(
         appBar: AppBar(
-          title: const Text(
-            'جواز سیر / لایسنس رانندگی',
-            style: TextStyle(fontFamily: 'IranYekan', fontWeight: FontWeight.bold, fontSize: 16),
+          title: Text(
+            tr(context, 'license_screen_title'),
+            style: const TextStyle(fontFamily: 'IranYekan', fontWeight: FontWeight.bold, fontSize: 16),
           ),
           centerTitle: true,
           leading: TextButton(
             onPressed: () {
               Navigator.pop(context);
             },
-            child: const Text(
-              'بستن',
-              style: TextStyle(fontFamily: 'IranYekan', color: Colors.black87, fontWeight: FontWeight.bold),
+            child: Text(
+              tr(context, 'close'),
+              style: const TextStyle(fontFamily: 'IranYekan', color: Colors.black87, fontWeight: FontWeight.bold),
             ),
           ),
           leadingWidth: 70,
@@ -52,7 +53,7 @@ class _DrivingLicenseUpdateScreenState
                   // بارگذاری روی لایسنس
                   _buildImagePickerFront(
                       context,
-                      'عکس روی لایسنس (ابتدا عکس بگیرید و سپس کات کنید)',
+                      tr(context, 'license_front_hint'),
                       registrationProvider.drivingLicenseFrontImage,
                       () => registrationProvider
                           .pickAndCropDrivingLicenseImage(true)),
@@ -61,7 +62,7 @@ class _DrivingLicenseUpdateScreenState
                   // بارگذاری پشت لایسنس
                   _buildImagePickerBack(
                       context,
-                      'عکس پشت لایسنس (ابتدا عکس بگیرید و سپس کات کنید)',
+                      tr(context, 'license_back_hint'),
                       registrationProvider.drivingLicenseBackImage,
                       () => registrationProvider
                           .pickAndCropDrivingLicenseImage(false)),
@@ -84,12 +85,12 @@ class _DrivingLicenseUpdateScreenState
                     ),
                     child: TextFormField(
                       controller: registrationProvider.drivingLicenseController,
-                      decoration: const InputDecoration(
-                        labelText: 'شماره لایسنس / جواز رانندگی',
-                        helperText: 'فرمت نمونه: ST-24-7174',
-                        helperStyle: TextStyle(fontFamily: 'IranYekan', fontSize: 11),
-                        labelStyle: TextStyle(fontFamily: 'IranYekan', fontSize: 13),
-                        border: OutlineInputBorder(
+                      decoration: InputDecoration(
+                        labelText: tr(context, 'license_number_label'),
+                        helperText: tr(context, 'license_number_helper'),
+                        helperStyle: const TextStyle(fontFamily: 'IranYekan', fontSize: 11),
+                        labelStyle: const TextStyle(fontFamily: 'IranYekan', fontSize: 13),
+                        border: const OutlineInputBorder(
                           borderRadius: BorderRadius.all(
                             Radius.circular(12),
                           ),
@@ -99,10 +100,10 @@ class _DrivingLicenseUpdateScreenState
                       keyboardType: TextInputType.text,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'وارد کردن شماره لایسنس الزامی است';
+                          return tr(context, 'err_license_required');
                         }
                         if (!registrationProvider.licenseRegExp.hasMatch(value)) {
-                          return 'لطفاً شماره لایسنس را با فرمت معتبر (مانند ST-24-7174) وارد کنید';
+                          return tr(context, 'err_license_format');
                         }
                         return null;
                       },
@@ -125,8 +126,10 @@ class _DrivingLicenseUpdateScreenState
                                   await registrationProvider
                                       .updatedriverLicenseInfo(context);
 
-                                  commonMethods.displaySnackBar(
-                                      "اطلاعات لایسنس شما با موفقیت به‌روزرسانی شد", context);
+                                  if (context.mounted) {
+                                    commonMethods.displaySnackBar(
+                                        tr(context, 'vehicle_update_success'), context);
+                                  }
                                 } catch (e) {
                                   print("Error while saving data: $e");
                                 }
@@ -144,9 +147,9 @@ class _DrivingLicenseUpdateScreenState
                           ? const CircularProgressIndicator(
                               color: Colors.white,
                             )
-                          : const Text(
-                              'به‌روزرسانی اطلاعات لایسنس',
-                              style: TextStyle(fontFamily: 'IranYekan', color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15),
+                          : Text(
+                              tr(context, 'update_docs'),
+                              style: const TextStyle(fontFamily: 'IranYekan', color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15),
                             ),
                     ),
                   ),
@@ -179,7 +182,7 @@ Widget _buildImagePickerFront(BuildContext context, String label,
           child: Text(
             label,
             style: const TextStyle(fontFamily: 'IranYekan', fontSize: 13, fontWeight: FontWeight.w500),
-            textAlign: Center,
+            textAlign: TextAlign.center,
           ),
         ),
         const SizedBox(height: 16),
@@ -199,9 +202,9 @@ Widget _buildImagePickerFront(BuildContext context, String label,
           child: TextButton.icon(
             onPressed: onPressed,
             icon: const Icon(Icons.camera_alt, color: Color(0xFF145A41), size: 18),
-            label: const Text(
-              'گرفتن عکس جدید',
-              style: TextStyle(fontFamily: 'IranYekan', color: Color(0xFF145A41), fontWeight: FontWeight.bold),
+            label: Text(
+              tr(context, 'car_img_take_photo'),
+              style: const TextStyle(fontFamily: 'IranYekan', color: Color(0xFF145A41), fontWeight: FontWeight.bold),
             ),
           ),
         ),
@@ -230,7 +233,7 @@ Widget _buildImagePickerBack(BuildContext context, String label,
           child: Text(
             label,
             style: const TextStyle(fontFamily: 'IranYekan', fontSize: 13, fontWeight: FontWeight.w500),
-            textAlign: Center,
+            textAlign: TextAlign.center,
           ),
         ),
         const SizedBox(height: 16),
@@ -250,9 +253,9 @@ Widget _buildImagePickerBack(BuildContext context, String label,
           child: TextButton.icon(
             onPressed: onPressed,
             icon: const Icon(Icons.camera_alt, color: Color(0xFF145A41), size: 18),
-            label: const Text(
-              'گرفتن عکس جدید',
-              style: TextStyle(fontFamily: 'IranYekan', color: Color(0xFF145A41), fontWeight: FontWeight.bold),
+            label: Text(
+              tr(context, 'car_img_take_photo'),
+              style: const TextStyle(fontFamily: 'IranYekan', color: Color(0xFF145A41), fontWeight: FontWeight.bold),
             ),
           ),
         ),
