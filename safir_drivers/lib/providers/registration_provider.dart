@@ -7,13 +7,14 @@ import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:safir_drivers/global/global.dart'; // اصلاح نام پکیج سفیر
-import 'package:safir_drivers/methods/common_method.dart'; // اصلاح نام پکیج سفیر
-import 'package:safir_drivers/methods/image_picker_service.dart'; // اصلاح نام پکیج سفیر
-import 'package:safir_drivers/models/driver.dart'; // اصلاح نام پکیج سفیر
-import 'package:safir_drivers/models/vehicleInfo.dart'; // اصلاح نام پکیج سفیر
-import 'package:safir_drivers/pages/profile/profile_page.dart'; // اصلاح نام پکیج سفیر
-import 'package:safir_drivers/providers/authentication_provider.dart'; // اصلاح نام پکیج سفیر به آدرس جدید
+import 'package:safir_drivers/global/global.dart'; 
+import 'package:safir_drivers/methods/common_method.dart'; 
+import 'package:safir_drivers/methods/image_picker_service.dart'; 
+import 'package:safir_drivers/models/driver.dart'; 
+import 'package:safir_drivers/models/vehicleInfo.dart'; 
+import 'package:safir_drivers/pages/profile/profile_page.dart'; 
+import 'package:safir_drivers/providers/authentication_provider.dart'; 
+import 'package:safir_drivers/helpers/helper.dart';
 import 'package:http/http.dart' as http;
 
 class RegistrationProvider extends ChangeNotifier {
@@ -110,7 +111,7 @@ class RegistrationProvider extends ChangeNotifier {
     }
     if (authProvider.isGoogleSignedIn) {
       emailController.text =
-          authProvider.firebaseAuth.currentUser!.email.toString();
+          authProvider.firebaseAuth.currentUser?.email ?? '';
       phoneController.text = '';
     }
     checkBasicFormValidity();
@@ -277,13 +278,14 @@ class RegistrationProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // تصحیح باگ ارسال اشتباه بافت عکس فایل به استوریج
-  Future<String> uploadImageToFirebaseStorage(XFile? photo, String? path) async {
+  // آپلود عکس به استوریج فایربیس
+  Future<String> uploadImageToFirebaseStorage(XFile? photo, String? path, BuildContext context) async {
     if (photo == null) {
-      throw Exception("هیچ عکسی انتخاب نشده است");
+      throw Exception(tr(context, 'err_no_image_selected'));
     }
+    if (_auth.currentUser == null) throw Exception("User not authenticated");
     String imageIDName = DateTime.now().millisecondsSinceEpoch.toString();
-    final file = File(photo.path); // تصحیح متغیر ثابت قبلی رفرنس روی پروفایل به متغیر پویا
+    final file = File(photo.path);
     final reference = _storage
         .ref()
         .child(_auth.currentUser!.uid)
@@ -300,32 +302,32 @@ class RegistrationProvider extends ChangeNotifier {
         !isFormValidCninc ||
         !isFormValidDrivingLicnese ||
         !isVehicleBasicFormValid) {
-      commonMethods.displaySnackBar("لطفاً تمام جزییات را به طور کامل پر کنید!", context);
+      commonMethods.displaySnackBar(tr(context, 'err_fill_all_fields'), context);
       return;
     }
     try {
       startLoading();
       final profilePictureUrl =
-          await uploadImageToFirebaseStorage(_profilePhoto, "ProfilePicture");
+          await uploadImageToFirebaseStorage(_profilePhoto, "ProfilePicture", context);
 
       final frontCnincImageUrl =
-          await uploadImageToFirebaseStorage(_cnicFrontImage, "Cninc");
+          await uploadImageToFirebaseStorage(_cnicFrontImage, "Cninc", context);
       final backCnincImageUrl =
-          await uploadImageToFirebaseStorage(_cnicBackImage, "Cninc");
+          await uploadImageToFirebaseStorage(_cnicBackImage, "Cninc", context);
       final faceWithCnincImageUrl = await uploadImageToFirebaseStorage(
-          _cnicWithSelfieImage, "SelfieWithCninc");
+          _cnicWithSelfieImage, "SelfieWithCninc", context);
       final drivingLicenseFrontImageUrl = await uploadImageToFirebaseStorage(
-          _drivingLicenseFrontImage, "DrivingLicenseImages");
+          _drivingLicenseFrontImage, "DrivingLicenseImages", context);
       final drivingLicenseBackImageUrl = await uploadImageToFirebaseStorage(
-          _drivingLicenseBackImage, "DrivingLicenseImages");
+          _drivingLicenseBackImage, "DrivingLicenseImages", context);
       final vehicleImageUrl =
-          await uploadImageToFirebaseStorage(_vehicleImage, "VehicleImage");
+          await uploadImageToFirebaseStorage(_vehicleImage, "VehicleImage", context);
       final vehicleRegistrationFrontImageUrl =
           await uploadImageToFirebaseStorage(
-              _vehicleRegistrationFrontImage, "VehicleRegistrationImages");
+              _vehicleRegistrationFrontImage, "VehicleRegistrationImages", context);
       final vehicleRegistrationBackImageUrl =
           await uploadImageToFirebaseStorage(
-              _vehicleRegistrationBackImage, "VehicleRegistrationImages");
+              _vehicleRegistrationBackImage, "VehicleRegistrationImages", context);
 
       final driver = Driver(
         id: _auth.currentUser!.uid,
@@ -365,12 +367,12 @@ class RegistrationProvider extends ChangeNotifier {
       stopLoading();
     } catch (e) {
       stopLoading();
-      print("خطا در ذخیره‌سازی داده‌های راننده: $e");
+      print("Error saving driver data: $e");
     }
   }
 
   Future<void> fetchUserData() async {
-    if (_isDataFetched) {
+    if (_isDataFetched || _auth.currentUser == null) {
       return; 
     }
     try {
@@ -391,29 +393,29 @@ class RegistrationProvider extends ChangeNotifier {
         emailController.text = data['email'] ?? '';
         cnicController.text = data['cnicNumber'] ?? '';
         drivingLicenseController.text = data['drivingLicenseNumber'] ?? '';
-        _selectedVehicle = data['vehicleInfo']['type'] ?? '';
-        brandController.text = data['vehicleInfo']['brand'] ?? '';
-        colorController.text = data['vehicleInfo']['color'] ?? '';
+        _selectedVehicle = data['vehicleInfo']?['type'] ?? '';
+        brandController.text = data['vehicleInfo']?['brand'] ?? '';
+        colorController.text = data['vehicleInfo']?['color'] ?? '';
         numberPlateController.text =
-            data['vehicleInfo']['registrationPlateNumber'] ?? '';
+            data['vehicleInfo']?['registrationPlateNumber'] ?? '';
         productionYearController.text =
-            data['vehicleInfo']['productionYear'] ?? '';
+            data['vehicleInfo']?['productionYear'] ?? '';
 
-        _profilePhoto = await _fetchImageFromUrl(data['profilePicture']);
-        _cnicFrontImage = await _fetchImageFromUrl(data['cnicFrontImage']);
-        _cnicBackImage = await _fetchImageFromUrl(data['cnicBackImage']);
+        _profilePhoto = await _fetchImageFromUrl(data['profilePicture'] ?? '');
+        _cnicFrontImage = await _fetchImageFromUrl(data['cnicFrontImage'] ?? '');
+        _cnicBackImage = await _fetchImageFromUrl(data['cnicBackImage'] ?? '');
         _cnicWithSelfieImage =
-            await _fetchImageFromUrl(data['driverFaceWithCnic']);
+            await _fetchImageFromUrl(data['driverFaceWithCnic'] ?? '');
         _drivingLicenseFrontImage =
-            await _fetchImageFromUrl(data['drivingLicenseFrontImage']);
+            await _fetchImageFromUrl(data['drivingLicenseFrontImage'] ?? '');
         _drivingLicenseBackImage =
-            await _fetchImageFromUrl(data['drivingLicenseBackImage']);
+            await _fetchImageFromUrl(data['drivingLicenseBackImage'] ?? '');
         _vehicleImage =
-            await _fetchImageFromUrl(data['vehicleInfo']['vehiclePicture']);
+            await _fetchImageFromUrl(data['vehicleInfo']?['vehiclePicture'] ?? '');
         _vehicleRegistrationFrontImage = await _fetchImageFromUrl(
-            data['vehicleInfo']['registrationCertificateFrontImage']);
+            data['vehicleInfo']?['registrationCertificateFrontImage'] ?? '');
         _vehicleRegistrationBackImage = await _fetchImageFromUrl(
-            data['vehicleInfo']['registrationCertificateBackImage']);
+            data['vehicleInfo']?['registrationCertificateBackImage'] ?? '');
         
         _isDataFetched = true;
         stopFetchLoading();
@@ -422,7 +424,7 @@ class RegistrationProvider extends ChangeNotifier {
         stopFetchLoading();
       }
     } catch (e) {
-      print("خطا در لود اطلاعات راننده: $e");
+      print("Error loading driver data: $e");
       stopFetchLoading();
     }
   }
@@ -451,6 +453,7 @@ class RegistrationProvider extends ChangeNotifier {
 
   Future<void> fetchDriverEarnings() async {
     try {
+      if (_auth.currentUser == null) return;
       final userId = _auth.currentUser!.uid;
       DatabaseReference driverRef =
           _database.ref().child("drivers").child(userId);
@@ -471,6 +474,7 @@ class RegistrationProvider extends ChangeNotifier {
 
   Future<void> retrieveCurrentDriverInfo() async {
     try {
+      if (_auth.currentUser == null) return;
       final driverId = _auth.currentUser!.uid;
       DatabaseReference driverRef =
           _database.ref().child("drivers").child(driverId);
@@ -486,14 +490,14 @@ class RegistrationProvider extends ChangeNotifier {
         address = data['address'] ?? '';
         ratting = data['driverRattings'] ?? '';
         driverPhoto = data['profilePicture'] ?? '';
-        carModel = data['vehicleInfo']['brand'] ?? '';
-        carColor = data['vehicleInfo']['color'] ?? '';
-        carNumber = data['vehicleInfo']['registrationPlateNumber'] ?? '';
+        carModel = data['vehicleInfo']?['brand'] ?? '';
+        carColor = data['vehicleInfo']?['color'] ?? '';
+        carNumber = data['vehicleInfo']?['registrationPlateNumber'] ?? '';
 
         notifyListeners();
       }
     } catch (e) {
-      print("خطا در بازیابی ساختار پروفایل راننده جاری: $e");
+      print("Error retrieving current driver profile: $e");
     }
   }
 
@@ -502,7 +506,7 @@ class RegistrationProvider extends ChangeNotifier {
       _isLoading = true;
       notifyListeners();
       final newProfilePicture =
-          await uploadImageToFirebaseStorage(_profilePhoto, "ProfilePicture");
+          await uploadImageToFirebaseStorage(_profilePhoto, "ProfilePicture", context);
       final driverData = {
         'firstName': firstNameController.text,
         'secondName': lastNameController.text,
@@ -528,9 +532,9 @@ class RegistrationProvider extends ChangeNotifier {
       _isLoading = true;
       notifyListeners();
       final frontCnincImageUrl =
-          await uploadImageToFirebaseStorage(_cnicFrontImage, "Cninc");
+          await uploadImageToFirebaseStorage(_cnicFrontImage, "Cninc", context);
       final backCnincImageUrl =
-          await uploadImageToFirebaseStorage(_cnicBackImage, "Cninc");
+          await uploadImageToFirebaseStorage(_cnicBackImage, "Cninc", context);
       final driverData = {
         'cnicFrontImage': frontCnincImageUrl,
         'cnicBackImage': backCnincImageUrl,
@@ -551,7 +555,7 @@ class RegistrationProvider extends ChangeNotifier {
       _isLoading = true;
       notifyListeners();
       final faceWithCnincImageUrl = await uploadImageToFirebaseStorage(
-          _cnicWithSelfieImage, "SelfieWithCninc");
+          _cnicWithSelfieImage, "SelfieWithCninc", context);
       final driverData = {
         'driverFaceWithCnic': faceWithCnincImageUrl,
       };
@@ -570,9 +574,9 @@ class RegistrationProvider extends ChangeNotifier {
       _isLoading = true;
       notifyListeners();
       final drivingLicenseFrontImageUrl = await uploadImageToFirebaseStorage(
-          _drivingLicenseFrontImage, "DrivingLicenseImages");
+          _drivingLicenseFrontImage, "DrivingLicenseImages", context);
       final drivingLicenseBackImageUrl = await uploadImageToFirebaseStorage(
-          _drivingLicenseBackImage, "DrivingLicenseImages");
+          _drivingLicenseBackImage, "DrivingLicenseImages", context);
       final driverData = {
         'driverLicenseFrontImage': drivingLicenseFrontImageUrl,
         'driverLicenseBackImage': drivingLicenseBackImageUrl,
@@ -617,7 +621,7 @@ class RegistrationProvider extends ChangeNotifier {
       _isLoading = true;
       notifyListeners();
       final vehicleImageUrl =
-          await uploadImageToFirebaseStorage(_vehicleImage, "VehicleImage");
+          await uploadImageToFirebaseStorage(_vehicleImage, "VehicleImage", context);
       final vehicleData = {
         'vehiclePicture': vehicleImageUrl,
       };
@@ -640,10 +644,10 @@ class RegistrationProvider extends ChangeNotifier {
       notifyListeners();
       final vehicleRegistrationFrontImageUrl =
           await uploadImageToFirebaseStorage(
-              _vehicleRegistrationFrontImage, "VehicleRegistrationImages");
+              _vehicleRegistrationFrontImage, "VehicleRegistrationImages", context);
       final vehicleRegistrationBackImageUrl =
           await uploadImageToFirebaseStorage(
-              _vehicleRegistrationBackImage, "VehicleRegistrationImages");
+              _vehicleRegistrationBackImage, "VehicleRegistrationImages", context);
       final vehicleData = {
         'registrationCertificateFrontImage': vehicleRegistrationFrontImageUrl,
         'registrationCertificateBackImage': vehicleRegistrationBackImageUrl,
