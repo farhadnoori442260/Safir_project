@@ -11,7 +11,11 @@ dependencies:
   flutter:
     sdk: flutter
   
-  # پکیج‌های جدید برای پیاده‌سازی اوپن‌استریت‌مپ (جایگزین گوگل مپ)
+  # پشتیبانی از چندزبانی و ترجمه درون‌برنامه‌ای
+  flutter_localizations:
+    sdk: flutter
+
+  # پکیج‌های اوپن‌استریت‌مپ (جایگزین گوگل مپ)
   flutter_map: ^7.0.2
   latlong2: ^0.9.1
   
@@ -55,10 +59,11 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 
-  # آدرس‌دهی اسِت‌ها و پوشه‌های گرافیکی/صوتی سفیر
+  # آدرس‌دهی اسِت‌ها و پوشه‌های گرافیکی/صوتی و فایل‌های ترجمه سفیر
   assets:
     - assets/audio/
     - assets/images/
     - assets/vehicles/
     - assets/auth/
+    - assets/lang/
     - themes/
