@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:safir_drivers/pages/profileUpdation/vehicleUpdation/driver_car_image_update_screen.dart'; // اصلاح نام پکیج سفیر
-import 'package:safir_drivers/pages/profileUpdation/vehicleUpdation/vehicle_baisc_info_update_screen.dart'; // اصلاح نام پکیج سفیر
-import 'package:safir_drivers/pages/profileUpdation/vehicleUpdation/vehicle_registration_update_screen.dart'; // اصلاح نام پکیج سفیر
-import 'package:safir_drivers/providers/registration_provider.dart'; // اصلاح نام پکیج سفیر
+import 'package:safir_drivers/pages/profileUpdation/vehicleUpdation/driver_car_image_update_screen.dart'; 
+import 'package:safir_drivers/pages/profileUpdation/vehicleUpdation/vehicle_baisc_info_update_screen.dart'; 
+import 'package:safir_drivers/pages/profileUpdation/vehicleUpdation/vehicle_registration_update_screen.dart'; 
+import 'package:safir_drivers/providers/registration_provider.dart'; 
+import 'package:safir_drivers/helpers/helper.dart';
 
 class VehicleInfoUpdateScreen extends StatefulWidget {
   const VehicleInfoUpdateScreen({super.key});
@@ -19,9 +20,9 @@ class _VehicleInfoUpdateScreenState extends State<VehicleInfoUpdateScreen> {
     return Consumer<RegistrationProvider>(
       builder: (context, registrationProvider, child) => Scaffold(
         appBar: AppBar(
-          title: const Text(
-            'اطلاعات موتر / وسیله نقلیه',
-            style: TextStyle(fontFamily: 'IranYekan', fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black),
+          title: Text(
+            tr(context, 'vehicle_info_title'),
+            style: const TextStyle(fontFamily: 'IranYekan', fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black),
           ),
           centerTitle: true,
           backgroundColor: Colors.white,
@@ -61,8 +62,8 @@ class _VehicleInfoUpdateScreenState extends State<VehicleInfoUpdateScreen> {
                       switch (index) {
                         case 0:
                           return _buildListTile(
-                            title: 'اطلاعات پایه موتر',
-                            subtitle: 'نوعیت موتر، برند، رنگ و شماره پلیت',
+                            title: tr(context, 'vehicle_basic_info_title'),
+                            subtitle: tr(context, 'vehicle_basic_info_subtitle'),
                             onTap: () async {
                               await Navigator.push(
                                 context,
@@ -75,8 +76,8 @@ class _VehicleInfoUpdateScreenState extends State<VehicleInfoUpdateScreen> {
                           );
                         case 1:
                           return _buildListTile(
-                            title: 'عکس موتر',
-                            subtitle: 'بارگذاری عکس واضح از نمای ظاهری موتر',
+                            title: tr(context, 'vehicle_image_title'),
+                            subtitle: tr(context, 'vehicle_image_subtitle'),
                             onTap: () async {
                               await Navigator.push(
                                 context,
@@ -89,8 +90,8 @@ class _VehicleInfoUpdateScreenState extends State<VehicleInfoUpdateScreen> {
                           );
                         case 2:
                           return _buildListTile(
-                            title: 'کارت ثبت موتر / اسناد قانونی',
-                            subtitle: 'بارگذاری تصاویر اسناد و کتابچه ثبت وسیله نقلیه',
+                            title: tr(context, 'vehicle_doc_title'),
+                            subtitle: tr(context, 'vehicle_doc_subtitle'),
                             onTap: () async {
                               await Navigator.push(
                                 context,
