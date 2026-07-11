@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:uber_drivers_app/methods/common_method.dart';
+import 'package:safir_drivers/methods/common_method.dart';
+import 'package:safir_drivers/helpers/helper.dart';
 
 class PaymentDialog extends StatefulWidget {
-  String fareAmount;
+  final String fareAmount;
 
-  PaymentDialog({
+  const PaymentDialog({
     super.key,
     required this.fareAmount,
   });
@@ -19,20 +20,27 @@ class _PaymentDialogState extends State<PaymentDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final String currencyUnit = tr(context, 'currency_unit');
+    
+    // جایگذاری داینامیک مبلغ در متن راهنما بدون به هم ریختن ساختار زبان
+    final String paymentGuideMsg = tr(context, 'msg_payment_guide')
+        .replaceAll('{amount}', widget.fareAmount)
+        .replaceAll('{currency}', currencyUnit);
+
     return Directionality(
-      textDirection: TextDirection.rtl, // راست‌چین کردن محتوای دیالوگ پرداخت
+      textDirection: Directionality.of(context), // راست‌چین/چپ‌چین داینامیک براساس زبان فعال
       child: Dialog(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16), // لبه‌های گرد مدرن
+          borderRadius: BorderRadius.circular(16),
         ),
-        backgroundColor: Colors.white, // اصلاح پس‌زمینه به سفید یکدست سفیر
+        backgroundColor: Colors.white,
         elevation: 5,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // آیکون بالای صفحه برای جذابیت بصری دریافت پول
+              // آیکون بالای صفحه
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
@@ -47,9 +55,9 @@ class _PaymentDialogState extends State<PaymentDialog> {
               ),
               const SizedBox(height: 16),
               
-              const Text(
-                "دریافت نقدی کرایه",
-                style: TextStyle(
+              Text(
+                tr(context, 'title_collect_cash'),
+                style: const TextStyle(
                   fontFamily: 'IranYekan',
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
@@ -60,9 +68,9 @@ class _PaymentDialogState extends State<PaymentDialog> {
               Divider(height: 1, color: Colors.grey.shade200),
               const SizedBox(height: 24),
               
-              // نمایش بزرگ مبلغ کرایه به افغانی
+              // نمایش بزرگ مبلغ کرایه
               Text(
-                "${widget.fareAmount} افغانی",
+                "${widget.fareAmount} $currencyUnit",
                 style: TextStyle(
                   color: safirColor,
                   fontSize: 32,
@@ -73,7 +81,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
               
               // متن راهنمای راننده
               Text(
-                "لطفاً مبلغ فوق ( ${widget.fareAmount} افغانی ) را به عنوان هزینه سفر از مسافر دریافت کنید.",
+                paymentGuideMsg,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontFamily: 'IranYekan',
@@ -84,7 +92,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
               ),
               const SizedBox(height: 32),
               
-              // دکمه تایید دریافت پول با استایل سبز سفیر
+              // دکمه تایید دریافت پول
               SizedBox(
                 width: double.infinity,
                 height: 50,
@@ -93,19 +101,18 @@ class _PaymentDialogState extends State<PaymentDialog> {
                     Navigator.pop(context);
                     Navigator.pop(context);
                     cMethods.turnOnLocationUpdatesForHomePage();
-                    //Restart.restartApp();
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: safirColor, // تغییر رنگ به سبز سفیر
+                    backgroundColor: safirColor,
                     foregroundColor: Colors.white,
                     elevation: 0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: const Text(
-                    "مبلغ را دریافت کردم",
-                    style: TextStyle(
+                  child: Text(
+                    tr(context, 'btn_cash_received'),
+                    style: const TextStyle(
                       fontFamily: 'IranYekan',
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
