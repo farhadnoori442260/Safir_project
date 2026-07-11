@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:safir_drivers/pages/earnings/earning_page.dart'; // اصلاح نام پکیج سفیر
-import 'package:safir_drivers/pages/home/home_page.dart'; // اصلاح نام پکیج سفیر
-import 'package:safir_drivers/pages/profile/profile_page.dart'; // اصلاح نام پکیج سفیر
-import 'package:safir_drivers/pages/trips/trips_page.dart'; // اصلاح نام پکیج سفیر
-import '../providers/dashboard_provider.dart'; // اصلاح مسیر پرووایدر
+import 'package:safir_drivers/pages/earnings/earning_page.dart'; 
+import 'package:safir_drivers/pages/home/home_page.dart'; 
+import 'package:safir_drivers/pages/profile/profile_page.dart'; 
+import 'package:safir_drivers/pages/trips/trips_page.dart'; 
+import 'package:safir_drivers/providers/dashboard_provider.dart'; 
+import 'package:safir_drivers/helpers/helper.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -39,34 +40,34 @@ class _DashboardState extends State<Dashboard>
         body: TabBarView(
           physics: const NeverScrollableScrollPhysics(),
           controller: controller,
-          children: [
-            const HomePage(),
-            const EarningsPage(),
-            const TripsPage(),
-            const ProfilePage(),
+          children: const [
+            HomePage(),
+            EarningsPage(),
+            TripsPage(),
+            ProfilePage(),
           ],
         ),
         bottomNavigationBar: BottomNavigationBar(
-          items: const [
+          items: [
             BottomNavigationBarItem(
-              icon: Icon(Icons.home_outlined), 
-              activeIcon: Icon(Icons.home), 
-              label: "خانه",
+              icon: const Icon(Icons.home_outlined), 
+              activeIcon: const Icon(Icons.home), 
+              label: tr(context, 'nav_home'),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.credit_card_outlined), 
-              activeIcon: Icon(Icons.credit_card), 
-              label: "درآمدها",
+              icon: const Icon(Icons.credit_card_outlined), 
+              activeIcon: const Icon(Icons.credit_card), 
+              label: tr(context, 'nav_earnings'),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.account_tree_outlined), 
-              activeIcon: Icon(Icons.account_tree), 
-              label: "سفرها",
+              icon: const Icon(Icons.account_tree_outlined), 
+              activeIcon: const Icon(Icons.account_tree), 
+              label: tr(context, 'nav_trips'),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.person_outline), 
-              activeIcon: Icon(Icons.person), 
-              label: "پروفایل",
+              icon: const Icon(Icons.person_outline), 
+              activeIcon: const Icon(Icons.person), 
+              label: tr(context, 'nav_profile'),
             ),
           ],
           currentIndex: dashboardProvider.selectedIndex,
