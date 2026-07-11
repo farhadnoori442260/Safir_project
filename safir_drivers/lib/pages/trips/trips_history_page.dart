@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:safir_drivers/providers/trips_provider.dart'; // اصلاح نام پکیج پروژه سفیر
+import 'package:safir_drivers/providers/trips_provider.dart'; 
+import 'package:safir_drivers/helpers/helper.dart';
 
 class TripsHistoryPage extends StatefulWidget {
   const TripsHistoryPage({super.key});
@@ -24,9 +25,9 @@ class _TripsHistoryPageState extends State<TripsHistoryPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'سفرهای انجام شده من',
-          style: TextStyle(fontFamily: 'IranYekan', fontWeight: FontWeight.bold, fontSize: 16),
+        title: Text(
+          tr(context, 'trips_history_title'),
+          style: const TextStyle(fontFamily: 'IranYekan', fontWeight: FontWeight.bold, fontSize: 16),
         ),
         centerTitle: true,
         backgroundColor: Colors.white,
@@ -40,10 +41,10 @@ class _TripsHistoryPageState extends State<TripsHistoryPage> {
               ),
             )
           : tripProvider.completedTrips.isEmpty
-              ? const Center(
+              ? Center(
                   child: Text(
-                    "هیچ تاریخچه‌ای ثبت نشده است.",
-                    style: TextStyle(fontFamily: 'IranYekan', color: Colors.black54, fontSize: 14),
+                    tr(context, 'no_trips_history'),
+                    style: const TextStyle(fontFamily: 'IranYekan', color: Colors.black54, fontSize: 14),
                   ),
                 )
               : ListView.builder(
@@ -73,7 +74,7 @@ class _TripsHistoryPageState extends State<TripsHistoryPage> {
                                 const SizedBox(width: 12),
                                 Expanded(
                                   child: Text(
-                                    "مبداء: ${trip["pickUpAddress"]}",
+                                    "${tr(context, 'pickup_label')}: ${trip["pickUpAddress"] ?? ''}",
                                     overflow: TextOverflow.ellipsis,
                                     style: const TextStyle(
                                       fontFamily: 'IranYekan',
@@ -91,7 +92,7 @@ class _TripsHistoryPageState extends State<TripsHistoryPage> {
                                     borderRadius: BorderRadius.circular(6),
                                   ),
                                   child: Text(
-                                    "${trip["fareAmount"]} افغانی",
+                                    "${trip["fareAmount"] ?? 0} ${tr(context, 'currency_afg')}",
                                     style: const TextStyle(
                                       fontFamily: 'IranYekan',
                                       fontSize: 12,
@@ -114,7 +115,7 @@ class _TripsHistoryPageState extends State<TripsHistoryPage> {
                                 const SizedBox(width: 12),
                                 Expanded(
                                   child: Text(
-                                    "مقصد: ${trip["dropOffAddress"]}",
+                                    "${tr(context, 'destination_label')}: ${trip["dropOffAddress"] ?? ''}",
                                     overflow: TextOverflow.ellipsis,
                                     style: const TextStyle(
                                       fontFamily: 'IranYekan',
