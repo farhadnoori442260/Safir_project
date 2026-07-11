@@ -3,8 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:safir_drivers/methods/common_method.dart'; // اصلاح نام پکیج پروژه سفیر
-import 'package:safir_drivers/providers/registration_provider.dart'; // اصلاح نام پکیج پروژه سفیر
+import 'package:safir_drivers/methods/common_method.dart'; 
+import 'package:safir_drivers/providers/registration_provider.dart'; 
+import 'package:safir_drivers/helpers/helper.dart'; 
 
 class CnincUpdateScreen extends StatefulWidget {
   const CnincUpdateScreen({super.key});
@@ -24,18 +25,18 @@ class _CnincUpdateScreenState extends State<CnincUpdateScreen> {
     return Consumer<RegistrationProvider>(
       builder: (context, registrationProvider, child) => Scaffold(
         appBar: AppBar(
-          title: const Text(
-            'تذکره / کارت ملی راننده',
-            style: TextStyle(fontFamily: 'IranYekan', fontWeight: FontWeight.bold, fontSize: 16),
+          title: Text(
+            tr(context, 'cnic_screen_title'),
+            style: const TextStyle(fontFamily: 'IranYekan', fontWeight: FontWeight.bold, fontSize: 16),
           ),
           centerTitle: true,
           leading: TextButton(
             onPressed: () {
               Navigator.pop(context);
             },
-            child: const Text(
-              'بستن',
-              style: TextStyle(fontFamily: 'IranYekan', color: Colors.black87, fontWeight: FontWeight.bold),
+            child: Text(
+              tr(context, 'close'),
+              style: const TextStyle(fontFamily: 'IranYekan', color: Colors.black87, fontWeight: FontWeight.bold),
             ),
           ),
           leadingWidth: 70,
@@ -51,7 +52,7 @@ class _CnincUpdateScreenState extends State<CnincUpdateScreen> {
                   // بارگذاری روی تذکره
                   _buildImagePickerFront(
                       context,
-                      'عکس روی تذکره (ابتدا عکس بگیرید و سپس کات کنید)',
+                      tr(context, 'cnic_front_hint'),
                       registrationProvider.cnincFrontImage,
                       () => registrationProvider.pickAndCropCnincImage(true)),
                   const SizedBox(height: 16),
@@ -59,7 +60,7 @@ class _CnincUpdateScreenState extends State<CnincUpdateScreen> {
                   // بارگذاری پشت تذکره
                   _buildImagePickerBack(
                       context,
-                      'عکس پشت تذکره (ابتدا عکس بگیرید و سپس کات کنید)',
+                      tr(context, 'cnic_back_hint'),
                       registrationProvider.cnincBackImage,
                       () => registrationProvider.pickAndCropCnincImage(false)),
                   const SizedBox(height: 16),
@@ -80,10 +81,10 @@ class _CnincUpdateScreenState extends State<CnincUpdateScreen> {
                     ),
                     child: TextFormField(
                       controller: registrationProvider.cnicController,
-                      decoration: const InputDecoration(
-                          labelText: 'شماره تذکره / کارت هوشمند ملی',
-                          labelStyle: TextStyle(fontFamily: 'IranYekan', fontSize: 13),
-                          border: OutlineInputBorder(
+                      decoration: InputDecoration(
+                          labelText: tr(context, 'cnic_number_label'),
+                          labelStyle: const TextStyle(fontFamily: 'IranYekan', fontSize: 13),
+                          border: const OutlineInputBorder(
                               borderRadius: BorderRadius.all(
                                 Radius.circular(12),
                               ),
@@ -92,10 +93,10 @@ class _CnincUpdateScreenState extends State<CnincUpdateScreen> {
                       maxLength: 13,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'وارد کردن شماره تذکره الزامی است';
+                          return tr(context, 'err_cnic_required');
                         }
                         if (value.length != 13) {
-                          return 'شماره تذکره باید ۱۳ رقم باشد';
+                          return tr(context, 'err_cnic_length');
                         }
                         return null;
                       },
@@ -117,8 +118,11 @@ class _CnincUpdateScreenState extends State<CnincUpdateScreen> {
                                 try {
                                   await registrationProvider
                                       .updateCnincInfo(context);
-                                  commonMethods.displaySnackBar(
-                                      "اطلاعات تذکره شما با موفقیت به‌روزرسانی شد", context);
+                                  
+                                  if (context.mounted) {
+                                    commonMethods.displaySnackBar(
+                                        tr(context, 'vehicle_update_success'), context);
+                                  }
                                 } catch (e) {
                                   print("Error while saving data: $e");
                                 }
@@ -136,9 +140,9 @@ class _CnincUpdateScreenState extends State<CnincUpdateScreen> {
                           ? const CircularProgressIndicator(
                               color: Colors.white,
                             )
-                          : const Text(
-                              'به‌روزرسانی مدرک هویت',
-                              style: TextStyle(fontFamily: 'IranYekan', color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15),
+                          : Text(
+                              tr(context, 'update_docs'),
+                              style: const TextStyle(fontFamily: 'IranYekan', color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15),
                             ),
                     ),
                   ),
@@ -171,7 +175,7 @@ Widget _buildImagePickerFront(BuildContext context, String label,
           child: Text(
             label,
             style: const TextStyle(fontFamily: 'IranYekan', fontSize: 13, fontWeight: FontWeight.w500),
-            textAlign: Center,
+            textAlign: TextAlign.center,
           ),
         ),
         const SizedBox(height: 16),
@@ -192,9 +196,9 @@ Widget _buildImagePickerFront(BuildContext context, String label,
           child: TextButton.icon(
             onPressed: onPressed,
             icon: const Icon(Icons.camera_alt, color: Color(0xFF145A41), size: 18),
-            label: const Text(
-              'گرفتن عکس جدید',
-              style: TextStyle(fontFamily: 'IranYekan', color: Color(0xFF145A41), fontWeight: FontWeight.bold),
+            label: Text(
+              tr(context, 'car_img_take_photo'),
+              style: const TextStyle(fontFamily: 'IranYekan', color: Color(0xFF145A41), fontWeight: FontWeight.bold),
             ),
           ),
         ),
@@ -223,7 +227,7 @@ Widget _buildImagePickerBack(BuildContext context, String label,
           child: Text(
             label,
             style: const TextStyle(fontFamily: 'IranYekan', fontSize: 13, fontWeight: FontWeight.w500),
-            textAlign: Center,
+            textAlign: TextAlign.center,
           ),
         ),
         const SizedBox(height: 16),
@@ -243,9 +247,9 @@ Widget _buildImagePickerBack(BuildContext context, String label,
           child: TextButton.icon(
             onPressed: onPressed,
             icon: const Icon(Icons.camera_alt, color: Color(0xFF145A41), size: 18),
-            label: const Text(
-              'گرفتن عکس جدید',
-              style: TextStyle(fontFamily: 'IranYekan', color: Color(0xFF145A41), fontWeight: FontWeight.bold),
+            label: Text(
+              tr(context, 'car_img_take_photo'),
+              style: const TextStyle(fontFamily: 'IranYekan', color: Color(0xFF145A41), fontWeight: FontWeight.bold),
             ),
           ),
         ),
