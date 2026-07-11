@@ -8,13 +8,14 @@ import '../methods/common_method.dart';
 import '../models/trip_details.dart';
 import '../pages/newTrip/new_trip_page.dart';
 import 'loading_dialog.dart';
+import 'package:safir_drivers/helpers/helper.dart';
 
 class NotificationDialog extends StatefulWidget {
   final TripDetails? tripDetailsInfo;
   final String? fareAmount;
   final String? bidAmount;
 
-  NotificationDialog({
+  const NotificationDialog({
     super.key,
     this.tripDetailsInfo,
     this.fareAmount,
@@ -71,10 +72,12 @@ class _NotificationDialogState extends State<NotificationDialog> {
     showDialog(
       barrierDismissible: false,
       context: context,
-      builder: (BuildContext context) => const LoadingDialog(
-        messageText: 'لطفاً منتظر بمانید...',
+      builder: (BuildContext context) => LoadingDialog(
+        messageText: tr(context, 'msg_please_wait'),
       ),
     );
+
+    if (FirebaseAuth.instance.currentUser == null) return;
 
     DatabaseReference driverTripStatusRef = FirebaseDatabase.instance
         .ref()
@@ -95,20 +98,24 @@ class _NotificationDialogState extends State<NotificationDialog> {
 
         cMethods.turnOffLocationUpdatesForHomePage();
 
-        await Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (c) =>
-                NewTripPage(newTripDetailsInfo: widget.tripDetailsInfo),
-          ),
-        );
+        if (mounted) {
+          await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (c) =>
+                  NewTripPage(newTripDetailsInfo: widget.tripDetailsInfo),
+            ),
+          );
+        }
       } else {
         String message = newTripStatusValue == "cancelled"
-            ? "درخواست سفر توسط مسافر لغو شد."
+            ? tr(context, 'err_trip_cancelled')
             : newTripStatusValue == "timeout"
-                ? "زمان پاسخگویی به درخواست به پایان رسید."
-                : "درخواست سفر یافت نشد یا حذف شده است.";
-        cMethods.displaySnackBar(message, context);
+                ? tr(context, 'err_trip_timeout')
+                : tr(context, 'err_trip_not_found');
+        if (mounted) {
+          cMethods.displaySnackBar(message, context);
+        }
       }
     });
   }
@@ -116,25 +123,26 @@ class _NotificationDialogState extends State<NotificationDialog> {
   @override
   Widget build(BuildContext context) {
     final String fareAmount = widget.fareAmount ?? "۰";
+    final String currencyUnit = tr(context, 'currency_unit');
     final String bidAmount =
         widget.bidAmount == "null" || widget.bidAmount == null
-            ? "بدون پیشنهاد قیمت"
-            : "${widget.bidAmount} افغانی";
+            ? tr(context, 'no_bid_offer')
+            : "${widget.bidAmount} $currencyUnit";
 
     return Directionality(
-      textDirection: TextDirection.rtl, // راست‌چین کردن کل محتوای کارت اعلان
+      textDirection: Directionality.of(context),
       child: Dialog(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
         ),
-        backgroundColor: Colors.white, // اصلاح بک‌گراند به سفید یکدست
+        backgroundColor: Colors.white,
         elevation: 5,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // آیکون بالای دیالوگ به جای لوگوی پیش‌فرض
+              // آیکون بالای دیالوگ
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
@@ -149,9 +157,9 @@ class _NotificationDialogState extends State<NotificationDialog> {
               ),
               const SizedBox(height: 12),
 
-              const Text(
-                "درخواست سفر جدید",
-                style: TextStyle(
+              Text(
+                tr(context, 'title_new_trip_request'),
+                style: const TextStyle(
                   fontFamily: 'IranYekan',
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
@@ -174,12 +182,12 @@ class _NotificationDialogState extends State<NotificationDialog> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
-                              "مبدا (محل سوار شدن):",
-                              style: TextStyle(fontSize: 12, color: Colors.grey, fontFamily: 'IranYekan'),
+                            Text(
+                              tr(context, 'label_pickup_location'),
+                              style: const TextStyle(fontSize: 12, color: Colors.grey, fontFamily: 'IranYekan'),
                             ),
                             Text(
-                              widget.tripDetailsInfo?.pickupAddress ?? "نامشخص",
+                              widget.tripDetailsInfo?.pickupAddress ?? tr(context, 'unknown_address'),
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(color: Colors.black87, fontSize: 14, fontWeight: FontWeight.w500),
@@ -199,12 +207,12 @@ class _NotificationDialogState extends State<NotificationDialog> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
-                              "مقصد:",
-                              style: TextStyle(fontSize: 12, color: Colors.grey, fontFamily: 'IranYekan'),
+                            Text(
+                              tr(context, 'label_dropoff_location'),
+                              style: const TextStyle(fontSize: 12, color: Colors.grey, fontFamily: 'IranYekan'),
                             ),
                             Text(
-                              widget.tripDetailsInfo?.dropOffAddress ?? "نامشخص",
+                              widget.tripDetailsInfo?.dropOffAddress ?? tr(context, 'unknown_address'),
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(color: Colors.black87, fontSize: 14, fontWeight: FontWeight.w500),
@@ -221,7 +229,7 @@ class _NotificationDialogState extends State<NotificationDialog> {
               Divider(height: 1, color: Colors.grey.shade200),
               const SizedBox(height: 15),
 
-              // بخش مبالغ کرایه به افغانی
+              // بخش مبالغ کرایه
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
@@ -233,15 +241,15 @@ class _NotificationDialogState extends State<NotificationDialog> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text("کرایه استاندارد:", style: TextStyle(fontFamily: 'IranYekan', color: Colors.black54)),
-                        Text("$fareAmount افغانی", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                        Text(tr(context, 'label_standard_fare'), style: const TextStyle(fontFamily: 'IranYekan', color: Colors.black54)),
+                        Text("$fareAmount $currencyUnit", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
                       ],
                     ),
                     const SizedBox(height: 8),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text("قیمت پیشنهادی مسافر:", style: TextStyle(fontFamily: 'IranYekan', color: Colors.black54)),
+                        Text(tr(context, 'label_passenger_bid'), style: const TextStyle(fontFamily: 'IranYekan', color: Colors.black54)),
                         Text(bidAmount, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: safirColor)),
                       ],
                     ),
@@ -267,9 +275,9 @@ class _NotificationDialogState extends State<NotificationDialog> {
                           foregroundColor: Colors.grey.shade700,
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                         ),
-                        child: const Text(
-                          "رد کردن",
-                          style: TextStyle(fontFamily: 'IranYekan', fontWeight: FontWeight.bold, fontSize: 14),
+                        child: Text(
+                          tr(context, 'btn_decline_trip'),
+                          style: const TextStyle(fontFamily: 'IranYekan', fontWeight: FontWeight.bold, fontSize: 14),
                         ),
                       ),
                     ),
@@ -292,9 +300,9 @@ class _NotificationDialogState extends State<NotificationDialog> {
                           elevation: 0,
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                         ),
-                        child: const Text(
-                          "قبول سفر",
-                          style: TextStyle(fontFamily: 'IranYekan', fontWeight: FontWeight.bold, fontSize: 14),
+                        child: Text(
+                          tr(context, 'btn_accept_trip'),
+                          style: const TextStyle(fontFamily: 'IranYekan', fontWeight: FontWeight.bold, fontSize: 14),
                         ),
                       ),
                     ),
