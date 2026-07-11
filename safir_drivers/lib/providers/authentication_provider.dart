@@ -4,8 +4,9 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:safir_drivers/models/driver.dart'; // اصلاح نام پکیج سفیر
-import 'package:safir_drivers/pages/auth/register_screen.dart'; // اصلاح نام پکیج سفیر
+import 'package:safir_drivers/models/driver.dart'; 
+import 'package:safir_drivers/pages/auth/register_screen.dart'; 
+import 'package:safir_drivers/helpers/helper.dart';
 import '../methods/common_method.dart';
 import '../models/vehicleInfo.dart';
 import '../pages/auth/otp_screen.dart';
@@ -72,7 +73,9 @@ class AuthenticationProvider extends ChangeNotifier {
         },
         verificationFailed: (FirebaseAuthException e) {
           stopLoading(); 
-          commonMethods.displaySnackBar("خطا در تایید شماره تلفن: ${e.message}", context);
+          if (context.mounted) {
+            commonMethods.displaySnackBar("${tr(context, 'err_phone_verify')}: ${e.message}", context);
+          }
           throw Exception(e.toString());
         },
         codeSent: (String verificationId, int? resendToken) {
@@ -82,14 +85,16 @@ class AuthenticationProvider extends ChangeNotifier {
           
           // انتقال به صفحه تایید کد OTP
           Future.delayed(const Duration(seconds: 1)).whenComplete(() {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => OTPScreen(
-                  verificationId: verificationId,
+            if (context.mounted) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => OTPScreen(
+                    verificationId: verificationId,
+                  ),
                 ),
-              ),
-            );
+              );
+            }
           });
         },
         codeAutoRetrievalTimeout: (String verificationId) {
@@ -98,7 +103,9 @@ class AuthenticationProvider extends ChangeNotifier {
       );
     } on FirebaseException catch (e) {
       stopLoading(); 
-      commonMethods.displaySnackBar(e.message ?? "خطایی رخ داد", context);
+      if (context.mounted) {
+        commonMethods.displaySnackBar(e.message ?? tr(context, 'err_generic'), context);
+      }
     }
   }
 
@@ -133,7 +140,9 @@ class AuthenticationProvider extends ChangeNotifier {
     } on FirebaseException catch (e) {
       _isLoading = false;
       notifyListeners();
-      commonMethods.displaySnackBar("کد تایید اشتباه است یا منقضی شده است.", context);
+      if (context.mounted) {
+        commonMethods.displaySnackBar(tr(context, 'err_invalid_otp'), context);
+      }
     }
   }
 
@@ -157,7 +166,9 @@ class AuthenticationProvider extends ChangeNotifier {
     } on FirebaseException catch (e) {
       stopLoading();
       notifyListeners();
-      commonMethods.displaySnackBar(e.message ?? "خطا در ثبت اطلاعات", context);
+      if (context.mounted) {
+        commonMethods.displaySnackBar(e.message ?? tr(context, 'err_save_failed'), context);
+      }
     }
   }
 
@@ -172,6 +183,7 @@ class AuthenticationProvider extends ChangeNotifier {
 
   // بررسی وجود راننده با UID فعلی
   Future<bool> checkUserExistById() async {
+    if (FirebaseAuth.instance.currentUser == null) return false;
     DatabaseReference usersRef = firebaseDatabase.ref().child("drivers");
     DatabaseEvent snapshot = await usersRef
         .orderByChild("id") 
@@ -184,6 +196,7 @@ class AuthenticationProvider extends ChangeNotifier {
   // دریافت اطلاعات کامل راننده از فایربیس
   Future<void> getUserDataFromFirebaseDatabase() async {
     try {
+      if (firebaseAuth.currentUser == null) return;
       DatabaseReference driverRef = firebaseDatabase
           .ref()
           .child("drivers")
@@ -235,16 +248,17 @@ class AuthenticationProvider extends ChangeNotifier {
         _uid = _driverModel!.id;
         notifyListeners(); 
       } else {
-        print("اطلاعات راننده یافت نشد.");
+        print("Driver data not found.");
       }
     } catch (e) {
-      print("خطا در دریافت اطلاعات راننده: $e");
+      print("Error fetching driver data: $e");
     }
   }
 
   // بررسی پر بودن فیلدهای ضروری پروفایل راننده جهت احراز هویت نهایی
   Future<bool> checkDriverFieldsFilled() async {
     try {
+      if (firebaseAuth.currentUser == null) return false;
       DatabaseReference driverRef = firebaseDatabase
           .ref()
           .child("drivers")
@@ -313,7 +327,7 @@ class AuthenticationProvider extends ChangeNotifier {
         return false;
       }
     } catch (e) {
-      print("خطا در بررسی فیلدهای راننده: $e");
+      print("Error checking driver fields: $e");
       return false;
     }
   }
@@ -352,14 +366,17 @@ class AuthenticationProvider extends ChangeNotifier {
       stopGoogleLoading();
     } on FirebaseAuthException catch (e) {
       stopGoogleLoading();
-      commonMethods.displaySnackBar(
-          e.message ?? "خطا در اتصال به حساب گوگل", context);
+      if (context.mounted) {
+        commonMethods.displaySnackBar(
+            e.message ?? tr(context, 'err_google_sign_in'), context);
+      }
     }
   }
 
   // بررسی وضعیت مسدود (بلاک) بودن راننده توسط مدیریت سفیر
   Future<bool> checkIfDriverIsBlocked() async {
     try {
+      if (firebaseAuth.currentUser == null) return false;
       DatabaseReference driverRef = firebaseDatabase
           .ref()
           .child("drivers")
@@ -386,7 +403,7 @@ class AuthenticationProvider extends ChangeNotifier {
         return false; 
       }
     } catch (e) {
-      print("خطا در چک کردن وضعیت بلاک: $e");
+      print("Error checking block status: $e");
       return false; 
     }
   }
@@ -402,18 +419,22 @@ class AuthenticationProvider extends ChangeNotifier {
       _isGoogleSignedIn = false;
       notifyListeners();
 
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(
-            builder: (context) =>
-                const RegisterScreen()), 
-        (route) => false,
-      );
+      if (context.mounted) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  const RegisterScreen()), 
+          (route) => false,
+        );
+      }
 
       stopLoading();
     } on FirebaseAuthException catch (e) {
       stopLoading();
-      commonMethods.displaySnackBar(e.message ?? "خطا در خروج از حساب", context);
+      if (context.mounted) {
+        commonMethods.displaySnackBar(e.message ?? tr(context, 'err_sign_out'), context);
+      }
     }
   }
 }
