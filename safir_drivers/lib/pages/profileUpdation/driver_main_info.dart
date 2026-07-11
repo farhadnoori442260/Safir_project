@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:safir_drivers/pages/profileUpdation/basic_driver_info_update_screen.dart'; // اصلاح نام پکیج سفیر
+import 'package:safir_drivers/pages/profileUpdation/basic_driver_info_update_screen.dart'; 
 import 'package:safir_drivers/pages/profileUpdation/cninc_update_screen.dart';
 import 'package:safir_drivers/pages/profileUpdation/driving_license_update_screen.dart';
 import 'package:safir_drivers/pages/profileUpdation/selfie_with_cninc_update_screen.dart';
 import 'package:safir_drivers/pages/profileUpdation/vehicle_info_update_screen.dart';
 import 'package:safir_drivers/providers/registration_provider.dart';
+import 'package:safir_drivers/helpers/helper.dart';
 
 class DriverMainInfo extends StatefulWidget {
   const DriverMainInfo({super.key});
@@ -39,23 +40,23 @@ class _DriverMainInfoState extends State<DriverMainInfo> {
     return Consumer<RegistrationProvider>(builder: (context, provider, child) {
       return Scaffold(
         appBar: AppBar(
-          title: const Text(
-            'تکمیل و به‌روزرسانی پروفایل',
-            style: TextStyle(fontFamily: 'IranYekan', fontWeight: FontWeight.bold, fontSize: 16),
+          title: Text(
+            tr(context, 'reg_steps_title'),
+            style: const TextStyle(fontFamily: 'IranYekan', fontWeight: FontWeight.bold, fontSize: 16),
           ),
           centerTitle: true,
         ),
         body: provider.isFetchLoading
-            ? const Center(
+            ? Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      "در حال دریافت اطلاعات شما...",
-                      style: TextStyle(fontFamily: 'IranYekan', fontSize: 14, color: Colors.black87),
+                      tr(context, 'please_wait'),
+                      style: const TextStyle(fontFamily: 'IranYekan', fontSize: 14, color: Colors.black87),
                     ),
-                    SizedBox(height: 16),
-                    CircularProgressIndicator(
+                    const SizedBox(height: 16),
+                    const CircularProgressIndicator(
                       color: brandColor,
                     ),
                   ],
@@ -92,8 +93,8 @@ class _DriverMainInfoState extends State<DriverMainInfo> {
                           itemBuilder: (context, index) {
                             if (index == 0) {
                               return _buildListTile(
-                                title: 'اطلاعات پایه',
-                                subtitle: 'نام، ایمیل و مشخصات عمومی راننده',
+                                title: tr(context, 'step_basic_info_title'),
+                                subtitle: tr(context, 'step_basic_info_sub'),
                                 onTap: () async {
                                   await Navigator.push(
                                     context,
@@ -106,8 +107,8 @@ class _DriverMainInfoState extends State<DriverMainInfo> {
                               );
                             } else if (index == 1) {
                               return _buildListTile(
-                                title: 'تذکره / کارت ملی',
-                                subtitle: 'تنظیمات عکس و شماره تذکره هوشمند',
+                                title: tr(context, 'step_cnic_title'),
+                                subtitle: tr(context, 'step_cnic_sub'),
                                 onTap: () async {
                                   await Navigator.push(
                                     context,
@@ -120,8 +121,8 @@ class _DriverMainInfoState extends State<DriverMainInfo> {
                               );
                             } else if (index == 2) {
                               return _buildListTile(
-                                title: 'سلفی همراه تذکره',
-                                subtitle: 'گرفتن عکس واضح راننده در کنار مدرک هویت',
+                                title: tr(context, 'step_selfie_title'),
+                                subtitle: tr(context, 'step_selfie_sub'),
                                 onTap: () async {
                                   await Navigator.push(
                                     context,
@@ -134,8 +135,8 @@ class _DriverMainInfoState extends State<DriverMainInfo> {
                               );
                             } else if (index == 3) {
                               return _buildListTile(
-                                title: 'جواز سیر / لایسنس رانندگی',
-                                subtitle: 'ثبت شماره لایسنس و تصاویر مدارک رانندگی',
+                                title: tr(context, 'step_license_title'),
+                                subtitle: tr(context, 'step_license_sub'),
                                 onTap: () async {
                                   await Navigator.push(
                                     context,
@@ -148,8 +149,8 @@ class _DriverMainInfoState extends State<DriverMainInfo> {
                               );
                             } else {
                               return _buildListTile(
-                                title: 'مشخصات وسایط نقلیه',
-                                subtitle: 'اطلاعات مدل، رنگ، نمبر پلیت و تصاویر موتر',
+                                title: tr(context, 'step_vehicle_title'),
+                                subtitle: tr(context, 'step_vehicle_sub'),
                                 onTap: () async {
                                   await Navigator.push(
                                     context,
@@ -187,7 +188,6 @@ class _DriverMainInfoState extends State<DriverMainInfo> {
         subtitle,
         style: const TextStyle(fontFamily: 'IranYekan', fontSize: 12, color: Colors.black54),
       ),
-      // استفاده از آیکون چپ‌جهت برای هماهنگی با زبان فارسی و باز شدن صفحات از راست به چپ
       trailing: const Icon(Icons.arrow_back_ios, size: 14, color: Colors.black38),
       onTap: onTap,
     );
