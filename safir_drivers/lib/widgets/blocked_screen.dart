@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:safir_drivers/pages/auth/register_screen.dart'; // اصلاح نام پکیج سفیر
+import 'package:safir_drivers/pages/auth/register_screen.dart'; 
+import 'package:safir_drivers/helpers/helper.dart';
 
 class BlockedScreen extends StatefulWidget {
   const BlockedScreen({super.key});
@@ -21,7 +22,7 @@ class _BlockedScreenState extends State<BlockedScreen> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // آیکون هشدار برای زیبایی و درک سریع‌تر وضعیت توسط راننده
+                // آیکون هشدار مسدودیت
                 const Icon(
                   Icons.block_rounded,
                   color: Color(0xFFD32F2F),
@@ -29,20 +30,20 @@ class _BlockedScreenState extends State<BlockedScreen> {
                 ),
                 const SizedBox(height: 24),
                 
-                // متن فارسی اطلاع‌رسانی مسدودیت با فونت ایران‌یکان
-                const Text(
-                  "حساب کاربری شما توسط مدیریت مسدود شده است.\nلطفاً جهت کسب اطلاعات بیشتر با پشتیبانی سفیر در ارتباط باشید:",
+                // متن اطلاع‌رسانی مسدودیت
+                Text(
+                  tr(context, 'account_blocked_msg'),
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontFamily: 'IranYekan',
                     fontSize: 15,
-                    color: Colors.black87, // اصلاح شده
+                    color: Colors.black87,
                     height: 1.6,
                   ),
                 ),
                 const SizedBox(height: 8),
                 
-                // قرار دادن ایمیل در بخش جداگانه برای جلوگیری از بهم ریختگی متن RTL
+                // ایمیل پشتیبانی
                 const Text(
                   "farhadnoori442@gmail.com",
                   style: TextStyle(
@@ -74,9 +75,9 @@ class _BlockedScreenState extends State<BlockedScreen> {
                         ),
                       );
                     },
-                    child: const Text(
-                      "متوجه شدم",
-                      style: TextStyle(
+                    child: Text(
+                      tr(context, 'btn_got_it'),
+                      style: const TextStyle(
                         fontFamily: 'IranYekan',
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
