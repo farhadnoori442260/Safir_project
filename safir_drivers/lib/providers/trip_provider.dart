@@ -36,7 +36,7 @@ class TripProvider with ChangeNotifier {
         currentDriverTotalTripsCompleted = "0";
       }
     } catch (error) {
-      print("خطا در دریافت تعداد کل سفرها: $error");
+      debugPrint("Error fetching completed trips count: $error");
     } finally {
       isLoading = false;
       notifyListeners();
@@ -74,7 +74,7 @@ class TripProvider with ChangeNotifier {
         completedTrips = [];
       }
     } catch (error) {
-      print("خطا در دریافت لیست تاریخچه سفرها: $error");
+      debugPrint("Error fetching completed trips list: $error");
     } finally {
       isLoading = false;
       notifyListeners();
