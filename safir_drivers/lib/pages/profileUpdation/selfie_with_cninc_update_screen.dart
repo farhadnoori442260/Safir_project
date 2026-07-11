@@ -3,8 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:safir_drivers/methods/common_method.dart'; // اصلاح نام پکیج سفیر
-import 'package:safir_drivers/providers/registration_provider.dart'; // اصلاح نام پکیج سفیر
+import 'package:safir_drivers/methods/common_method.dart'; 
+import 'package:safir_drivers/providers/registration_provider.dart'; 
+import 'package:safir_drivers/helpers/helper.dart';
 
 class SelfieWithCnincUpdateScreen extends StatefulWidget {
   const SelfieWithCnincUpdateScreen({super.key});
@@ -25,18 +26,18 @@ class _SelfieWithCnincUpdateScreenState
     return Consumer<RegistrationProvider>(
       builder: (context, registrationProvider, child) => Scaffold(
         appBar: AppBar(
-          title: const Text(
-            'سلفی همراه تذکره / کارت هویت',
-            style: TextStyle(fontFamily: 'IranYekan', fontWeight: FontWeight.bold, fontSize: 16),
+          title: Text(
+            tr(context, 'selfie_screen_title'),
+            style: const TextStyle(fontFamily: 'IranYekan', fontWeight: FontWeight.bold, fontSize: 16),
           ),
           centerTitle: true,
           leading: TextButton(
             onPressed: () {
               Navigator.pop(context);
             },
-            child: const Text(
-              'بستن',
-              style: TextStyle(fontFamily: 'IranYekan', color: Colors.black87, fontWeight: FontWeight.bold),
+            child: Text(
+              tr(context, 'close'),
+              style: const TextStyle(fontFamily: 'IranYekan', color: Colors.black87, fontWeight: FontWeight.bold),
             ),
           ),
           leadingWidth: 70,
@@ -50,10 +51,10 @@ class _SelfieWithCnincUpdateScreenState
                 // بخش انتخاب تصویر سلفی همراه تذکره
                 _buildImagePicker(
                   context,
-                  'تأیید هویت راننده',
+                  tr(context, 'selfie_label'),
                   registrationProvider.cnicWithSelfieImage,
                   registrationProvider.pickCnincImageWithSelfie,
-                  'لطفاً تذکره یا کارت ملی خود را به صورت واضح جلوی خود نگه داشته و یک عکس سلفی بگیرید. تصویر باید کاملاً واضح بوده و جزئیات کارت و چهره شما در نور مناسب و با کیفیت بالا قابل تشخیص باشد.'
+                  tr(context, 'selfie_description'),
                 ),
                 const SizedBox(height: 24),
 
@@ -69,8 +70,11 @@ class _SelfieWithCnincUpdateScreenState
                                 try {
                                   await registrationProvider
                                       .updateSelfieWithCnincInfo(context);
-                                  commonMethods.displaySnackBar(
-                                      "تصویر تأیید هویت شما با موفقیت ثبت شد.", context);
+                                  
+                                  if (context.mounted) {
+                                    commonMethods.displaySnackBar(
+                                        tr(context, 'vehicle_update_success'), context);
+                                  }
                                 } catch (e) {
                                   print("Error while saving data: $e");
                                 }
@@ -87,9 +91,9 @@ class _SelfieWithCnincUpdateScreenState
                         ? const CircularProgressIndicator(
                             color: Colors.white,
                           )
-                        : const Text(
-                            'به‌روزرسانی و ارسال عکس',
-                            style: TextStyle(fontFamily: 'IranYekan', color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15),
+                        : Text(
+                            tr(context, 'update_docs'),
+                            style: const TextStyle(fontFamily: 'IranYekan', color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15),
                           ),
                   ),
                 ),
@@ -138,9 +142,9 @@ Widget _buildImagePicker(BuildContext context, String label, XFile? imageFile,
           child: TextButton.icon(
             onPressed: onPressed,
             icon: const Icon(Icons.camera_alt, color: Color(0xFF145A41), size: 18),
-            label: const Text(
-              'گرفتن عکس سلفی',
-              style: TextStyle(fontFamily: 'IranYekan', color: Color(0xFF145A41), fontWeight: FontWeight.bold),
+            label: Text(
+              tr(context, 'selfie_take_photo'),
+              style: const TextStyle(fontFamily: 'IranYekan', color: Color(0xFF145A41), fontWeight: FontWeight.bold),
             ),
           ),
         ),
