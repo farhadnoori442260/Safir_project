@@ -3,11 +3,11 @@ import 'package:provider/provider.dart';
 import 'package:safir_drivers/methods/common_method.dart';
 import 'package:safir_drivers/pages/dashboard.dart';
 import 'package:safir_drivers/pages/driverRegistration/basic_info_screen.dart';
-import 'package:safir_drivers/pages/driverRegistration/cninc_screen.dart';
+import 'package:safir_drivers/pages/driverRegistration/cnic_screen.dart'; // 👈 اصلاح غلط املایی cninc به cnic
 import 'package:safir_drivers/pages/driverRegistration/driving_license_screen.dart';
 import 'package:safir_drivers/pages/driverRegistration/selfie_screen.dart';
 import 'package:safir_drivers/providers/registration_provider.dart';
-import 'package:safir_drivers/utils/lang_helper.dart'; // 👈 هیلپر زبان سفیر
+import 'package:safir_drivers/utils/lang_helper.dart';
 import 'vehicle_info_screen.dart';
 
 class DriverRegistration extends StatefulWidget {
@@ -24,6 +24,15 @@ class _DriverRegistrationState extends State<DriverRegistration> {
   bool isVehicleInfoComplete = false;
   bool isDrivingLicenseInfoComplete = false;
   bool isAllComplete = false;
+
+  // متد پشتیبان جهت اطمینان از کارکرد صحیح tr حتی در صورت نبود فایل هیلپر کامل
+  String _getTranslatedText(BuildContext context, String key) {
+    try {
+      return tr(context, key);
+    } catch (e) {
+      return key;
+    }
+  }
 
   // تابع بازخوانی وضعیت تکمیل تمامی مدارک
   void _recalculateAllComplete() {
@@ -42,7 +51,7 @@ class _DriverRegistrationState extends State<DriverRegistration> {
       builder: (context, registrationProvider, child) => Scaffold(
         appBar: AppBar(
           title: Text(
-            tr(context, 'reg_steps_title'),
+            _getTranslatedText(context, 'reg_steps_title'),
             style: const TextStyle(fontFamily: 'IranYekan', fontWeight: FontWeight.bold, fontSize: 18),
           ),
           centerTitle: true,
@@ -77,8 +86,8 @@ class _DriverRegistrationState extends State<DriverRegistration> {
                     itemBuilder: (context, index) {
                       if (index == 0) {
                         return _buildListTile(
-                          title: tr(context, 'step_basic_info_title'),
-                          subtitle: tr(context, 'step_basic_info_sub'),
+                          title: _getTranslatedText(context, 'step_basic_info_title'),
+                          subtitle: _getTranslatedText(context, 'step_basic_info_sub'),
                           isCompleted: isBasicInfoComplete,
                           onTap: () async {
                             bool? result = await Navigator.push(
@@ -97,8 +106,8 @@ class _DriverRegistrationState extends State<DriverRegistration> {
                         );
                       } else if (index == 1) {
                         return _buildListTile(
-                          title: tr(context, 'step_cnic_title'),
-                          subtitle: tr(context, 'step_cnic_sub'),
+                          title: _getTranslatedText(context, 'step_cnic_title'),
+                          subtitle: _getTranslatedText(context, 'step_cnic_sub'),
                           isCompleted: isCnicComplete,
                           onTap: () async {
                             bool? result = await Navigator.push(
@@ -117,8 +126,8 @@ class _DriverRegistrationState extends State<DriverRegistration> {
                         );
                       } else if (index == 2) {
                         return _buildListTile(
-                          title: tr(context, 'step_selfie_title'),
-                          subtitle: tr(context, 'step_selfie_sub'),
+                          title: _getTranslatedText(context, 'step_selfie_title'),
+                          subtitle: _getTranslatedText(context, 'step_selfie_sub'),
                           isCompleted: isSelfieComplete,
                           onTap: () async {
                             bool? result = await Navigator.push(
@@ -137,8 +146,8 @@ class _DriverRegistrationState extends State<DriverRegistration> {
                         );
                       } else if (index == 3) {
                         return _buildListTile(
-                          title: tr(context, 'step_license_title'),
-                          subtitle: tr(context, 'step_license_sub'),
+                          title: _getTranslatedText(context, 'step_license_title'),
+                          subtitle: _getTranslatedText(context, 'step_license_sub'),
                           isCompleted: isDrivingLicenseInfoComplete,
                           onTap: () async {
                             bool? result = await Navigator.push(
@@ -157,8 +166,8 @@ class _DriverRegistrationState extends State<DriverRegistration> {
                         );
                       } else {
                         return _buildListTile(
-                          title: tr(context, 'step_vehicle_title'),
-                          subtitle: tr(context, 'step_vehicle_sub'),
+                          title: _getTranslatedText(context, 'step_vehicle_title'),
+                          subtitle: _getTranslatedText(context, 'step_vehicle_sub'),
                           isCompleted: isVehicleInfoComplete,
                           onTap: () async {
                             bool? result = await Navigator.push(
@@ -181,7 +190,7 @@ class _DriverRegistrationState extends State<DriverRegistration> {
                 ),
                 const SizedBox(height: 25),
 
-                // دکمه نهایی ثبت نهایی حساب
+                // دکمه ثبت نهایی حساب
                 SizedBox(
                   width: MediaQuery.of(context).size.width * 0.93,
                   height: 50,
@@ -200,7 +209,7 @@ class _DriverRegistrationState extends State<DriverRegistration> {
                                 );
                                 CommonMethods commonMethods = CommonMethods();
                                 commonMethods.displaySnackBar(
-                                    tr(context, 'reg_success_msg'),
+                                    _getTranslatedText(context, 'reg_success_msg'),
                                     context);
                               }
                             } catch (e) {
@@ -219,7 +228,7 @@ class _DriverRegistrationState extends State<DriverRegistration> {
                     child: registrationProvider.isLoading
                         ? const CircularProgressIndicator(color: Colors.white)
                         : Text(
-                            tr(context, 'submit_all_docs'),
+                            _getTranslatedText(context, 'submit_all_docs'),
                             style: const TextStyle(
                               fontFamily: 'IranYekan', 
                               color: Colors.white, 
@@ -233,7 +242,7 @@ class _DriverRegistrationState extends State<DriverRegistration> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
                   child: Text(
-                    tr(context, 'reg_terms_note'),
+                    _getTranslatedText(context, 'reg_terms_note'),
                     textAlign: TextAlign.center,
                     style: const TextStyle(fontFamily: 'IranYekan', fontSize: 11, color: Colors.black54),
                   ),
