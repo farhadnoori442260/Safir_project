@@ -8,10 +8,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_notification_channel/flutter_notification_channel.dart';
 import 'package:flutter_notification_channel/notification_importance.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:safir_drivers/global/global.dart'; // اصلاح نام پکیج سفیر
-import 'package:safir_drivers/main.dart'; // اصلاح نام پکیج سفیر
-import 'package:safir_drivers/models/trip_details.dart'; // اصلاح نام پکیج سفیر
-import 'package:safir_drivers/widgets/notification_dialog.dart'; // اصلاح نام پکیج سفیر
+import 'package:safir_drivers/global/global.dart'; 
+import 'package:safir_drivers/main.dart'; 
+import 'package:safir_drivers/models/trip_details.dart'; 
+import 'package:safir_drivers/widgets/notification_dialog.dart'; 
 
 class PushNotificationSystem {
   FirebaseMessaging firebaseCloudMessaging = FirebaseMessaging.instance;
@@ -19,13 +19,16 @@ class PushNotificationSystem {
   Future<String?> generateDeviceRegistrationToken() async {
     String? deviceRecognitionToken = await firebaseCloudMessaging.getToken();
 
-    DatabaseReference referenceOnlineDriver = FirebaseDatabase.instance
-        .ref()
-        .child("drivers")
-        .child(FirebaseAuth.instance.currentUser!.uid)
-        .child("deviceToken");
-    
-    await referenceOnlineDriver.set(deviceRecognitionToken);
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null) {
+      DatabaseReference referenceOnlineDriver = FirebaseDatabase.instance
+          .ref()
+          .child("drivers")
+          .child(currentUser.uid)
+          .child("deviceToken");
+      
+      await referenceOnlineDriver.set(deviceRecognitionToken);
+    }
     
     // سابسکرایب به تاپیک‌های مربوطه
     firebaseCloudMessaging.subscribeToTopic("drivers");
@@ -37,7 +40,7 @@ class PushNotificationSystem {
     // ثبت کانال نوتیفیکیشن اختصاصی برای اپلیکیشن سفیر رانندگان
     var result = await FlutterNotificationChannel().registerNotificationChannel(
       description: 'برای نمایش نوتیفیکیشن‌های درخواست سفر سفیر',
-      id: 'safirDriversApp', // اصلاح شناسه کانال به نام پروژه سفیر
+      id: 'safirDriversApp',
       importance: NotificationImportance.IMPORTANCE_HIGH,
       name: 'Safir Drivers',
     );
@@ -51,7 +54,7 @@ class PushNotificationSystem {
       if (messageRemote != null) {
         String? tripID = messageRemote.data["tripID"];
         if (tripID != null) {
-          print("Terminated Trip ID: $tripID");
+          log("Terminated Trip ID: $tripID");
           retrieveTripRequestInfo(tripID, context);
         }
       }
@@ -62,7 +65,7 @@ class PushNotificationSystem {
       if (messageRemote != null) {
         String? tripID = messageRemote.data["tripID"];
         if (tripID != null) {
-          print("Foreground Trip ID: $tripID");
+          log("Foreground Trip ID: $tripID");
           retrieveTripRequestInfo(tripID, context);
         }
       }
@@ -73,7 +76,7 @@ class PushNotificationSystem {
       if (messageRemote != null) {
         String? tripID = messageRemote.data["tripID"];
         if (tripID != null) {
-          print("Background Trip ID: $tripID");
+          log("Background Trip ID: $tripID");
           retrieveTripRequestInfo(tripID, context);
         }
       }
@@ -99,7 +102,7 @@ class PushNotificationSystem {
           final data = dataSnapshot.snapshot.value as Map<dynamic, dynamic>;
           log("Trip Data: $data");
 
-          // مدیریت پخش صدای هشدار درخواست جدید به صورت امن
+          // مدیریت پخش صدای هشدار درخواست جدید
           audioPlayer.stop().then((_) {
             audioPlayer.open(
               Audio("assets/audio/alert-sound.mp3"),
@@ -110,30 +113,34 @@ class PushNotificationSystem {
           TripDetails tripDetailsInfo = TripDetails();
 
           // پارس کردن اطلاعات مبدا
-          final pickUpLatLng = data["pickUpLatLng"] as Map<dynamic, dynamic>;
-          double pickUpLat = double.parse(pickUpLatLng["latitude"].toString());
-          double pickUpLng = double.parse(pickUpLatLng["longitude"].toString());
-          tripDetailsInfo.pickUpLatLng = LatLng(pickUpLat, pickUpLng);
-          tripDetailsInfo.pickupAddress = data["pickUpAddress"].toString();
+          if (data["pickUpLatLng"] != null) {
+            final pickUpLatLng = data["pickUpLatLng"] as Map<dynamic, dynamic>;
+            double pickUpLat = double.parse(pickUpLatLng["latitude"].toString());
+            double pickUpLng = double.parse(pickUpLatLng["longitude"].toString());
+            tripDetailsInfo.pickUpLatLng = LatLng(pickUpLat, pickUpLng);
+          }
+          tripDetailsInfo.pickupAddress = data["pickUpAddress"]?.toString() ?? "";
 
           // پارس کردن اطلاعات مقصد
-          final dropOffLatLng = data["dropOffLatLng"] as Map<dynamic, dynamic>;
-          double dropOffLat = double.parse(dropOffLatLng["latitude"].toString());
-          double dropOffLng = double.parse(dropOffLatLng["longitude"].toString());
-          tripDetailsInfo.dropOffLatLng = LatLng(dropOffLat, dropOffLng);
-          tripDetailsInfo.dropOffAddress = data["dropOffAddress"].toString();
+          if (data["dropOffLatLng"] != null) {
+            final dropOffLatLng = data["dropOffLatLng"] as Map<dynamic, dynamic>;
+            double dropOffLat = double.parse(dropOffLatLng["latitude"].toString());
+            double dropOffLng = double.parse(dropOffLatLng["longitude"].toString());
+            tripDetailsInfo.dropOffLatLng = LatLng(dropOffLat, dropOffLng);
+          }
+          tripDetailsInfo.dropOffAddress = data["dropOffAddress"]?.toString() ?? "";
 
           // جزییات مسافر و مبالغ کرایه
-          tripDetailsInfo.userName = data["userName"].toString();
-          tripDetailsInfo.userPhone = data["userPhone"].toString();
-          bidAmount = data["bidAmount"].toString();
-          fareAmount = data["fareAmount"].toString();
+          tripDetailsInfo.userName = data["userName"]?.toString() ?? "";
+          tripDetailsInfo.userPhone = data["userPhone"]?.toString() ?? "";
+          bidAmount = data["bidAmount"]?.toString() ?? "";
+          fareAmount = data["fareAmount"]?.toString() ?? "";
           tripDetailsInfo.tripID = tripID;
 
           // نمایش دیالوگ پاپ‌آپ درخواست سفر به راننده
           showDialog(
             context: currentContext,
-            barrierDismissible: false, // راننده حتماً باید دکمه رد یا قبول را بزند
+            barrierDismissible: false,
             builder: (BuildContext context) => NotificationDialog(
               tripDetailsInfo: tripDetailsInfo,
               bidAmount: bidAmount,
