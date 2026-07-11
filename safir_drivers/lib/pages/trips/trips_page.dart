@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:safir_drivers/providers/trips_provider.dart'; // اصلاح نام پکیج پروژه سفیر
+import 'package:safir_drivers/providers/trips_provider.dart'; 
+import 'package:safir_drivers/helpers/helper.dart';
 import 'trip_history_page.dart';
 
 class TripsPage extends StatefulWidget {
@@ -26,11 +27,11 @@ class _TripsPageState extends State<TripsPage> {
     const Color brandColor = Color(0xFF145A41); // رنگ سبز برند سفیر
 
     return Scaffold(
-      backgroundColor: Colors.grey.shade50, // پس‌زمینه روشن و تمیز به جای ایندیگو
+      backgroundColor: Colors.grey.shade50, // پس‌زمینه روشن و تمیز
       appBar: AppBar(
-        title: const Text(
-          'گزارش سفرها',
-          style: TextStyle(fontFamily: 'IranYekan', fontWeight: FontWeight.bold, fontSize: 16),
+        title: Text(
+          tr(context, 'trips_report_title'),
+          style: const TextStyle(fontFamily: 'IranYekan', fontWeight: FontWeight.bold, fontSize: 16),
         ),
         centerTitle: true,
         backgroundColor: Colors.white,
@@ -74,9 +75,9 @@ class _TripsPageState extends State<TripsPage> {
                                 width: 100,
                               ),
                               const SizedBox(height: 16),
-                              const Text(
-                                "مجموع سفرهای انجام شده",
-                                style: TextStyle(
+                              Text(
+                                tr(context, 'total_completed_trips'),
+                                style: const TextStyle(
                                   fontFamily: 'IranYekan',
                                   color: Colors.black54,
                                   fontSize: 14,
@@ -133,21 +134,23 @@ class _TripsPageState extends State<TripsPage> {
                                   colorBlendMode: BlendMode.modulate,
                                 ),
                                 const SizedBox(height: 14),
-                                const Row(
+                                Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
-                                      "مشاهده تاریخچه سفرها",
-                                      style: TextStyle(
+                                      tr(context, 'view_trips_history'),
+                                      style: const TextStyle(
                                         fontFamily: 'IranYekan',
                                         color: Colors.white,
                                         fontSize: 15,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                    SizedBox(width: 8),
+                                    const SizedBox(width: 8),
                                     Icon(
-                                      Icons.arrow_back_ios_new,
+                                      Directionality.of(context) == TextDirection.rtl
+                                          ? Icons.arrow_back_ios_new
+                                          : Icons.arrow_forward_ios,
                                       color: Colors.white,
                                       size: 14,
                                     )
